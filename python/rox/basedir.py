@@ -12,8 +12,8 @@ Typical usage:
 	for dir in basedir.load_config_paths('MyProg/Options'):
 		print "Load settings from", dir
 
-	print >>file(basedir.save_config_path('MyProg/Options'), 'w'),
-		"foo=2"
+	dir = basedir.save_config_path('MyProg')
+	print >>file(os.path.join(dir, 'Options'), 'w'), "foo=2"
 
 Note: see the rox.Options module for a higher-level API for managing options.
 """
@@ -51,6 +51,7 @@ def save_config_path(resource):
 	assert not resource.startswith('/')
 	path = os.path.join(xdg_config_home, resource)
 	os.makedirs(path, 0700)
+	return path
 
 def save_data_path(resource):
 	"""Ensure $XDG_DATA_HOME/<resource>/ exists, and return its path.
@@ -60,6 +61,7 @@ def save_data_path(resource):
 	assert not resource.startswith('/')
 	path = os.path.join(xdg_data_home, resource)
 	os.makedirs(path)
+	return path
 
 def load_config_paths(resource):
 	"""Returns an iterator which gives each directory named 'resource' in the
