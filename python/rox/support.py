@@ -84,10 +84,27 @@ def icon_for_type(window, media, subtype):
 		p, m = create_pixmap_from_xpm_d(window, None, bad_xpm)
 	return p, m
 
+error_box = None
 def report_error(message, title = 'Error'):
-	box = MultipleChoice(message, ['OK'])
-	box.set_title(title)
-	box.show()
+	"""Report an error. If an error is already displayed, reshow that
+	(instead of opening thousands of boxes!). Returns without waiting."""
+	global error_box
+	if error_box:
+		error_box.hide()
+		error_box.show()
+		import time
+		gdk_beep()
+		print "Too many errors - skipping: " + title + ': ' + message
+		time.sleep(1)	# Try not to panic!
+		return
+	error_box = MultipleChoice(message, ['OK'])
+	error_box.connect('destroy', clear_error_box)
+	error_box.set_title(title)
+	error_box.show()
+
+def clear_error_box(eb):
+	global error_box
+	error_box = None
 
 def report_exception():
 	type, value, tb = sys.exc_info()
