@@ -72,6 +72,8 @@ class SaveBox(g.Dialog):
 			self.destroy()
 		elif response == g.RESPONSE_OK:
 			self.save_area.save_to_file_in_entry()
+		elif response == g.RESPONSE_DELETE_EVENT:
+			pass
 		else:
 			raise Exception('Unknown response!')
 	
