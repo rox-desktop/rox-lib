@@ -97,6 +97,10 @@ Tasks API is no longer experimental, but proxy API is.
 Added a Help button to the exception dialog, which opens the new Help/Errors
 file (Thomas Leonard).
 
+08-Sep-2004
+~~~~~~~~~~~
+Bugfix: Failed to call the parent constructor to AbortSave correctly.
+
 06-Sep-2004
 ~~~~~~~~~~~
 Simplified su code and interface.
