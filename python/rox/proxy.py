@@ -36,6 +36,10 @@ class MasterObject(object):
 
 class Proxy:
 	def __init__(self, to_peer, from_peer, slave_object = None):
+		if not hasattr(to_peer, 'fileno'):
+			to_peer = os.fdopen(to_peer, 'w')
+		if not hasattr(from_peer, 'fileno'):
+			from_peer = os.fdopen(from_peer, 'r')
 		self.to_peer = to_peer
 		self.from_peer = from_peer
 		self.out_buffer = ""
@@ -50,11 +54,12 @@ class Proxy:
 
 	def enable_write_watch(self):
 		from rox import g
-		g.input_add(self.to_peer, g.gdk.INPUT_WRITE,
+		INPUT_WRITE = 0x14 # g.gdk.INPUT_WRITE sometimes wrong!!
+		g.input_add(self.to_peer.fileno(), INPUT_WRITE,
 			lambda src, cond: self.write_ready())
 
 	def write_object(self, object):
-		if self.to_peer == -1:
+		if self.to_peer is None:
 			raise Exception('Peer is defunct')
 		if not self.out_buffer:
 			self.enable_write_watch()
@@ -70,15 +75,15 @@ class Proxy:
 			if not w:
 				print "Not ready for writing"
 				return True
-			n = os.write(self.to_peer, self.out_buffer)
+			n = os.write(self.to_peer.fileno(), self.out_buffer)
 			self.out_buffer = self.out_buffer[n:]
 		return False
 
 	def read_ready(self):
-		new = os.read(self.from_peer, 1000)
+		new = os.read(self.from_peer.fileno(), 1000)
 		if not new:
 			self.finish()
-			raise Exception("Lost connection to slave!")
+			self.lost_connection()
 		self.in_buffer += new
 		while ':' in self.in_buffer:
 			l, rest = self.in_buffer.split(':', 1)
@@ -92,8 +97,10 @@ class Proxy:
 		return True
 
 	def finish(self):
-		self.to_slave = -1
-		self.from_slave = -1
+		self.to_slave = self.from_slave = None
+	
+	def lost_connection(self):
+		raise Exception("Lost connection to peer!")
 
 class Queue:
 	"""A queue of responses to some method call.
@@ -217,3 +224,6 @@ class SlaveProxy(Proxy):
 			getattr(self.slave_object, method)(request, *args)
 		except Exception, e:
 			send(e)
+
+	def lost_connection(self):
+		sys.exit()
