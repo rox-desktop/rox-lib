@@ -371,9 +371,9 @@ class ColourButton(GtkButton):
 	
 	def set_colour(self, colour):
 		try:
-			r = int(colour[1:5], 16)
-			g = int(colour[5:9], 16)
-			b = int(colour[9:13], 16)
+			r = string.atoi(colour[1:5], 16)
+			g = string.atoi(colour[5:9], 16)
+			b = string.atoi(colour[9:13], 16)
 		except:
 			print "Invalid colour spec:", colour
 			r, g, b = (0, 0, 0)
