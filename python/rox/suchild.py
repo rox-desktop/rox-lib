@@ -55,6 +55,10 @@ class Slave:
 	def rmtree(self, request, path):
 		shutil.rmtree(path)
 		request.send(None)
+	
+	def unlink(self, request, path):
+		os.unlink(path)
+		request.send(None)
 
 if __name__ == '__main__':
 	from select import select
