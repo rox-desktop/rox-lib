@@ -112,6 +112,8 @@ class OptionsBox(g.Dialog):
 		
 		self.handlers = {}	# Option -> (get, set)
 		self.revert = {}	# Option -> old value
+		self.size_groups = {}	# Name -> GtkSizeGroup
+		self.current_size_group = None
 		
 		self.build_window_frame()
 
@@ -289,6 +291,11 @@ class OptionsBox(g.Dialog):
 		if label:
 			label = self._(label)
 
+		old_size_group = self.current_size_group
+		sg = node.getAttributeNode('size-group')
+		if sg is not None:
+			self.current_size_group = sg.value or None
+
 		option = None
 		if name:
 			try:
@@ -307,9 +314,7 @@ class OptionsBox(g.Dialog):
 				name = node.localName.replace('-', '_')
 				fn = getattr(self, 'build_' + name)
 			except AttributeError:
-				print "Unknown widget type '%s'" \
-						% node.localName
-				return
+				fn = self.build_unknown
 
 		if option:
 			widgets = fn(node, label, option)
@@ -317,6 +322,8 @@ class OptionsBox(g.Dialog):
 			widgets = fn(node, label)
 		for w in widgets:
 			box.pack_start(w, False, True, 0)
+
+		self.current_size_group = old_size_group
 		
 	def may_add_tip(self, widget, node):
 		"""If 'node' contains any text, use that as the tip for 'widget'."""
@@ -326,6 +333,18 @@ class OptionsBox(g.Dialog):
 			data = None
 		if data:
 			self.tips.set_tip(widget, self._(data))
+
+	def make_sized_label(self, label):
+		"""Create a GtkLabel and add it to the current size-group, if any"""
+		widget = g.Label(label)
+		if self.current_size_group:
+			try:
+				group = self.size_groups[self.current_size_group]
+			except KeyError:
+				group = g.SizeGroup(g.SIZE_GROUP_HORIZONTAL)
+				self.size_groups[self.current_size_group] = group
+			group.add_widget(widget)
+		return widget
 	
 	# Each type of widget has a method called 'build_NAME' where name is
 	# the XML element name. This method is called as method(node, label,
@@ -333,9 +352,12 @@ class OptionsBox(g.Dialog):
 	# otherwise.  It should return a list of widgets to add to the window
 	# and, if it's for an Option, set self.handlers[option] = (get, set).
 
+	def build_unknown(self, node, label, option = None):
+		return [g.Label("Unknown widget type <%s>" % node.localName)]
+
 	def build_label(self, node, label):
-		widget = g.Label(self._(data(node)))
 		help_flag = int(node.getAttribute('help') or '0')
+		widget = self.make_sized_label(self._(data(node)))
 		if help_flag:
 			widget.set_alignment(0, 0.5)
 		else:
@@ -476,7 +498,7 @@ class OptionsBox(g.Dialog):
 		self.may_add_tip(button, node)
 
 		hbox = g.HBox(False, 4)
-		hbox.pack_start(g.Label(label), False, True, 0)
+		hbox.pack_start(self.make_sized_label(label), False, True, 0)
 		hbox.pack_start(button, False, True, 0)
 
 		self.handlers[option] = (button.get, button.set)
@@ -497,7 +519,7 @@ class OptionsBox(g.Dialog):
 
 		hbox = g.HBox(False, 4)
 		if label:
-			widget = g.Label(label)
+			widget = self.make_sized_label(label)
 			widget.set_alignment(1.0, 0.5)
 			hbox.pack_start(widget, False, True, 0)
 
@@ -532,7 +554,7 @@ class OptionsBox(g.Dialog):
 
 		if label:
 			box = g.HBox(False, 4)
-			label_wid = g.Label(label)
+			label_wid = self.make_sized_label(label)
 			label_wid.set_alignment(1.0, 0.5)
 			box.pack_start(label_wid, False, True, 0)
 			box.pack_start(option_menu, True, True, 0)
