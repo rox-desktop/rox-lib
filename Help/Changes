@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+25-Jul-2003
+~~~~~~~~~~~
+Updated findrox to use ZeroInstall, if possible.
+
 22-Jul-2003
 ~~~~~~~~~~~
 Work out correct application name even if invoked via a symlink. This stops
