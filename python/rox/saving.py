@@ -168,13 +168,11 @@ class SaveArea(g.VBox):
 
 	def set_type(self, type, icon = None):
 		"""Change the icon and drag target to 'type'.
-		If 'icon' is given (as (pixmap, mask)) then that icon is used,
+		If 'icon' is given (as a GtkImage) then that icon is used,
 		otherwise an appropriate icon for the type is used."""
-		if icon:
-			pixmap, mask = icon
-		else:
-			pixmap, mask = icon_for_type(self, type)
-		self.icon.set(pixmap, mask)
+		if not icon:
+			icon = image_for_type(type)
+		self.icon.set_from_pixbuf(icon.get_pixbuf())
 		self._set_drag_source(type)
 	
 	def _set_drag_source(self, type):
