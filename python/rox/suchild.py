@@ -38,8 +38,14 @@ class SuSlave(proxy.SlaveProxy):
 		write_watches.append(self.write_watch)
 	
 class Slave:
-	def spawn(self, request, argv):
-		request.send(argv)
+	def spawnvpe(self, request, mode, file, args, env = None):
+		if env is None:
+			request.send(os.spawnvp(mode, file, args))
+		else:
+			request.send(os.spawnvpe(mode, file, args, env))
+
+	def waitpid(self, request, pid, flags):
+		request.send(os.waitpid(pid, flags))
 	
 	def getuid(self, request):
 		request.send(os.getuid())

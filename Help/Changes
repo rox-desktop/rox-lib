@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+27-Aug-2004 (Release 1.9.15)
+~~~~~~~~~~~
+Added spawnvpe and waitpid methods to suchild.
+
 08-Aug-2004
 ~~~~~~~~~~~
 If the unit field for a <numentry> option is blank, don't try to translate it
