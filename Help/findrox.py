@@ -7,7 +7,12 @@
 import os, sys
 from os.path import exists
 import string
-
+try:
+	import gtk
+except:
+	sys.stderr.write('The pygtk (or python-gnome) package must be ' +
+			 'installed to use this program!')
+	raise
 try:
 	path = os.environ['LIBDIRPATH']
 	paths = string.split(path, ':')
@@ -19,7 +24,10 @@ found = 0
 for p in paths:
 	if exists(p):
 		found = 1
-		sys.path.append(p + '/python')
+		if hasattr(gtk, 'MessageDialog'):
+			sys.path.append(p + '/python2')	# Gtk+-2.0
+		else:
+			sys.path.append(p + '/python')
 		break
 if not found:
 	err = "This program needs ROX-Lib to run.\nI tried all of these places:\n\n" + \
@@ -29,16 +37,21 @@ if not found:
 		sys.stderr.write('*** ' + err + '\n')
 	except:
 		pass
-	from gtk import *
-	win = GtkDialog()
+	try:
+		win = gtk.GtkDialog()
+		message = gtk.GtkLabel(err)
+	except AttributeError:
+		win = gtk.MessageDialog(None, 0, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, err)
+		win.set_position(gtk.WIN_POS_CENTER)
+		win.run()
+		sys.exit(1)
 	win.set_title('Missing ROX-Lib')
-	win.set_position(WIN_POS_CENTER)
-	message = GtkLabel(err)
+	win.set_position(gtk.WIN_POS_CENTER)
 	message.set_padding(20, 20)
 	win.vbox.pack_start(message)
 
-	ok = GtkButton("OK")
-	ok.set_flags(CAN_DEFAULT)
+	ok = gtk.GtkButton("OK")
+	ok.set_flags(gtk.CAN_DEFAULT)
 	win.action_area.pack_start(ok)
 	ok.connect('clicked', mainquit)
 	ok.grab_default()

@@ -2,6 +2,11 @@
 			Shared code for ROX applications
 			by Thomas Leonard
 			http://rox.sourceforge.net
+
+27-Dec-2001
+~~~~~~~~~~~
+Started adding support for Gtk+-2.0.
+
 15-Nov-2001 (Release 0.1.4)
 ~~~~~~~~~~~
 Added 'savebox' example program to ROX-Lib.
