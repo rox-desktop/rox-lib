@@ -1,11 +1,11 @@
 # ROX-Lib2 Italian Translation.
-# Copyright @ 2003 Free Software Foundation, Inc.
-# Current translator: Yuri Bongiorno http://yuri.webhop.org, 2004.
+# Copyright @ 2005 Free Software Foundation, Inc.
+# Current translator: Yuri Bongiorno http://yuri.webhop.org, 2005.
 msgid ""
 msgstr ""
-"Project-Id-Version: ROX-Lib2 1.9.13\n"
-"POT-Creation-Date: Sat Jul 31 10:26:37 2004\n"
-"PO-Revision-Date: 2004-03-18 16:40+0200\n"
+"Project-Id-Version: ROX-Lib2 1.9.17\n"
+"POT-Creation-Date: 2005-01-19 21:58+CET\n"
+"PO-Revision-Date: 2005-01-18 16:40+0200\n"
 "Last-Translator: Yuri Bongiorno http://yuri.webhop.org\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -34,7 +34,7 @@ msgstr ""
 msgid "Operation aborted at user's request"
 msgstr "Operazione interrotta per richiesta dell'utente"
 
-#: __init__.py:131 debug.py:37
+#: __init__.py:131 debug.py:44
 msgid "Error"
 msgstr "Errore"
 
@@ -46,7 +46,7 @@ msgstr "Informazione"
 msgid "Confirm:"
 msgstr "Conferma:"
 
-#: __init__.py:379
+#: __init__.py:383
 msgid ""
 "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "
@@ -56,23 +56,23 @@ msgstr ""
 "necessario installare «python-xmlbase» (è un pacchetto piccolo: non è "
 "richiesto l'intero PyXML)."
 
-#: debug.py:28
+#: debug.py:34
 msgid "_Details"
 msgstr "_Dettagli"
 
-#: debug.py:77
+#: debug.py:86
 msgid "_Bug Report"
 msgstr "Segnala _bug"
 
-#: debug.py:83
+#: debug.py:92
 msgid "Forced Quit"
 msgstr "Esci subito"
 
-#: debug.py:102
+#: debug.py:111
 msgid "Stack trace (innermost last)"
 msgstr "Stack trace (il più interno è l'ultimo)"
 
-#: debug.py:187
+#: debug.py:196
 msgid "Local variables in selected frame:"
 msgstr "Variabili locali nel frame selezionato:"
 
@@ -106,15 +106,13 @@ msgstr ""
 "application/octet-stream non forniti)"
 
 #: mime.py:262
-#, fuzzy
 msgid ""
 "The '%s' command returned an error code!\n"
 "Make sure you have the freedesktop.org shared MIME package:\n"
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 msgstr ""
 "Il comando «%s» ha restituito un codice di errore.\n"
-"Assicurarsi di avere installato il pacchetto shared MIME di freedesktop."
-"org:\n"
+"Assicurarsi di avere il pacchetto shared MIME di freedesktop.org:\n"
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 
 #: mime_handler.py:236
@@ -153,7 +151,7 @@ msgid ""
 "The application can handle files of these types.  Click on OK to add it to "
 "the SendTo menu for the type of file, and also the customized File menu."
 msgstr ""
-"L'applicazione può gestire i file di questo tipo. Cliccare su «Ok» per "
+"L'applicazione può gestire i file di questo tipo. Fare clic su «Ok» per "
 "aggiungerla nei menù «File» e «Invia a...»."
 
 #: saving.py:139
@@ -200,6 +198,3 @@ msgstr "Abban_dona"
 msgid "Save As:"
 msgstr "Salva come:"
 
-#: su.py:138
-msgid "Enter %s's password:"
-msgstr "Inserire la password di «%s»:"
