@@ -153,7 +153,7 @@ def report_exception():
 	of a 'try' block. Uses rox.debug.show_exception()."""
 	type, value, tb = sys.exc_info()
 	import debug
-	debug.show_exception(type, value, tb, skip)
+	debug.show_exception(type, value, tb)
 
 _icon_path = os.path.join(app_dir, '.DirIcon')
 _window_icon=None

@@ -3,10 +3,18 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+22-Sep-2003
+~~~~~~~~~~~
+New bug() function to quickly bring up a debugging prompt.
+
 15-Sep-2003
 ~~~~~~~~~~~
 The glob patterns in mime.py are now sorted longest first.  Fix for setting 
 icon in the old way when there was no icon (Stephen Watson)
+
+25-Aug-2003
+~~~~~~~~~~~
+Try to cope better with bad hostname setup (reported by Nathan Howell).
 
 24-Aug-2003
 ~~~~~~~~~~~
