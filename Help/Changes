@@ -3,6 +3,13 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+28-Dec-2003
+~~~~~~~~~~~
+Allow ROXLIB_DISABLE_ZEROINSTALL to override looking for ROX-Lib in Zero
+Install (useful for ROX-Lib developers). Prefer a locally installed version
+of ROX-Filer to the Zero Install version; this also allows users to select
+which Zero Install version they want (eg, stable or developer).
+
 24-Dec-2003
 ~~~~~~~~~~~
 Added <menu> OptionMenu widget for Options box (Chris Shaffer).

@@ -13,7 +13,7 @@ def version(major, minor, micro):
 	add it to sys.path. If version is missing or too old, either
 	prompt the user, or (if possible) upgrade it automatically."""
 
-	if os.path.exists('/uri/0install/rox.sourceforge.net'):
+	if not os.getenv('ROXLIB_DISABLE_ZEROINSTALL') and os.path.exists('/uri/0install/rox.sourceforge.net'):
 		# We're using ZeroInstall. Good :-)
 		zpath = '/uri/0install/rox.sourceforge.net/lib/ROX-Lib2/' \
 			'latest'
