@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+10-Mar-2005
+~~~~~~~~~~~
+Bugfix: Set default in Options box to OK to avoid triggering a GTK bug
+	(Thomas Leonard, reported by Guido Schimmels).
+
 16-Jan-2005 (Release 1.9.17)
 ~~~~~~~~~~~
 Added OutputBlocker, which works in a similar way to InputBlocker (Thomas

@@ -128,6 +128,8 @@ class OptionsBox(g.Dialog):
 
 		self.add_button(g.STOCK_OK, g.RESPONSE_OK)
 
+		self.set_default_response(g.RESPONSE_OK)
+
 		doc = minidom.parse(options_xml)
 		assert doc.documentElement.localName == 'options'
 		
