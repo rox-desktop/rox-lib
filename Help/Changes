@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+05-Dec-2002
+~~~~~~~~~~~
+Cope with missing input_add_full.
+
 25-Oct-2002
 ~~~~~~~~~~~
 Pygtk 1.99.12 seems to more-or-less work now (according to Alastair Porter), so

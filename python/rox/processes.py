@@ -60,8 +60,13 @@ class Process:
 		os.close(stderr_w)
 		self.err_from_child = stderr_r
 
-		self.tag = g.input_add_full(self.err_from_child,
-					    g.gdk.INPUT_READ, self._got_errors)
+		if hasattr(g, 'input_add_full'):
+			self.tag = g.input_add_full(self.err_from_child,
+					g.gdk.INPUT_READ, self._got_errors)
+		else:
+			import gobject
+			self.tag = gobject.io_add_watch(self.err_from_child,
+					gobject.IO_IN | gobject.IO_HUP, self._got_errors)
 
 		self.parent_post_fork()
 	
