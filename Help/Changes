@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+19-Aug-2002
+~~~~~~~~~~~
+Added 'processes' module, based on code in Archive, which makes controlling
+subprocesses easier.
+
 14-Aug-2002
 ~~~~~~~~~~~
 Bugfix: Changing the keys lost any builtin shortcuts (Gtk behaviour has
