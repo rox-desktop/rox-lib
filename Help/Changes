@@ -1,0 +1,9 @@
+			ROX-Lib
+			Shared code for ROX applications
+			by Thomas Leonard
+			http://rox.sourceforge.net
+
+18-May-2001
+~~~~~~~~~~~
+Added the options module. This allows you to easily load, save and edit
+settings using a ROX-Filer-like interface.
