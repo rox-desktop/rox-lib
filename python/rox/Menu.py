@@ -51,8 +51,6 @@ class Menu:
 		if not _save_name:
 			raise Exception('Call rox.Menu.set_save_name() first!')
 
-		self.attached = {}
-
 		ag = g.AccelGroup()
 		self.accel_group = ag
 		factory = g.ItemFactory(g.Menu, '<%s>' % name, ag)
@@ -100,10 +98,8 @@ class Menu:
 		def kev(w, k):
 			self.caller = object
 			return 0
-		signal = window.connect('key-press-event', kev)
+		window.connect('key-press-event', kev)
 		window.add_accel_group(self.accel_group)
-		
-		self.attached[(window, object)] = signal
 	
 	def popup(self, caller, event):
 		"""Display the menu. Call 'caller.<callback_name>' when an item is chosen."""
