@@ -8,6 +8,7 @@ import proxy
 
 read_watches = []
 write_watches = []
+streams = {}
 
 class Watch:
 	"""Contains a file descriptor and a function to call when it's ready"""
@@ -59,6 +60,25 @@ class Slave:
 	def unlink(self, request, path):
 		os.unlink(path)
 		request.send(None)
+	
+	def open(self, request, path, mode = 'r'):
+		stream = file(path, mode)
+		streams[id(stream)] = stream
+		request.send(id(stream))
+	
+	def close(self, request, stream):
+		streams[stream].close()
+		del streams[stream]
+		request.send(None)
+	
+	def read(self, request, stream, length = 0):
+		request.send(streams[stream].read(length))
+
+	def write(self, request, stream, data):
+		request.send(streams[stream].write(data))
+	
+	def rename(self, request, old, new):
+		request.send(os.rename(old, new))
 
 if __name__ == '__main__':
 	from select import select

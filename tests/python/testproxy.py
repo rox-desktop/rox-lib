@@ -4,7 +4,7 @@ import unittest
 import sys
 import os
 from os.path import dirname, abspath, join
-import tempfile
+import tempfile, shutil
 
 rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
 sys.path.insert(0, join(rox_lib, 'python'))
@@ -115,6 +115,83 @@ class TestProxy(unittest.TestCase):
 			g.mainquit()
 		tasks.Task(run())
 		g.mainloop()
+	
+	def testFileRead(self):
+		tmp_file = tempfile.NamedTemporaryFile(suffix = '-roxlib-test')
+		tmp_file.write('Hello\n')
+		tmp_file.flush()
+		root = self.master.root
+		def run():
+			queue = root.open(tmp_file.name)
+			yield queue.blocker
+			stream = queue.dequeue_last()
+
+			queue = root.read(stream, 5)
+			yield queue.blocker
+			data = queue.dequeue_last()
+			assert data == 'Hello'
+
+			queue = root.close(stream)
+			yield queue.blocker
+			queue.dequeue_last()
+
+			g.mainquit()
+		tasks.Task(run())
+		g.mainloop()
+
+	def testFileWrite(self):
+		tmp_dir = tempfile.mkdtemp('-roxlib-test')
+		root = self.master.root
+		tmp_file = join(tmp_dir, 'new')
+		def run():
+			queue = root.open(tmp_file, 'w')
+			yield queue.blocker
+			stream = queue.dequeue_last()
+
+			assert os.path.isfile(tmp_file)
+
+			queue = root.write(stream, 'Hello\n')
+			yield queue.blocker
+			queue.dequeue_last()
+
+			queue = root.close(stream)
+			yield queue.blocker
+			queue.dequeue_last()
+
+			assert file(tmp_file).read() == 'Hello\n'
+
+			queue = root.close(stream)
+			yield queue.blocker
+			try:
+				queue.dequeue_last()
+				assert 0, 'Expected an exception!'
+			except KeyError:
+				pass
+
+			g.mainquit()
+		tasks.Task(run())
+		g.mainloop()
+		shutil.rmtree(tmp_dir)
+
+	def testRename(self):
+		tmp_dir = tempfile.mkdtemp('-roxlib-test')
+		root = self.master.root
+		f = file(join(tmp_dir, 'old'), 'w')
+		f.write('Hello\n')
+		f.close()
+
+		def run():
+			queue = root.rename(join(tmp_dir, 'old'),
+					    join(tmp_dir, 'new'))
+			yield queue.blocker
+			queue.dequeue_last()
+
+			assert file(join(tmp_dir, 'new')).read() == 'Hello\n'
+
+			g.mainquit()
+		tasks.Task(run())
+		g.mainloop()
+		shutil.rmtree(tmp_dir)
 
 sys.argv.append('-v')
 unittest.main()
