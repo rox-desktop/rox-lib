@@ -86,8 +86,9 @@ def icon_for_type(window, media, subtype):
 def report_error(message, title = 'Error'):
 	box = MultipleChoice(message, ['OK'])
 	box.set_title(title)
-	box.wait()
+	box.show()
 
 def report_exception():
-	ex = format_exception_only(sys.exc_type, sys.exc_value)
+	type, value, tb = sys.exc_info()
+	ex = format_exception_only(type, value)
 	report_error(join(ex, ''))
