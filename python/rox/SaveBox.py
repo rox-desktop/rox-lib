@@ -78,21 +78,6 @@ class SaveBox(GtkWindow):
 		self.set_border_width(4)
 		self.document = document
 
-		vbox = GtkVBox(FALSE, 0)
-		self.add(vbox)
-
-		align = GtkAlignment()
-		align.set(.5, .5, 0, 0)
-		vbox.pack_start(align, TRUE, TRUE, 0)
-		
-		drag_box = GtkEventBox()
-		drag_box.set_border_width(4)
-		drag_box.add_events(BUTTON_PRESS_MASK)
-		align.add(drag_box)
-
-		pixmap, mask = icon_for_type(self, type)
-		self.icon = GtkPixmap(pixmap, mask)
-
 		if hasattr(document, 'save_as_file'):
 			self.save_as_file = document.save_as_file
 		elif hasattr(document, 'save_get_data'):
@@ -109,6 +94,74 @@ class SaveBox(GtkWindow):
 		else:
 			self.save_as_selection = None
 		
+		save_area = self.create_save_area(uri, type, discard)
+		self.add(save_area)
+		save_area.show()
+
+		i = rfind(uri, '/')
+		i = i + 1
+		self.entry.realize()
+		self.entry.set_position(-1)
+		self.entry.select_region(i, -1)
+		self.ok.grab_default()
+
+		self.connect('key-press-event', self.key_press)
+		rox_toplevel_ref()
+		self.connect('destroy', self.savebox_destroyed)
+	
+	def create_save_area(self, uri, type, discard):
+		"Override this to make your own layout. Call this from "
+		"your new method."
+		vbox = GtkVBox(FALSE, 0)
+
+		drag_area = self.create_drag_area(type)
+		vbox.pack_start(drag_area, TRUE, TRUE, 0)
+		drag_area.show_all()
+
+		entry = GtkEntry()
+		self.entry = entry
+		vbox.pack_start(entry, FALSE, TRUE, 4)
+		entry.grab_focus()
+		entry.set_text(uri)
+		entry.show()
+
+		hbox = GtkHBox(TRUE, 0)
+		vbox.pack_start(hbox, FALSE, TRUE, 0)
+
+		self.ok = GtkButton("Save")
+		self.ok.set_flags(CAN_DEFAULT)
+		hbox.pack_start(self.ok, FALSE, TRUE, 0)
+
+		cancel = GtkButton("Cancel")
+		cancel.set_flags(CAN_DEFAULT)
+		hbox.pack_start(cancel, FALSE, TRUE, 0)
+		cancel.connect('clicked', self.cancel)
+		
+		if discard:
+			vbox.pack_start(GtkHSeparator(), FALSE, TRUE, 4)
+			button = GtkButton('Discard')
+			vbox.pack_start(button, FALSE, TRUE, 0)
+			button.connect('clicked', self.discard_clicked)
+
+		self.ok.connect('clicked', self.ok, entry)
+		entry.connect('activate', self.ok, entry)
+
+		hbox.show_all()
+
+		return vbox
+
+	def create_drag_area(self, type):
+		align = GtkAlignment()
+		align.set(.5, .5, 0, 0)
+
+		drag_box = GtkEventBox()
+		drag_box.set_border_width(4)
+		drag_box.add_events(BUTTON_PRESS_MASK)
+		align.add(drag_box)
+
+		pixmap, mask = icon_for_type(self, type)
+		self.icon = GtkPixmap(pixmap, mask)
+
 		if self.save_as_file:
 			targets = [('XdndDirectSave0', 0, TARGET_XDS)]
 		else:
@@ -130,48 +183,9 @@ class SaveBox(GtkWindow):
 
 		drag_box.add(self.icon)
 
-		entry = GtkEntry()
-		self.entry = entry
-		vbox.pack_start(entry, FALSE, TRUE, 4)
-
-		hbox = GtkHBox(TRUE, 0)
-		vbox.pack_start(hbox, FALSE, TRUE, 0)
-
-		ok = GtkButton("Save")
-		ok.set_flags(CAN_DEFAULT)
-		hbox.pack_start(ok, FALSE, TRUE, 0)
-
-		cancel = GtkButton("Cancel")
-		cancel.set_flags(CAN_DEFAULT)
-		hbox.pack_start(cancel, FALSE, TRUE, 0)
-		cancel.connect('clicked', self.cancel)
-		
-		if discard:
-			vbox.pack_start(GtkHSeparator(), FALSE, TRUE, 4)
-			button = GtkButton('Discard')
-			vbox.pack_start(button, FALSE, TRUE, 0)
-			button.connect('clicked', self.discard_clicked)
-
-		vbox.show_all()
-		ok.grab_default()
-		ok.connect('clicked', self.ok, entry)
-
-		entry.grab_focus()
-		entry.connect('activate', self.ok, entry)
-
-		entry.set_text(uri)
-		i = rfind(uri, '/')
-		i = i + 1
-
-		entry.realize()
-		entry.set_position(-1)
-		entry.select_region(i, -1)
-
-		self.connect('key-press-event', self.key_press)
-		rox_toplevel_ref()
-		self.connect('destroy', self.destroyed)
+		return align
 	
-	def destroyed(self, widget):
+	def savebox_destroyed(self, widget):
 		rox_toplevel_unref()
 
 	def key_press(self, window, event):

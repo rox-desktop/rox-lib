@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+11-Aug-2001
+~~~~~~~~~~~
+Changed internal structure of SaveBox to allow better subclassing.
+
 10-Aug-2001
 ~~~~~~~~~~~
 SaveBox calls rox_toplevel_[un]ref() functions automatically.
