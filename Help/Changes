@@ -3,7 +3,7 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
-02-Oct-2004
+02-Oct-2004 (Release 1.9.16)
 ~~~~~~~~~~~
 Cope better with user cancelling su operation. New interface to replace
 create_su_proxy (Thomas Leonard).
