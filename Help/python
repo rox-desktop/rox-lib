@@ -116,11 +116,8 @@ filename, and the MIME type for the data, eg:
 		If missing, uses get_save_data() and sends that.
 
 	discard()
-		Discard button clicked. Only needed if discard = TRUE.
-
-	close()
-		If the discard button is present and the data is saved,
-		this gets called.
+		Only used if discard = TRUE. Called when Discard button
+		is clicked, or when data is saved safely.
 
 If save_get_data is NOT provided, then one or both of save_as_file and
 save_as_selection must be present. If only one is provided then the other
