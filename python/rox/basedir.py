@@ -37,11 +37,6 @@ xdg_config_dirs = [xdg_config_home] + \
 xdg_data_dirs = filter(lambda x: x, xdg_data_dirs)
 xdg_config_dirs = filter(lambda x: x, xdg_config_dirs)
 
-#print "Config load", xdg_config_dirs
-#print "Config save", xdg_config_home
-#print "Data load", xdg_data_dirs
-#print "Data save", xdg_data_home
-
 def save_config_path(resource):
 	"""Ensure $XDG_CONFIG_HOME/<resource>/ exists, and return its path.
 	'resource' should normally be the name of your application. Use this

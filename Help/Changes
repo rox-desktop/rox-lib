@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+11-Jun-2004
+~~~~~~~~~~~
+Allow "" as a valid value in a OptionsBox menu (reported by Guido Schimmels).
+
 10-Jun-2004
 ~~~~~~~~~~~
 Added 'proxy' module. This allows one Python process to invoke methods on

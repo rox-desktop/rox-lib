@@ -7,13 +7,18 @@ from rox import basedir
 
 class TestBasedir(unittest.TestCase):
 	def setUp(self):
+		os.environ['XDG_DATA_HOME'] = '/tmp/share'
+		os.environ['XDG_DATA_DIRS'] = '/tmp/share.2:/tmp/share.3'
+		os.environ['XDG_CONFIG_HOME'] = '/tmp/config'
+		os.environ['XDG_CONFIG_DIRS'] = '/tmp/config.2:/tmp/config.3'
+		reload(basedir)
+
+	def testDefaults(self):
 		for x in ['XDG_DATA_HOME', 'XDG_DATA_DIRS',
 			  'XDG_CONFIG_HOME', 'XDG_CONFIG_DIRS']:
 			if x in os.environ:
 				del os.environ[x]
 		reload(basedir)
-
-	def testDefaults(self):
 		self.assertEquals(os.path.expanduser('~/.config'),
 				  basedir.xdg_config_home)
 		self.assertEquals([basedir.xdg_config_home, '/etc/xdg'],
@@ -26,11 +31,6 @@ class TestBasedir(unittest.TestCase):
 				  basedir.xdg_data_dirs)
 
 	def testOverride(self):
-		os.environ['XDG_DATA_HOME'] = '/tmp/share'
-		os.environ['XDG_DATA_DIRS'] = '/tmp/share.2:/tmp/share.3'
-		os.environ['XDG_CONFIG_HOME'] = '/tmp/config'
-		os.environ['XDG_CONFIG_DIRS'] = '/tmp/config.2:/tmp/config.3'
-		reload(basedir)
 		self.assertEquals('/tmp/config', basedir.xdg_config_home)
 		self.assertEquals([basedir.xdg_config_home,
 					'/tmp/config.2', '/tmp/config.3'],
@@ -40,6 +40,17 @@ class TestBasedir(unittest.TestCase):
 		self.assertEquals([basedir.xdg_data_home,
 					'/tmp/share.2', '/tmp/share.3'],
 				  basedir.xdg_data_dirs)
+	
+	def testMkDir(self):
+		assert not os.path.isdir(basedir.xdg_config_home)
+		path = basedir.save_config_path('ROX-Lib-Test')
+		self.assertEquals('/tmp/config/ROX-Lib-Test', path)
+		assert os.path.isdir(basedir.xdg_config_home)
+		assert os.path.isdir(path)
+
+		os.rmdir(path)
+		os.rmdir(basedir.xdg_config_home)
+
 
 sys.argv.append('-v')
 unittest.main()

@@ -572,8 +572,8 @@ class OptionsBox(g.Dialog):
 		#self.may_add_tip(option_menu, node)
 
 		for item in node.getElementsByTagName('item'):
+			assert item.hasAttribute('value')
 			value = item.getAttribute('value')
-			assert value
 			label_item = self._(item.getAttribute('label')) or value
 
 			menu.append(g.MenuItem(label_item))
