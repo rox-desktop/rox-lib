@@ -1,5 +1,3 @@
-# $Id$
-
 """Provide a standard window for displaying application information."""
 
 import os

@@ -1,6 +1,3 @@
-# Access to shared MIME database
-# $Id$
-
 """This module provides access to the shared MIME database.
 
 types is a dictionary of all known MIME types, indexed by the type name, e.g.
@@ -149,17 +146,8 @@ def _import_glob_file(dir):
 for dir in mimedirs:
 	_import_glob_file(dir)
 
-def longest_first(a, b):
-	stra=a[0]
-	strb=b[0]
-	if len(stra)>len(strb):
-		return -1
-	elif len(stra)<len(strb):
-		return 1
-	return 0
-
 # Sort globs by length
-globs.sort(longest_first)
+globs.sort(lambda a, b: cmp(len(b[0]), len(a[0])))
 
 def get_type_by_name(path):
 	"""Returns type of file by its name, or None if not known"""
