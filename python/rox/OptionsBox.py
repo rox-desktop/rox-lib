@@ -707,7 +707,7 @@ class ColourButton(g.Button):
 		self.dialog.connect('destroy', closed)
 		self.dialog.connect('response', response)
 
-		c = self.get_style().bg[g.STATE_NORMAL]
+		c = self.c_box.get_style().bg[g.STATE_NORMAL]
 		self.dialog.colorsel.set_current_color(c)
 		self.dialog.show()
 		
