@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+17-Mar-2004
+~~~~~~~~~~~
+Warn about old versions of findrox.py.
+Bugfix: Bug in new menu API prevented submenus from working.
+
 16-Mar-2004 (Release 1.9.13)
 ~~~~~~~~~~~
 Bugfix: Icon themes didn't work with python versions older than 2.2.2

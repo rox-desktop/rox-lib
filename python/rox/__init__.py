@@ -101,6 +101,14 @@ except:
 # Put argv back the way it was, now that Gtk has initialised
 sys.argv[0] = _path
 
+def _warn_old_findrox():
+	import findrox
+	if not hasattr(findrox, 'version'):
+		print >>sys.stderr, "WARNING from ROX-Lib: the version of " \
+			"findrox.py used by this application (%s) is very " \
+			"old and may cause problems." % app_dir
+_warn_old_findrox()
+
 TRUE = True
 FALSE = False
 

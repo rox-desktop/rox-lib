@@ -89,7 +89,7 @@ def _walk(items):
 		yield "/" + x.label, x
 		if isinstance(x, SubMenu):
 			for l, y in _walk(x.submenu):
-				yield x.label + l, y
+				yield "/" + x.label + l, y
 
 class Menu:
 	def __init__(self, name, items):

@@ -49,19 +49,8 @@ def data(node):
 			if text.nodeType == Node.TEXT_NODE])
 
 class OptionsBox(g.Dialog):
-	"""OptionsBox can be sub-classed to provide your own widgets, by
-	creating extra build_* functions. Each build funtion takes a DOM
-	Element from the <app_dir>/Options.xml file and returns a list of
-	GtkWidgets to add to the box. The function should be named after
-	the element (<foo> -> def build_foo()).
-	
-	When creating the widget, self.handlers[option] should be set to
-	a pair of functions (get, set) called to get and set the value
-	shown in the widget.
-
-	When the widget is modified, call self.check_widget(option) to
-	update the stored values.
-	"""
+	"""A dialog box which lets the user edit the options. The file
+	Options.xml specifies the layout of this box."""
 	def __init__(self, options_group, options_xml, translation = None):
 		"""options_xml is an XML file, usually <app_dir>/Options.xml,
 		which defines the layout of the OptionsBox.
