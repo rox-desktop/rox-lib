@@ -54,7 +54,7 @@ def image_for_type(type):
 
 def _report_save_error():
 	"Report a SaveAbort nicely, otherwise use report_exception()"
-	type, value = sys.exc_info()[:2]
+	value = sys.exc_info()[1]
 	if isinstance(value, AbortSave):
 		value.show()
 	else:
@@ -103,32 +103,32 @@ class Saveable:
 		can't be created, it writes directly over the original."""
 
 		# Ensure the directory exists...
-		dir = os.path.dirname(path)
-		if not os.path.isdir(dir):
+		parent_dir = os.path.dirname(path)
+		if not os.path.isdir(parent_dir):
 			from rox import fileutils
 			try:
-				fileutils.makedirs(dir)
+				fileutils.makedirs(parent_dir)
 			except OSError:
 				raise AbortSave(None)	# (message already shown)
 		
 		import random
 		tmp = 'tmp-' + `random.randrange(1000000)`
-		tmp = os.path.join(dir, tmp)
+		tmp = os.path.join(parent_dir, tmp)
 
-		def open(path):
+		def open_private(path):
 			return os.fdopen(os.open(path, os.O_CREAT | os.O_WRONLY, 0600), 'wb')
 		
 		try:
-			file = open(tmp)
+			stream = open_private(tmp)
 		except:
 			# Can't create backup... try a direct write
 			tmp = None
-			file = open(path)
+			stream = open_private(path)
 		try:
 			try:
-				self.save_to_stream(file)
+				self.save_to_stream(stream)
 			finally:
-				file.close()
+				stream.close()
 			if tmp:
 				os.rename(tmp, path)
 		except:
@@ -208,6 +208,10 @@ class Saveable:
 		raise Exception("Lazy programmer error: can't abort save!")
 
 class SaveArea(g.VBox):
+	document = None		# The Saveable with the data
+	entry = None
+	initial_uri = None	# The pathname supplied to the constructor
+	
 	"""A SaveArea contains the widgets used in a save box. You can use
 	this to put a savebox area in a larger window."""
 	def __init__(self, document, uri, type):
@@ -459,6 +463,7 @@ class SaveBox(g.Dialog):
 	"""A SaveBox is a GtkDialog that contains a SaveArea and, optionally, a Discard button.
 	Calls rox.toplevel_(un)ref automatically.
 	"""
+	save_area = None
 
 	def __init__(self, document, uri, type = 'text/plain', discard = False):
 		"""See SaveArea.__init__.
@@ -579,6 +584,7 @@ class SaveFilter(Saveable):
 	the save fails (messages written to stderr are displayed).
 	"""
 
+	command = None
 	stdin = None
 
 	def set_stdin(self, stream):

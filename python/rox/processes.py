@@ -168,6 +168,7 @@ class Process:
 		pid, status = os.waitpid(self.child, 0)
 		self.child = None
 		self.child_died(status)
+		return
 		
 	def child_died(self, status):
 		"""Called when the child died (actually, when the child
@@ -337,14 +338,14 @@ def _test():
 
 	print "Test _Tmp()..."
 	
-	file = _Tmp()
-	file.write('Hello')
-	print >>file, ' ',
-	file.flush()
-	os.write(file.fileno(), 'World')
+	test_file = _Tmp()
+	test_file.write('Hello')
+	print >>test_file, ' ',
+	test_file.flush()
+	os.write(test_file.fileno(), 'World')
 
-	file.seek(0)
-	assert file.read() == 'Hello World'
+	test_file.seek(0)
+	assert test_file.read() == 'Hello World'
 
 	print "Test pipe_through_command():"
 
@@ -372,26 +373,26 @@ def _test():
 	assert a.getvalue() == 'Hello\n'
 
 	print "Reading from a stream to a StringIO..."
-	file.seek(1)			# (ignored)
-	pipe_through_command('cat', file, a)
+	test_file.seek(1)			# (ignored)
+	pipe_through_command('cat', test_file, a)
 	assert a.getvalue() == 'Hello\nHello World'
 
 	print "Writing to a fileno stream..."
-	file.seek(0)
-	file.truncate(0)
-	pipe_through_command('echo Foo', None, file)
-	file.seek(0)
-	assert file.read() == 'Foo\n'
+	test_file.seek(0)
+	test_file.truncate(0)
+	pipe_through_command('echo Foo', None, test_file)
+	test_file.seek(0)
+	assert test_file.read() == 'Foo\n'
 
 	print "Read and write fileno streams..."
 	src = _Tmp()
 	src.write('123')
 	src.seek(0)
-	file.seek(0)
-	file.truncate(0)
-	pipe_through_command('cat', src, file)
-	file.seek(0)
-	assert file.read() == '123'
+	test_file.seek(0)
+	test_file.truncate(0)
+	pipe_through_command('cat', src, test_file)
+	test_file.seek(0)
+	assert test_file.read() == '123'
 
 	print "Detect non-zero exit value..."
 	try:
@@ -410,9 +411,9 @@ def _test():
 		assert 0
 
 	print "Check tmp file is deleted..."
-	name = file.name
+	name = test_file.name
 	assert os.path.exists(name)
-	file = None
+	test_file = None
 	assert not os.path.exists(name)
 
 	print "Check we can kill a runaway proces..."
