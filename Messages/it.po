@@ -3,8 +3,8 @@
 # Current translator: Yuri Bongiorno http://yuri.webhop.org, 2003.
 msgid ""
 msgstr ""
-"Project-Id-Version: ROX-Lib2 1.9.9\n"
-"POT-Creation-Date: 2003-08-30Tue Aug 19 16:39:25 2003\n"
+"Project-Id-Version: ROX-Lib2 1.9.11\n"
+"POT-Creation-Date: Sat Nov 22 18:22:10 2003\n"
 "PO-Revision-Date: 2003-08-30 16:40+0200\n"
 "Last-Translator: Yuri Bongiorno http://yuri.webhop.org\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -18,10 +18,9 @@ msgstr "_Ripristina"
 
 #: OptionsBox.py:71
 msgid "Restore all options to how they were when the window was opened"
-msgstr ""
-"Rimette tutte le opzioni come erano prima dell'apertura della finestra"
+msgstr "Rimette tutte le opzioni come erano prima dell'apertura della finestra"
 
-#: __init__.py:80
+#: __init__.py:91
 msgid ""
 "The pygtk2 package (1.99.13 or later) must be installed to use this "
 "program:\n"
@@ -31,19 +30,19 @@ msgstr ""
 "questo programma:\n"
 "http://rox.sourceforge.net/rox_lib.php3\n"
 
-#: __init__.py:96 debug.py:37
+#: __init__.py:107 debug.py:38
 msgid "Error"
 msgstr "Errore"
 
-#: __init__.py:112
+#: __init__.py:133
 msgid "Information"
 msgstr "Informazione"
 
-#: __init__.py:134
+#: __init__.py:155
 msgid "Confirm:"
 msgstr "Conferma:"
 
-#: __init__.py:320
+#: __init__.py:339
 msgid ""
 "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "
@@ -53,23 +52,23 @@ msgstr ""
 "necessario installare «python-xmlbase» (è un pacchetto piccolo: non è "
 "richiesto l'intero PyXML)."
 
-#: debug.py:28
+#: debug.py:29
 msgid "_Details"
 msgstr "_Dettagli"
 
-#: debug.py:71
+#: debug.py:76
 msgid "_Bug Report"
 msgstr "Segnala _bug"
 
-#: debug.py:77
+#: debug.py:82
 msgid "Forced Quit"
 msgstr "Esci subito"
 
-#: debug.py:95
+#: debug.py:100
 msgid "Stack trace (innermost last)"
 msgstr "Stack trace (innermost last)"
 
-#: debug.py:180
+#: debug.py:185
 msgid "Local variables in selected frame:"
 msgstr "Variabili locali nel frame selezionato:"
 
@@ -99,10 +98,10 @@ msgid ""
 "Cannot load files from a remote machine (multiple files, or target "
 "application/octet-stream not provided)"
 msgstr ""
-"Impossibile caricare i file dalla macchina remota (file multipli o "
-"target application/octet-stream non forniti)"
+"Impossibile caricare i file dalla macchina remota (file multipli o target "
+"application/octet-stream non forniti)"
 
-#: mime.py:50
+#: mime.py:48
 msgid ""
 "WARNING: %s not found for shared MIME database version %s, using %s for "
 "version %s"
@@ -117,14 +116,23 @@ msgid ""
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 msgstr ""
 "Il comando «update-mime-database» ha restituito un codice di errore.\n"
-"Assicurarsi di avere installato il pacchetto shared MIME di freedesktop.org:\n"
+"Assicurarsi di avere installato il pacchetto shared MIME di freedesktop."
+"org:\n"
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 
-#: saving.py:124
+#: mime.py:398
+msgid "run action"
+msgstr "esegui azione"
+
+#: mime.py:408
+msgid "thumbnail handler"
+msgstr "gestore miniature"
+
+#: saving.py:134
 msgid "Delete temporary file '%s'?"
 msgstr "Eliminare il file temporaneo «%s»?"
 
-#: saving.py:290
+#: saving.py:300
 msgid ""
 "Drag the icon to a directory viewer\n"
 "(or enter a full pathname)"
@@ -132,22 +140,22 @@ msgstr ""
 "Trascinare l'icona su una directory\n"
 "(o inserire un percorso completo)"
 
-#: saving.py:311
+#: saving.py:321
 msgid "Unnamed"
 msgstr "SenzaNome"
 
-#: saving.py:396
+#: saving.py:406
 msgid "File '%s' already exists -- overwrite it?"
 msgstr "Il file «%s» esiste già: sovrascrivere?"
 
-#: saving.py:397
+#: saving.py:407
 msgid "_Overwrite"
 msgstr "S_ovrascrivi"
 
-#: saving.py:432
+#: saving.py:442
 msgid "_Discard"
 msgstr "_Annulla"
 
-#: saving.py:442
+#: saving.py:452
 msgid "Save As:"
 msgstr "Salva come:"
