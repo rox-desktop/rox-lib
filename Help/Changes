@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+02-Jan-2003
+~~~~~~~~~~~
+Added method to MIMEtype to fetch its icon.  Install list window for
+the MIME handler installation uses it (Stephen Watson).
+
 28-Dec-2003
 ~~~~~~~~~~~
 Allow ROXLIB_DISABLE_ZEROINSTALL to override looking for ROX-Lib in Zero
