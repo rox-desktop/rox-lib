@@ -6,7 +6,8 @@
 27-Sep-2004
 ~~~~~~~~~~~
 The choices module is now deprecated. You can use choices.migrate() to move
-settings over to the basedir system (Thomas Leonard).
+settings over to the basedir system (Thomas Leonard). Also added
+basedir.load_first_config(), which works like the old choices.load().
 
 26-Sep-2004
 ~~~~~~~~~~~
