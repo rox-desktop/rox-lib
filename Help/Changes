@@ -9,6 +9,8 @@ Allow ROXLIB_DISABLE_ZEROINSTALL to override looking for ROX-Lib in Zero
 Install (useful for ROX-Lib developers). Prefer a locally installed version
 of ROX-Filer to the Zero Install version; this also allows users to select
 which Zero Install version they want (eg, stable or developer).
+Moved MIME handler installation into a separate module (mime_handler) and
+made a few changes to the XML syntax.
 
 24-Dec-2003
 ~~~~~~~~~~~
