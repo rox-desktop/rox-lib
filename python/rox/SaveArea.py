@@ -1,5 +1,5 @@
 import rox
-from rox import alert, info, g, report_exception, choices
+from rox import alert, info, g, report_exception, choices, get_local_path
 
 gdk = g.gdk
 TRUE = g.TRUE
@@ -7,49 +7,6 @@ FALSE = g.FALSE
 
 TARGET_XDS = 0
 TARGET_RAW = 1
-
-_host_name = None
-def our_host_name():
-	from socket import gethostbyaddr, gethostname
-	global _host_name
-	if _host_name:
-		return _host_name
-	try:
-		(host, alias, ips) = gethostbyaddr(gethostname())
-		for name in [host] + alias:
-			if find(name, '.') != -1:
-				_host_name = name
-				return name
-		return name
-	except:
-		sys.stderr.write(
-			"*** ROX-Lib gethostbyaddr(gethostname()) failed!\n")
-		return "localhost"
-	
-def get_local_path(uri):
-	"Convert uri to a local path and return, if possible. Otherwise,"
-	"return None."
-	if not uri:
-		return None
-
-	if uri[0] == '/':
-		if uri[1] != '/':
-			return uri	# A normal Unix pathname
-		i = uri.find('/', 2)
-		if i == -1:
-			return None	# //something
-		if i == 2:
-			return uri[2:]	# ///path
-		remote_host = uri[2:i]
-		if remote_host == our_host_name():
-			return uri[i:]	# //localhost/path
-		# //otherhost/path
-	elif uri[:5].lower() == 'file:':
-		if uri[5:6] == '/':
-			return get_local_path(uri[5:])
-	elif uri[:2] == './' or uri[:3] == '../':
-		return uri
-	return None
 
 def write_xds_property(context, value):
 	win = context.source_window
