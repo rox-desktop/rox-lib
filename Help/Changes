@@ -6,6 +6,7 @@
 05-Aug-2002
 ~~~~~~~~~~~
 Renamed XDSLoader module to 'loading' (like 'saving').
+Added 'mime' module for installing extra MIME information.
 
 31-Jul-2002
 ~~~~~~~~~~~
