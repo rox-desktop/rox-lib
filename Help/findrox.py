@@ -45,7 +45,7 @@ def version(major, minor, micro):
 				return	# Can't check version
 			if not hasattr(rox, 'roxlib_version'):
 				break
-			if (major, minor, micro) >= rox.roxlib_version:
+			if (major, minor, micro) <= rox.roxlib_version:
 				return	# OK
 	report_error("This program needs ROX-Lib2 (version %d.%d.%d) " % \
 		(major, minor, micro) + "to run.\n" + \

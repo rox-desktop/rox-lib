@@ -3,10 +3,20 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
-02-Jan-2003
+22-Jan-2004
 ~~~~~~~~~~~
-Added method to MIMEtype to fetch its icon.  Install list window for
+Added 'tasks' module to provide a light-weight alternative to threads.
+Bugfix: On non-zero-install systems, the sense of the version check in findrox
+	was wrong.
+
+02-Jan-2004
+~~~~~~~~~~~
+Added method to MIMEtype to fetch its icon. Install list window for
 the MIME handler installation uses it (Stephen Watson).
+
+13-Dec-2003
+~~~~~~~~~~~
+Translate text in Options box.
 
 28-Dec-2003
 ~~~~~~~~~~~
@@ -21,6 +31,7 @@ made a few changes to the XML syntax.
 ~~~~~~~~~~~
 Added <menu> OptionMenu widget for Options box (Chris Shaffer).
 
+>>>>>>> 1.79
 27-Nov-2003
 ~~~~~~~~~~~
 Fixed bug in findrox when not using Zero Install (Lionel Bringuier).
