@@ -45,9 +45,9 @@ class SaveBox(g.Dialog):
 		self.set_wmclass('savebox', 'Savebox')
 		self.set_border_width(1)
 
-		self.pass_through('save_get_data')
-		self.pass_through('save_as_file')
-		self.pass_through('save_as_selection')
+		self.pass_through('save_to_stream')
+		self.pass_through('save_to_file')
+		self.pass_through('save_to_selection')
 
 		save_area = SaveArea(self, uri, type)
 		self.save_area = save_area
@@ -64,6 +64,16 @@ class SaveBox(g.Dialog):
 		# Have to do this here, or the selection gets messed up
 		save_area.entry.grab_focus()
 		save_area.entry.select_region(i, -1)
+
+		self.connect('response', self.got_response)
+	
+	def got_response(self, widget, response):
+		if response == g.RESPONSE_CANCEL:
+			self.destroy()
+		elif response == g.RESPONSE_OK:
+			self.save_area.save_to_file_in_entry()
+		else:
+			raise Exception('Unknown response!')
 	
 	def set_uri(self, uri):
 		if hasattr(self.document, 'set_uri'):

@@ -8,6 +8,49 @@ FALSE = g.FALSE
 TARGET_XDS = 0
 TARGET_RAW = 1
 
+_host_name = None
+def our_host_name():
+	from socket import gethostbyaddr, gethostname
+	global _host_name
+	if _host_name:
+		return _host_name
+	try:
+		(host, alias, ips) = gethostbyaddr(gethostname())
+		for name in [host] + alias:
+			if find(name, '.') != -1:
+				_host_name = name
+				return name
+		return name
+	except:
+		sys.stderr.write(
+			"*** ROX-Lib gethostbyaddr(gethostname()) failed!\n")
+		return "localhost"
+	
+def get_local_path(uri):
+	"Convert uri to a local path and return, if possible. Otherwise,"
+	"return None."
+	if not uri:
+		return None
+
+	if uri[0] == '/':
+		if uri[1] != '/':
+			return uri	# A normal Unix pathname
+		i = uri.find('/', 2)
+		if i == -1:
+			return None	# //something
+		if i == 2:
+			return uri[2:]	# ///path
+		remote_host = uri[2:i]
+		if remote_host == our_host_name():
+			return uri[i:]	# //localhost/path
+		# //otherhost/path
+	elif uri[:5].lower() == 'file:':
+		if uri[5:6] == '/':
+			return get_local_path(uri[5:])
+	elif uri[:2] == './' or uri[:3] == '../':
+		return uri
+	return None
+
 def write_xds_property(context, value):
 	win = context.source_window
 	if value:
@@ -24,33 +67,6 @@ def read_xds_property(context, delete):
 		return retval[2]
 	return None
 	
-def default_selection(document, selection):
-	print "Sending..."
-	print document.save_get_data()
-	selection.set(selection.target, 8, document.save_get_data())
-
-def default_file(document, path):
-	data = document.save_get_data()
-	try:
-		file = None
-		try:
-			if type(data) == unicode:
-				import codecs
-				file = codecs.open(path, 'wb',
-						   encoding = 'UTF-8')
-		except:
-			pass
-		if not file:
-			file = open(path, 'wb')
-		try:
-			file.write(data)
-		finally:
-			file.close()
-	except:
-		report_exception()
-		return 0
-	return 1
-
 def image_for_type(type):
 	'Search <Choices> for a suitable icon. Returns an Image.'
 	media, subtype = type.split('/', 1)
@@ -77,16 +93,16 @@ class SaveArea(g.VBox):
 		Data is safely saved to this location, mark unmodified.
 		May be omitted.
 
-	save_get_data()
-		Return a string containing the data to save.
+	save_to_stream(stream)
+		Write the data to save to the stream.
 
-	save_as_file(path)
+	save_to_file(path)
 		Write data to file, return TRUE on success.
-		If missing, uses save_get_data() and writes that.
+		If missing, uses save_to_stream().
 
-	save_as_selection(selection_data)
+	save_to_selection(selection_data)
 		Write data to the selection.
-		If missing, uses save_get_data() and sends that.
+		If missing, uses save_to_stream().
 	
 	save_done()
 		Time to close the savebox.
@@ -99,27 +115,26 @@ class SaveArea(g.VBox):
 
 		self.document = document
 
-		if hasattr(document, 'save_as_file'):
-			self.save_as_file = document.save_as_file
-		elif hasattr(document, 'save_get_data'):
-			self.save_as_file = \
-				lambda p, d = document: default_file(d, p)
+		if hasattr(document, 'save_to_file'):
+			self.save_to_file = document.save_to_file
+		elif hasattr(document, 'save_to_stream'):
+			self.save_to_file = lambda p: self.default_file(p)
 		else:
-			self.save_as_file = None
+			self.save_to_file = None
 		
-		if hasattr(document, 'save_as_selection'):
-			self.save_as_selection = document.save_as_selection
-		elif hasattr(document, 'save_get_data'):
-			self.save_as_selection = \
-				lambda s, d = document:	default_selection(d, s)
+		if hasattr(document, 'save_to_selection'):
+			self.save_to_selection = document.save_to_selection
+		elif hasattr(document, 'save_to_stream'):
+			self.save_to_selection = lambda s: self.default_selection(s)
 		else:
-			self.save_as_selection = None
+			self.save_to_selection = None
 
 		drag_area = self.create_drag_area(type)
 		self.pack_start(drag_area, TRUE, TRUE, 0)
 		drag_area.show_all()
 
 		entry = g.Entry()
+		entry.connect('activate', lambda w: self.save_to_file_in_entry())
 		self.entry = entry
 		self.pack_start(entry, FALSE, TRUE, 4)
 		entry.show()
@@ -159,11 +174,11 @@ class SaveArea(g.VBox):
 		self.set_drag_source(type)
 	
 	def set_drag_source(self, type):
-		if self.save_as_file:
+		if self.save_to_file:
 			targets = [('XdndDirectSave0', 0, TARGET_XDS)]
 		else:
 			targets = []
-		if self.save_as_selection:
+		if self.save_to_selection:
 			targets = targets + [(type, 0, TARGET_RAW),
 				  ('application/octet-stream', 0, TARGET_RAW)]
 
@@ -180,17 +195,14 @@ class SaveArea(g.VBox):
 		if hasattr(self.document, 'save_done'):
 			self.document.save_done()
 	
-	def cancel(self, widget):
-		self.end_save()
-
-	def ok(self, widget, entry):
-		uri = entry.get_text()
+	def save_to_file_in_entry(self):
+		uri = self.entry.get_text()
 		path = get_local_path(uri)
 
 		if path:
 			try:
 				self.set_sensitive(FALSE)
-				if self.save_as_file(path):
+				if self.save_to_file(path):
 					self.set_uri(path)
 					self.end_save()
 			except:
@@ -198,8 +210,7 @@ class SaveArea(g.VBox):
 			self.set_sensitive(TRUE)
 		else:
 			rox.info("Drag the icon to a directory viewer\n" +
-					  "(or enter a full pathname)",
-					  "To Save:")
+					  "(or enter a full pathname)")
 	
 	def drag_begin(self, drag_box, context):
 		self.drag_in_progress = 1
@@ -223,7 +234,7 @@ class SaveArea(g.VBox):
 		if info == TARGET_RAW:
 			try:
 				self.set_sensitive(FALSE)
-				self.save_as_selection(selection_data)
+				self.save_to_selection(selection_data)
 				self.set_sensitive(TRUE)
 			except:
 				report_exception()
@@ -257,7 +268,7 @@ class SaveArea(g.VBox):
 			if path:
 				try:
 					self.set_sensitive(FALSE)
-					self.data_sent = self.save_as_file(path)
+					self.data_sent = self.save_to_file(path)
 					self.set_sensitive(TRUE)
 				except:
 					report_exception()
@@ -294,3 +305,25 @@ class SaveArea(g.VBox):
 		self.drag_in_progress = 0
 		if self.destroy_on_drag_end:
 			self.end_save()
+
+	def default_selection(self, selection):
+		# The document has save_to_stream but not save_to_selection.
+		from cStringIO import StringIO
+		stream = StringIO()
+		self.document.save_to_stream(stream)
+		selection.set(selection.target, 8, stream.getvalue())
+
+	def default_file(self, path):
+		# The document has save_to_stream but not save_to_file.
+		try:
+			# TODO: Save to temp file and rename...
+			file = open(path, 'wb')
+			try:
+				self.document.save_to_stream(file)
+			finally:
+				file.close()
+		except:
+			report_exception()
+			return 0
+		return 1
+

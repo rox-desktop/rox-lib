@@ -1,4 +1,4 @@
-import sys
+import sys, os
 
 try:
 	import gtk2 as g
@@ -6,6 +6,8 @@ except:
 	sys.stderr.write('The pygtk2 package must be ' +
 			 'installed to use this program!')
 	raise
+
+app_dir = os.path.dirname(sys.argv[0])
 
 def alert(message):
 	"Display message in an error box."
