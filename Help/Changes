@@ -7,6 +7,8 @@
 ~~~~~~~~~~~
 Renamed XDSLoader module to 'loading' (like 'saving').
 Added 'mime' module for installing extra MIME information.
+Bugfix: XDSLoader didn't handle the drag-drop signal, and so only worked for
+	widgets with their own implementation!
 
 31-Jul-2002
 ~~~~~~~~~~~

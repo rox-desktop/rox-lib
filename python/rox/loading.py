@@ -2,7 +2,7 @@
 to allow drops onto widgets in your application."""
 
 import rox
-from rox import g, alert, get_local_path, _
+from rox import g, alert, get_local_path, _, TRUE, FALSE
 
 gdk = g.gdk
 
@@ -51,7 +51,21 @@ class XDSLoader:
 				self.targets,
 				gdk.ACTION_COPY | gdk.ACTION_MOVE | gdk.ACTION_PRIVATE)
 		
-		widget.connect('drag_data_received', self.xds_data_received)
+		widget.connect('drag-data-received', self.xds_data_received)
+		widget.connect('drag-drop', self.xds_drag_drop)
+	
+	def xds_drag_drop(self, widget, context, data, info, time):
+		"""Called when something is dropped on us. Decide which of the "
+		offered targets to request and ask for it. xds_data_received will
+		be called when it finally arrives."""
+		print "xds_data_get"
+		target = widget.drag_dest_find_target(context, self.targets)
+		if target is None:
+			# Error?
+			context.drag_finish(FALSE, FALSE, time)
+		else:
+			widget.drag_get_data(context, target, time)
+		return TRUE
 
 	def xds_data_received(self, widget, context, x, y, selection, info, time):
 		"Called when we get some data. Internal."
