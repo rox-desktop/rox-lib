@@ -37,6 +37,27 @@ def info(message):
 	box.destroy()
 	toplevel_unref()
 
+def confirm(message, stock_icon, action = None):
+	"Display a <Cancel>/<Action> dialog. Returns 1 if the user chooses the "
+	"action."
+	toplevel_ref()
+	box = g.MessageDialog(None, 0, g.MESSAGE_QUESTION,
+				g.BUTTONS_CANCEL, message)
+	if action:
+		button = ButtonMixed(stock_icon, action)
+	else:
+		button = g.Button(stock = stock_icon)
+	button.set_flags(g.CAN_DEFAULT)
+	button.show()
+	box.add_action_widget(button, g.RESPONSE_OK)
+	box.set_position(g.WIN_POS_CENTER)
+	box.set_title('Confirm:')
+	box.set_default_response(g.RESPONSE_OK)
+	resp = box.run()
+	box.destroy()
+	toplevel_unref()
+	return resp == g.RESPONSE_OK
+
 def report_exception():
 	import traceback
 	type, value, tb = sys.exc_info()
