@@ -39,7 +39,7 @@ try:
 except:
 	sys.stderr.write(_('The pygtk2 package must be '
 			   'installed to use this program:\n'
-			   'http://rox.sourceforge.net/rox_lib.php3'))
+			   'http://rox.sourceforge.net/rox_lib.php3\n'))
 	raise
 
 TRUE = g.TRUE

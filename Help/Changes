@@ -3,6 +3,14 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+10-Oct-2002
+~~~~~~~~~~~
+Make clicking on ROX-Lib itself work again (Christopher Arndt).
+
+25-Aug-2002
+~~~~~~~~~~~
+Updated findrox.py to use pygtk 1.99.13 -- update your programs!
+
 25-Aug-2002 (Release 1.9.3)
 ~~~~~~~~~~~
 Switch to use new pygtk versioning system (requires pygtk 1.99.13).

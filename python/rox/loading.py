@@ -126,6 +126,8 @@ class XDSLoader:
 	def xds_load_from_selection(self, selection):
 		"""Try to load this selection (data from another application). The default
 		puts the data in a cStringIO and calls xds_load_from_stream()."""
+		if not selection.data:
+			return	# Timeout or drop aborted
 		from cStringIO import StringIO
 		type = str(selection.type)
 		self.xds_load_from_stream(None, type, StringIO(selection.data))
