@@ -88,13 +88,12 @@ class Saveable:
 			if tmp:
 				os.rename(tmp, path)
 		except:
-			exception = sys.exc_info()
 			if tmp and os.path.exists(tmp):
 				if os.path.getsize(tmp) == 0 or \
 				   rox.confirm("Delete temporary file '%s'?" % tmp,
 				   		g.STOCK_DELETE):
 					os.unlink(tmp)
-			raise exception[0], exception[1], exception[2]
+			raise
 
 	def save_to_selection(self, selection_data):
 		"""Write data to the selection. The default method uses save_to_stream()."""
