@@ -72,7 +72,6 @@ def show_exception(type, value, tb, auto_details = False):
 			sys.exit(1)
 		assert resp == DETAILS
 		box.set_response_sensitive(DETAILS, False)
-		box.set_has_separator(False)
 
 		button = ButtonMixed(g.STOCK_SAVE, _('_Bug Report'))
 		button.set_flags(g.CAN_DEFAULT)
