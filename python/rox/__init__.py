@@ -33,7 +33,7 @@ import sys, os, codecs
 
 _to_utf8 = codecs.getencoder('utf-8')
 
-roxlib_version = (1, 9, 16)
+roxlib_version = (1, 9, 17)
 
 _path = os.path.realpath(sys.argv[0])
 app_dir = os.path.dirname(_path)

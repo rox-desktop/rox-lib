@@ -3,7 +3,7 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
-16-Jan-2005
+16-Jan-2005 (Release 1.9.17)
 ~~~~~~~~~~~
 Added OutputBlocker, which works in a similar way to InputBlocker (Thomas
 Leonard).
