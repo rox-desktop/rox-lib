@@ -144,6 +144,27 @@ class InputBlocker(Blocker):
 			g.input_remove(self._tag)
 			self._tag = None
 
+class OutputBlocker(Blocker):
+	"""Triggers when os.write(stream) would not block."""
+	_tag = None
+	_stream = None
+	def __init__(self, stream):
+		Blocker.__init__(self)
+		self._stream = stream
+	
+	def add_task(self, task):
+		Blocker.add_task(self, task)
+		if self._tag is None:
+			INPUT_WRITE = 0x14 # g.gdk.INPUT_WRITE sometimes wrong!!
+			self._tag = g.input_add(self._stream, INPUT_WRITE,
+				lambda src, cond: self.trigger())
+	
+	def remove_task(self, task):
+		Blocker.remove_task(self, task)
+		if not self._rox_lib_tasks:
+			g.input_remove(self._tag)
+			self._tag = None
+
 _idle_blocker = IdleBlocker()
 
 class Task:

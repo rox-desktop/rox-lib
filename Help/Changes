@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+16-Jan-2005
+~~~~~~~~~~~
+Added OutputBlocker, which works in a similar way to InputBlocker (Thomas
+Leonard).
+
 15-Jan-2005
 ~~~~~~~~~~~
 Be consistent about URI escaping. set_uri() is now always passed an unescaped

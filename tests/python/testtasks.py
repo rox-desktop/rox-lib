@@ -47,5 +47,37 @@ class TestTasks(unittest.TestCase):
 		tasks.Task(run())
 		g.mainloop()
 
+	def testOutputBlocker(self):
+		readable, writeable = os.pipe()
+		def run():
+			# Fill the input buffer...
+			sent = 0
+			while True:
+				ob = tasks.OutputBlocker(writeable)
+				tb = tasks.TimeoutBlocker(0.2)
+				yield ob, tb
+				if ob.happened:
+					sent += os.write(writeable, 'Hello\n')
+				else:
+					assert tb.happened
+					break
+			assert sent > 0
+			#print "send %d bytes" % sent
+
+			# Read it all back...
+			got = 0
+			while got < sent:
+				got += len(os.read(readable, sent - got))
+
+			ob = tasks.OutputBlocker(writeable)
+			tb = tasks.TimeoutBlocker(0.2)
+			yield ob, tb
+			assert ob.happened
+			assert not tb.happened
+
+			g.mainquit()
+		tasks.Task(run())
+		g.mainloop()
+
 sys.argv.append('-v')
 unittest.main()
