@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+26-Jun-2003
+~~~~~~~~~~~
+When loading data from another application, pass the suggested leafname to
+xds_load_from_stream().
+
 04-Jun-2003
 ~~~~~~~~~~~
 Code tidying, thanks to pychecker.

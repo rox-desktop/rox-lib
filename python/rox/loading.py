@@ -59,18 +59,23 @@ class XDSLoader:
 		offered targets to request and ask for it. xds_data_received will
 		be called when it finally arrives."""
 		target = widget.drag_dest_find_target(context, self.targets)
+		context.rox_leafname = None
 		if target is None:
 			# Error?
 			context.drop_finish(False, time)
 		else:
+			if provides(context, 'XdndDirectSave0'):
+				import saving
+				context.rox_leafname = saving._read_xds_property(context, False)
 			widget.drag_get_data(context, target, time)
 		return True
 
 	def xds_data_received(self, widget, context, x, y, selection, info, time):
 		"Called when we get some data. Internal."
+
 		if info == TARGET_RAW:
 			try:
-				self.xds_load_from_selection(selection)
+				self.xds_load_from_selection(selection, context.rox_leafname)
 			except:
 				context.drop_finish(False, time)
 				raise
@@ -123,7 +128,7 @@ class XDSLoader:
 		except:
 			rox.report_exception()
 	
-	def xds_load_from_selection(self, selection):
+	def xds_load_from_selection(self, selection, leafname = None):
 		"""Try to load this selection (data from another application). The default
 		puts the data in a cStringIO and calls xds_load_from_stream()."""
 		if selection.data is None:
@@ -131,7 +136,7 @@ class XDSLoader:
 			return
 		from cStringIO import StringIO
 		type = str(selection.type)
-		self.xds_load_from_stream(None, type, StringIO(selection.data))
+		self.xds_load_from_stream(leafname, type, StringIO(selection.data))
 	
 	def xds_load_from_stream(self, name, type, stream):
 		"""Called when we get any data sent via drag-and-drop in any way (local
