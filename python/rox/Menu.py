@@ -1,3 +1,5 @@
+from __future__ import generators
+
 """The Menu widget provides an easy way to create menus that allow the user to
 define keyboard shortcuts, and saves the shortcuts automatically. You only define
 each Menu once, and attach it to windows as required.
@@ -39,6 +41,44 @@ def set_save_name(prog, leaf = 'menus'):
 	global _save_name
 	_save_name = (prog, leaf)
 
+class MenuItem:
+	"""Base class for menu items. You should normally use one of the subclasses..."""
+	def __init__(self, label, callback_name, type = '', key = None, stock = None):
+		self.label = label
+		self.fn = callback_name
+		self.type = type
+		self.key = key
+		self.stock = stock
+
+	def activate(self, caller):
+		getattr(caller, self.fn)()
+
+class Action(MenuItem):
+	"""A leaf menu item, possibly with a stock icon, which calls a method when clicked."""
+	def __init__(self, label, callback_name, key = None, stock = None):
+		if stock:
+			MenuItem.__init__(self, label, callback_name, '<StockItem>', key, stock)
+		else:
+			MenuItem.__init__(self, label, callback_name, '', key)
+
+class SubMenu(MenuItem):
+	"""A branch menu item leading to a submenu."""
+	def __init__(self, label, submenu):
+		MenuItem.__init__(self, label, None, '<Branch>')
+		self.submenu = submenu
+
+class Separator(MenuItem):
+	"""A line dividing two parts of the menu."""
+	def __init__(self):
+		MenuItem.__init__(self, '', None, '<Separator>')
+
+def _walk(items):
+	for x in items:
+		yield x.label, x
+		if isinstance(x, SubMenu):
+			for l, y in _walk(x.submenu):
+				yield x.label + '/' + l, y
+
 class Menu:
 	def __init__(self, name, items):
 		"""names should be unique (eg, 'popup', 'main', etc).
@@ -60,25 +100,22 @@ class Menu:
 
 		out = []
 		self.fns = []
-		for item  in items:
-			stock = None
-			key = None
-			if len(item) == 3:
-				(label, fn, type) = item
-			elif len(item) == 4:
-				(label, fn, type, key) = item
-			else:
-				(label, fn, type, key, stock) = item
-			if fn:
-				self.fns.append(fn)
+
+		# Convert old-style list of tuples to new classes
+		if items and not isinstance(items[0], MenuItem):
+			items = [MenuItem(*t) for t in items]
+		
+		for path, item in _walk(items):
+			if item.fn:
+				self.fns.append(item)
 				cb = self._activate
 			else:
 				cb = None
-			if stock:
-				out.append((label, key, cb, len(self.fns) - 1, type, stock))
+			if item.stock:
+				out.append((path, item.key, cb, len(self.fns) - 1, item.type, item.stock))
 			else:
-				out.append((label, key, cb, len(self.fns) - 1, type))
-			
+				out.append((path, item.key, cb, len(self.fns) - 1, item.type))
+
 		factory.create_items(out)
 		self.factory = factory
 
@@ -124,7 +161,7 @@ class Menu:
 	def _activate(self, action, widget):
 		if self.caller:
 			try:
-				getattr(self.caller, self.fns[action])()
+				self.fns[action].activate(self.caller)
 			except:
 				rox.report_exception()
 		else:

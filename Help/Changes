@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+10-Feb-2004
+~~~~~~~~~~~
+New API for menus. Instead of passing tuples for menu items, python classes
+can be used. The old tuple interface is still supported.
+
 07-Feb-2004
 ~~~~~~~~~~~
 Don't stop DnD working in the savebox just because no icon can be found
