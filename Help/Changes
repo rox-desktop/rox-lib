@@ -3,7 +3,7 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
-22-Jan-2004
+22-Jan-2004 (Release 1.9.12)
 ~~~~~~~~~~~
 Added 'tasks' module to provide a light-weight alternative to threads.
 Bugfix: On non-zero-install systems, the sense of the version check in findrox
