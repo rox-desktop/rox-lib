@@ -5,6 +5,7 @@
 
 29-Oct-2003
 ~~~~~~~~~~~
+Changed 'Dismiss' to 'Close' (Chris Shaffer).
 Bugfix: Error reporting in mime.py failed to import the _ function (reported
 	by Christopher Haines).
 

@@ -94,7 +94,7 @@ class InfoWin(g.Dialog):
 
         hbox=self.action_area
 
-        button=g.Button("Dismiss")
+        button = g.Button(stock = g.STOCK_CLOSE)
         hbox.pack_start(button)
 
         def dismiss(widget, iw):
