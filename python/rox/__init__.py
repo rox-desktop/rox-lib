@@ -35,7 +35,11 @@ _roxlib_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 _ = i18n.translation(os.path.join(_roxlib_dir, 'Messages'))
 
 try:
-	import gtk2 as g
+	try:
+		import gtk2 as g
+	except:
+		import gtk as g
+	assert g.Window
 except:
 	sys.stderr.write(_('The pygtk2 package must be '
 			   'installed to use this program:\n'

@@ -3,7 +3,13 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
-19-Jul-2002
+21-Jul-2002
+~~~~~~~~~~~
+If 'gtk2' isn't available, see if 'gtk' is actually the 2.0 version.
+Added save_set_permissions to Saveable interface, allowing the default
+save_to_file to preserve file permissions.
+
+19-Jul-2002 (Release 1.9.1)
 ~~~~~~~~~~~
 Added support for translations.
 
@@ -17,7 +23,7 @@ Added AbortSave exception.
 Saveable.save_to_file() should raise an exception when saving fails, rather
 than returning 0. The return value is now ignored (note that raising an
 exception will still work with 1.9.0).
-top_level_unref() ignores any arguments, so it is easier to use as a signal
+toplevel_unref() ignores any arguments, so it is easier to use as a signal
 handler.
 
 12-Jul-2002 (Release 1.9.0)

@@ -7,7 +7,7 @@ the purpose and pass that to the SaveBox."""
 
 import os, sys
 import rox
-from rox import alert, info, g, _
+from rox import alert, info, g, _, filer
 from rox import choices, get_local_path, TRUE, FALSE
 
 gdk = g.gdk
@@ -95,12 +95,16 @@ class Saveable:
 		import random
 		tmp = 'tmp-' + `random.randrange(1000000)`
 		tmp = os.path.join(os.path.dirname(path), tmp)
+
+		def open(path):
+			return os.fdopen(os.open(path, os.O_CREAT | os.O_WRONLY, 0600), 'wb')
+		
 		try:
-			file = open(tmp, 'wb')
+			file = open(tmp)
 		except:
 			# Can't create backup... try a direct write
 			tmp = None
-			file = open(path, 'wb')
+			file = open(path)
 		try:
 			try:
 				self.save_to_stream(file)
@@ -116,6 +120,8 @@ class Saveable:
 				   		g.STOCK_DELETE):
 					os.unlink(tmp)
 			raise AbortSave(None)
+		self.save_set_permissions(path)
+		filer.examine(path)
 
 	def save_to_selection(self, selection_data):
 		"""Write data to the selection. The default method uses save_to_stream()."""
@@ -123,6 +129,20 @@ class Saveable:
 		stream = StringIO()
 		self.save_to_stream(stream)
 		selection_data.set(selection_data.target, 8, stream.getvalue())
+
+	save_mode = None
+	def save_set_permissions(self, path):
+		"""The default save_to_file() creates files with the mode 0600
+		(user read/write only). After saving has finished, it calls this
+		method to set the final permissions. The save_set_permissions():
+		- sets it to 0666 masked with the umask (if save_mode is None), or
+		- sets it to save_mode (not masked) otherwise."""
+		if self.save_mode is not None:
+			os.chmod(path, self.save_mode)
+		else:
+			mask = os.umask(0077)	# Get the current umask
+			os.umask(mask)		# Set it back how it was
+			os.chmod(path, 0666 & ~mask)
 	
 	def save_done(self):
 		"""Time to close the savebox. Default method does nothing."""
