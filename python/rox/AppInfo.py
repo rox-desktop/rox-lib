@@ -4,8 +4,6 @@ Written by Christopher Arndt and Stephen Watson."""
 import sys
 from xml.dom import Node, minidom, XML_NAMESPACE
 
-MIME_NAMESPACE='http://www.freedesktop.org/standards/shared-mime-info'
-
 def _getlangs(langs):
     if langs is None:
         langs = ['en', 'C', '']
@@ -210,7 +208,7 @@ class AppInfo:
     def _getTypeList(self, element):
         types=[]
         for node in self._doc.getElementsByTagName(element):
-            for t in node.getElementsByTagNameNS(MIME_NAMESPACE, 'mime-type'):
+            for t in node.getElementsByTagNameNS(None, 'MimeType'):
                 types.append(t.getAttribute('type'))
         return types
 
