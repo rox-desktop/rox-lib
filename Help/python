@@ -17,6 +17,7 @@ The following modules are provided:
 	MultipleChoice	- A message box with buttons along the bottom
 	SaveBox		- Drag and drop saving
 	Toolbar		- A ROX-Filer style toolbar
+	XDSLoader	- Allow files to be dropped on your widgets
 
 
 choices
@@ -177,3 +178,26 @@ The third argument is the tooltip for the tool.
 You can connect to the 'clicked' signal of 'tool' to handle clicks.
 
 The icons are cached, not reloaded every time you create a new toolbar.
+
+XDSLoader
+~~~~~~~~~
+To make a widget allow drops, add XDSLoader to its classes list and
+initialise it with a list of allowed types (None prevents data being
+dragged in from other applications, but still allows files):
+
+	from rox.XDSLoader import XDSLoader
+
+	class MyWindow(GtkWindow, XDSLoader):
+		def __init__(self, filename = None):
+			GtkWindow.__init__(self)
+			XDSLoader.__init__(self, ['text/plain'])
+
+When a file is dragged onto the window the method xds_load_uris() gets
+called with a list of URIs to load. If you don't override it, the default
+is to call xds_load_file(path) for each (local) file in the list.
+
+If some data (not a file) is dropped on the window then
+xds_load_from_selection(selection) is called.
+
+In either case, the default methods get the data and call
+xds_load_data(data).
