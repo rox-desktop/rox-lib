@@ -8,6 +8,7 @@
 Escape and unescape URIs, as required by ROX-Filer 2.1.0 (reported by
 Peter Geer).
 Note that the xds_load_uris() method is now called with escaped URIs.
+Try to run the filer through Zero Install, if possible.
 
 11-Nov-2003
 ~~~~~~~~~~~

@@ -24,16 +24,25 @@ def _spawn(argv):
 		print "Error: fork() failed!"
 	waitpid(child, 0)
 
+def spawn_rox(args):
+	"""Run rox (either from PATH or through Zero Install) with the
+	given arguments."""
+	import os.path
+	if os.path.exists('/uri/0install/rox.sourceforge.net'):
+		_spawn(('/bin/0run', 'rox.sourceforge.net/rox 2002-01-01') + args)
+	else:
+		_spawn(('rox',) + args)
+
 def open_dir(dir):
 	"Open 'dir' in a new filer window."
-	_spawn(('rox', '-d', dir))
+	spawn_rox(('-d', dir))
 
 def examine(file):
 	"""'file' may have changed (maybe you just created it, for example). Update
 	any filer views of it."""
-	_spawn(('rox', '-x', file))
+	spawn_rox(('-x', file))
 
 def show_file(file):
 	"""Open a directory and draw the user's attention to this file. Useful for
 	'Up' toolbar buttons that show where a file is saved."""
-	_spawn(('rox', '-s', file))
+	spawn_rox(('-s', file))
