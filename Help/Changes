@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+05-Nov-2003
+~~~~~~~~~~~
+Added support in mime.py for an application to set MIME-type run
+actions and thumbnail programs (Stephen Watson).
+
 31-Oct-2003
 ~~~~~~~~~~~
 Simplified implementation of saving.SaveFilter by using the new

@@ -64,7 +64,7 @@ _ = i18n.translation(os.path.join(_roxlib_dir, 'Messages'))
 try:
 	zhost = 'zero-install.sourceforge.net'
 	zpath = '/uri/0install/' + zhost
-	if os.path.exists(zpath):
+	if not os.getenv('ROXLIB_DISABLE_ZEROINSTALL') and os.path.exists(zpath):
 		zpath = os.path.join(zpath, 'libs/pygtk-2/platform/latest')
 		if not os.path.exists(zpath):
 			os.system('0refresh ' + zhost)
@@ -75,7 +75,7 @@ try:
 		# Try to support 1.99.12, at lest to show an error
 		import pygtk; pygtk.require('2.0')
 	except:
-		pass
+		raise
 	import gtk; g = gtk	# Don't syntax error for python1.5
 	assert g.Window		# Ensure not 1.2 bindings
 except:
