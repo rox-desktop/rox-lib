@@ -7,6 +7,9 @@ except:
 			 'installed to use this program!')
 	raise
 
+TRUE = g.TRUE
+FALSE = g.FALSE
+
 app_dir = os.path.dirname(sys.argv[0])
 
 def alert(message):
@@ -51,11 +54,11 @@ class ButtonMixed(g.Button):
 		label.set_mnemonic_widget(self)
 
 		image = g.image_new_from_stock(stock, g.ICON_SIZE_BUTTON)
-		box = g.HBox(g.FALSE, 2)
+		box = g.HBox(FALSE, 2)
 		align = g.Alignment(0.5, 0.5, 0.0, 0.0)
 
-		box.pack_start(image, g.FALSE, g.FALSE, 0)
-		box.pack_end(label, g.FALSE, g.FALSE, 0)
+		box.pack_start(image, FALSE, FALSE, 0)
+		box.pack_end(label, FALSE, FALSE, 0)
 
 		self.add(align)
 		align.add(box)

@@ -1,10 +1,9 @@
 import os
 from os.path import exists
-import string
 
 try:
 	path = os.environ['CHOICESPATH']
-	paths = string.split(path, ':')
+	paths = path.split(':')
 except KeyError:
 	paths = [ os.environ['HOME'] + '/Choices',
 		  '/usr/local/share/Choices',
