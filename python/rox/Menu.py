@@ -145,7 +145,11 @@ class Menu:
 					g.accel_map_save(path)
 				except AttributeError:
 					print "Error saving keybindings to", path
-		ag.connect('accel_changed', keys_changed)
+		# GtkAccelGroup has its own (unrelated) connect method,
+		# so the obvious approach doesn't work.
+		#ag.connect('accel_changed', keys_changed)
+		import gobject
+		gobject.GObject.connect(ag, 'accel_changed', keys_changed)
 	
 	def attach(self, window, object):
 		"""Keypresses on this window will be treated as menu shortcuts
