@@ -3,6 +3,12 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+14-Mar-2004
+~~~~~~~~~~~
+Bugfix: If an error occurred loading the ROX theme at startup it could not
+	be reported, because icon_theme wants debug, debug wants saving, and
+	saving wants icon_theme (reported by Thomas Zajic).
+
 12-Mar-2004
 ~~~~~~~~~~~
 Cope with pygtk2.2 API change (Stephen Watson, reported by Guido Schimmels).

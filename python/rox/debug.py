@@ -7,7 +7,6 @@ import linecache
 
 from rox import g, ButtonMixed, toplevel_ref, toplevel_unref, _
 from rox import info, alert
-from saving import StringSaver
 
 savebox = None
 
@@ -63,6 +62,7 @@ def show_exception(type, value, tb, auto_details = False):
 				savebox.destroy()
 			def destroy(box):
 				savebox = None
+			from saving import StringSaver
 			savebox = StringSaver(bug_report, 'BugReport')
 			savebox.connect('destroy', destroy)
 			savebox.show()

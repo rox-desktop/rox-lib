@@ -9,7 +9,6 @@ import os, sys
 import rox
 from rox import alert, info, g, _, filer, escape
 from rox import choices, get_local_path, TRUE, FALSE
-from icon_theme import rox_theme
 
 gdk = g.gdk
 
@@ -34,6 +33,7 @@ def _read_xds_property(context, delete):
 	
 def image_for_type(type):
 	'Search <Choices> for a suitable icon. Returns a pixbuf, or None.'
+	from icon_theme import rox_theme
 	media, subtype = type.split('/', 1)
 	path = choices.load('MIME-icons', media + '_' + subtype + '.png')
 	if not path:
