@@ -3,6 +3,15 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+24-Aug-2003
+~~~~~~~~~~~
+Added InfoWin.py to provide standardized information window (Stephen Watson).
+
+24-Aug-2003
+~~~~~~~~~~~
+Fall back to old way of setting default icon for older pygtk's (Stephen 
+Watson).
+
 20-Aug-2003
 ~~~~~~~~~~~
 Added Italian translation (Yuri Bongiorno).
