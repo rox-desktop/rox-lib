@@ -367,113 +367,18 @@ class OptionsBox(g.Dialog):
 			
 		return radios
 	
-	def set_toggle(self, toggle, value):
-		toggle.set_active(not not value)
-	def get_toggle(self, toggle):
-		return toggle.get_active()
-		
-	def make_toggle(self, widget, box):
-		toggle = g.CheckButton(widget.label)
-		box.pack_start(toggle, FALSE, TRUE, 0)
-		self.may_add_tip(toggle, widget)
-		return (self.set_toggle, self.get_toggle, toggle)
+	def build_toggle(self, node, label, option):
+		toggle = g.CheckButton(label)
+		self.may_add_tip(toggle, node)
+
+		self.handlers[option] = (
+			lambda: str(toggle.get_active()),
+			lambda: toggle.set_active(option.int_value))
+
+		toggle.connect('toggled', lambda w: self.check_widget(option))
+
+		return [toggle]
 	
-	def set_adj(self, adj, value):
-		adj.set_value(int(value))
-	def get_adj(self, adj):
-		return adj.value
-
-	def make_slider(self, widget, box):
-		min = int(widget.min)
-		max = int(widget.max)
-		if hasattr(widget, 'fixed'):
-			fixed = int(widget.fixed)
-		else:
-			fixed = 0
-		if hasattr(widget, 'showvalue'):
-			showvalue = int(widget.showvalue)
-		else:
-			showvalue = 0
-			
-		adj = g.Adjustment(0, min, max, 1, 10, 0)
-		hbox = g.HBox(FALSE, 4)
-		hbox.pack_start(g.Label(widget.label), FALSE, TRUE, 0)
-		slide = g.HScale(adj)
-
-		if fixed:
-			slide.set_usize(adj.upper, 24)
-		slide.set_draw_value(showvalue)
-		if showvalue:
-			slide.set_value_pos(POS_LEFT)
-			slide.set_digits(0)
-		slide.unset_flags(CAN_FOCUS)
-		self.may_add_tip(slide, widget)
-		hbox.pack_start(slide, not fixed, TRUE, 0)
-		box.pack_start(hbox, FALSE, TRUE, 0)
-		return (self.set_adj, self.get_adj, adj)
-	
-	def set_radio(self, radios, value):
-		for widget, val in radios:
-			if val == value:
-				widget.set_active(TRUE)
-				return
-		print "No radio button for value '%s'!" % value
-	
-	def get_radio(self, radios):
-		for widget, val in radios:
-			if widget.get_active():
-				return val
-		print "No radio button is active!"
-
-	def make_radios(self, widget, box):
-		button = None
-		radios = []
-		for radio in widget.childNodes:
-			button = g.RadioButton(button, radio.label)
-			radios.append((button, radio.value))
-
-			box.pack_start(button, FALSE, TRUE, 0)
-			self.may_add_tip(button, widget)
-
-		return (self.set_radio, self.get_radio, radios)
-
-	def set_menu(self, menu, values, value):
-		try:
-			menu.set_history(values.index(value))
-		except ValueError:
-			print "'%s' not in %s!" % (value, values)
-	
-	def get_menu(self, menu, values):
-		item = menu.get_menu().get_active()
-		return item.get_data('value')
-
-	def make_menu(self, widget, box):
-		hbox = g.HBox(FALSE, 4)
-		box.pack_start(hbox, FALSE, TRUE, 0)
-		hbox.pack_start(g.Label(widget.label), FALSE, TRUE, 0)
-		option_menu = g.OptionMenu()
-		hbox.pack_start(option_menu, FALSE, TRUE, 0)
-
-		om = g.Menu()
-		option_menu.set_menu(om)
-
-		max_w = 4
-		max_h = 4
-		values = []
-		for item in widget.childNodes:
-			mitem = g.MenuItem(item.label)
-			om.append(mitem)
-			om.show_all()
-			mitem.set_data('value', item.value)
-			values.append(item.value)
-			(w, h) = mitem.size_request()
-			max_w = max(w, max_w)
-			max_h = max(h, max_h)
-
-		option_menu.show_all()
-		option_menu.set_usize(max_w + 50, max_h + 4)
-		return (self.set_menu, self.get_menu, option_menu, values)
-
 class FontButton(g.Button):
 	def __init__(self, option_box, option, title):
 		g.Button.__init__(self)
