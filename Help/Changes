@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+03-Jan-2004
+~~~~~~~~~~~
+Added fixedlist and varlist widgets to OptionsBox (Stephen Watson).
+
 31-Dec-2004
 ~~~~~~~~~~~
 Added MIME type matching by file contents (Stephen Watson).

@@ -43,10 +43,31 @@ import gobject
 
 REVERT = 1
 
+# Functions for extracting data from XML nodes
 def data(node):
 	"""Return all the text directly inside this DOM Node."""
 	return ''.join([text.nodeValue for text in node.childNodes
 			if text.nodeType == Node.TEXT_NODE])
+
+def bool_attr(node, name, val=False):
+	"""Interpret node attribute as a boolean value"""
+	try:
+		v=node.getAttribute(name)
+		if v=='yes':
+			return True
+		else:
+			return False
+	except:
+		pass
+	return val
+
+def str_attr(node, name, val=''):
+	"""Get string value of node attribute"""
+	try:
+		val=node.getAttribute(name)
+	except:
+		pass
+	return val
 
 class OptionsBox(g.Dialog):
 	"""A dialog box which lets the user edit the options. The file
@@ -686,6 +707,182 @@ class OptionsBox(g.Dialog):
 			lambda w: self.check_widget(option))
 
 		return [hbox]
+
+	def build_fixedlist(self, node, label, option):
+		"""<fixedlist name='...' label='...' selection='single|none|multiple'>Tooltip<listitem label='...'/><listitem label='...'/></fixedlist>"""
+		select=str_attr(node, 'selection', 'single')
+    
+		cont=g.VBox(False, 4)
+    
+		if label:
+			label_wid = g.Label(label)
+			cont.pack_start(label_wid, False, True, 0)
+			label_wid.show()
+                        
+		swin = g.ScrolledWindow()
+		swin.set_border_width(4)
+		swin.set_policy(g.POLICY_NEVER, g.POLICY_ALWAYS)
+		swin.set_shadow_type(g.SHADOW_IN)
+		swin.set_size_request(-1, 128)
+		cont.pack_start(swin, True, True, 0)
+    
+		model = g.ListStore(str)
+		view = g.TreeView(model)
+		swin.add(view)
+
+		selection=view.get_selection()
+		if select=='none':
+			selection.set_mode(g.SELECTION_NONE)
+		elif select=='multiple':
+			selection.set_mode(g.SELECTION_MULTIPLE)
+		else:
+			selection.set_mode(g.SELECTION_SINGLE)
+			select='single'
+
+		def sel_changed(sel, box):
+			box.check_widget(option)
+        
+		selection.connect('changed', sel_changed, self)
+
+		cell = g.CellRendererText()
+		column = g.TreeViewColumn('', cell, text = 0)
+		view.append_column(column)
+
+		for item in node.getElementsByTagName('listitem'):
+			label=item.getAttribute('label')
+			iter=model.append()
+			model.set(iter, 0, label)
+
+		self.may_add_tip(swin, node)
+
+		def make_sel(model, path, iter, l):
+			l.append(str(model.get_value(iter, 0)))
+
+		def get():
+			mode=view.get_selection().get_mode()
+			if mode==g.SELECTION_NONE:
+				return []
+			elif mode==g.SELECTION_SINGLE:
+				model, iter=view.get_selection().get_selected()
+				return [str(model.get_value(iter, 0))]
+        
+			v=[]
+			view.get_selection().selected_foreach(make_sel, v)
+			return v
+
+		def set():
+			sel=view.get_selection()
+			mode=sel.get_mode()
+			sel.unselect_all()
+			for v in option.list_value:
+				iter=model.get_iter_first()
+				while iter:
+					if v==model.get_value(iter, 0):
+						sel.select_iter(iter)
+						break
+
+					iter=model.iter_next(iter)
+
+		self.handlers[option]=(get, set)
+		
+		return [cont]
+	
+	def build_varlist(self, node, label, option):
+		"""<varlist name='...' label='...' edit='yes|no' extend='yes|no' selection='single|none|multiple'>Tooltip</varlist>"""
+		edit=bool_attr(node, 'edit')
+		reorder=bool_attr(node, 'reorder')
+		extend=bool_attr(node, 'extend')
+		select=str_attr(node, 'selection', 'single')
+		
+		cont=rox.g.VBox(False, 4)
+    
+		if label:
+			label_wid = rox.g.Label(label)
+			cont.pack_start(label_wid, False, True, 0)
+			label_wid.show()
+                        
+		swin = g.ScrolledWindow()
+		swin.set_border_width(4)
+		swin.set_policy(g.POLICY_NEVER, g.POLICY_ALWAYS)
+		swin.set_shadow_type(g.SHADOW_IN)
+		swin.set_size_request(-1, 128)
+		cont.pack_start(swin, True, True, 0)
+    
+		model = g.ListStore(str, str)
+		view = g.TreeView(model)
+		swin.add(view)
+
+		selection=view.get_selection()
+		if select=='none':
+			selection.set_mode(g.SELECTION_NONE)
+		elif select=='multiple':
+			selection.set_mode(g.SELECTION_MULTIPLE)
+		else:
+			selection.set_mode(g.SELECTION_SINGLE)
+			select='single'
+
+		if reorder:
+			view.set_reorderable(True)
+        
+		def cell_edited(ell, path, new_text, col):
+			if col==0 and new_text.find('=')>=0:
+				return
+			iter=model.get_iter_from_string(path)
+			model.set(iter, col, new_text)
+			self.check_widget(option)
+			
+		cell = g.CellRendererText()
+		column = g.TreeViewColumn('Variable', cell, text = 0)
+		view.append_column(column)
+		if edit:
+			cell.set_property('editable', True)
+			cell.connect('edited', cell_edited, 0)
+
+		cell = g.CellRendererText()
+		column = g.TreeViewColumn('Value', cell, text = 1)
+		view.append_column(column)
+		if edit:
+			cell.set_property('editable', True)
+			cell.connect('edited', cell_edited, 1)
+
+		def add(widget, box):
+			iter=model.append()
+			model.set(iter, 0, 'newvar', 1, 'new value')
+			if select=='single':
+				view.get_selection().select_iter(iter)
+			box.check_widget(option)
+		if extend:
+			hbox=g.HBox(False, 2)
+			cont.pack_start(hbox, False)
+        
+			but=g.Button(stock=g.STOCK_ADD)
+			but.connect('clicked', add, self)
+			hbox.pack_start(but, False)            
+
+		self.may_add_tip(swin, node)
+
+		def get():
+			v=[]
+			iter=model.get_iter_first()
+			while iter:
+				var=model.get_value(iter, 0)
+				val=model.get_value(iter, 1)
+				v.append(var+'='+val)
+
+				iter=model.iter_next(iter)
+			return v
+
+		def set():
+			model.clear()
+			for v in option.list_value:
+				var, val=v.split('=', 1)
+				iter=model.append()
+				model.set(iter, 0, var, 1, val)
+
+		self.handlers[option]=(get, set)
+
+		return [cont]
+
 	
 class FontButton(g.Button):
 	"""A button that opens a GtkFontSelectionDialog"""
