@@ -9,10 +9,7 @@ option widget.
 from rox import g, options, _
 import rox
 from xml.dom import Node, minidom
-import gobject, pango
-
-FALSE = g.FALSE
-TRUE = g.TRUE
+import gobject
 
 REVERT = 1
 
@@ -63,7 +60,7 @@ class OptionsBox(g.Dialog):
 
 		g.Dialog.__init__(self)
 		self.tips = g.Tooltips()
-		self.set_has_separator(FALSE)
+		self.set_has_separator(False)
 
 		self.options = options_group
 		self.set_title(('%s options') % options_group.program)
@@ -140,8 +137,8 @@ class OptionsBox(g.Dialog):
 		will do anything)."""
 		for option in self.options:
 			if option.value != self.revert[option]:
-				return TRUE
-		return FALSE
+				return True
+		return False
 	
 	def update_widgets(self):
 		"Make widgets show current values. Internal."
@@ -161,14 +158,14 @@ class OptionsBox(g.Dialog):
 	
 	def build_window_frame(self):
 		"Create the main structure of the window."
-		hbox = g.HBox(FALSE, 4)
-		self.vbox.pack_start(hbox, TRUE, TRUE, 0)
+		hbox = g.HBox(False, 4)
+		self.vbox.pack_start(hbox, True, True, 0)
 
 		# scrolled window for the tree view
 		sw = g.ScrolledWindow()
 		sw.set_shadow_type(g.SHADOW_IN)
 		sw.set_policy(g.POLICY_NEVER, g.POLICY_AUTOMATIC)
-		hbox.pack_start(sw, FALSE, TRUE, 0)
+		hbox.pack_start(sw, False, True, 0)
 		self.sections_swin = sw		# Used to hide it...
 
 		# tree view
@@ -176,7 +173,7 @@ class OptionsBox(g.Dialog):
 		tv = g.TreeView(model)
 		sel = tv.get_selection()
 		sel.set_mode(g.SELECTION_BROWSE)
-		tv.set_headers_visible(FALSE)
+		tv.set_headers_visible(False)
 		self.sections = model
 		self.tree_view = tv
 		tv.unset_flags(g.CAN_FOCUS)	# Stop irritating highlight
@@ -191,11 +188,11 @@ class OptionsBox(g.Dialog):
 		# main options area
 		frame = g.Frame()
 		frame.set_shadow_type(g.SHADOW_IN)
-		hbox.pack_start(frame, TRUE, TRUE, 0)
+		hbox.pack_start(frame, True, True, 0)
 
 		notebook = g.Notebook()
-		notebook.set_show_tabs(FALSE)
-		notebook.set_show_border(FALSE)
+		notebook.set_show_tabs(False)
+		notebook.set_show_border(False)
 		frame.add(notebook)
 		self.notebook = notebook
 
@@ -232,7 +229,7 @@ class OptionsBox(g.Dialog):
 	def build_section(self, section, parent):
 		"""Create a new page for the notebook and a new entry in the
 		sections tree, and build all the widgets inside the page."""
-		page = g.VBox(FALSE, 4)
+		page = g.VBox(False, 4)
 		page.set_border_width(4)
 		self.notebook.append_page(page, g.Label('unused'))
 
@@ -273,7 +270,7 @@ class OptionsBox(g.Dialog):
 			else:
 				widgets = fn(node, label)
 			for w in widgets:
-				box.pack_start(w, FALSE, TRUE, 0)
+				box.pack_start(w, False, True, 0)
 		
 	def may_add_tip(self, widget, node):
 		"""If 'node' contains any text, use that as the tip for 'widget'."""
@@ -302,15 +299,15 @@ class OptionsBox(g.Dialog):
 
 	def build_hbox(self, node, label):
 		"""<hbox>...</hbox> to layout child widgets horizontally."""
-		return self.do_box(node, label, g.HBox(FALSE, 4))
+		return self.do_box(node, label, g.HBox(False, 4))
 	def build_vbox(self, node, label):
 		"""<vbox>...</vbox> to layout child widgets vertically."""
-		return self.do_box(node, label, g.VBox(FALSE, 0))
+		return self.do_box(node, label, g.VBox(False, 0))
 		
 	def do_box(self, node, label, widget):
 		"Helper function for building hbox, vbox and frame widgets."
 		if label:
-			widget.pack_start(g.Label(label), FALSE, TRUE, 4)
+			widget.pack_start(g.Label(label), False, True, 4)
 
 		for child in node.childNodes:
 			if child.nodeType == Node.ELEMENT_NODE:
@@ -334,7 +331,7 @@ class OptionsBox(g.Dialog):
 		#list.insert(attr)
 		#label_widget.set_attributes(list)
 
-		vbox = g.VBox(FALSE, 4)
+		vbox = g.VBox(False, 4)
 		vbox.set_border_width(12)
 		frame.add(vbox)
 
@@ -344,14 +341,14 @@ class OptionsBox(g.Dialog):
 
 	def build_entry(self, node, label, option):
 		"<entry name='...' label='...'>Tooltip</entry>"
-		box = g.HBox(FALSE, 4)
+		box = g.HBox(False, 4)
 		entry = g.Entry()
 
 		if label:
 			label_wid = g.Label(label)
 			label_wid.set_alignment(1.0, 0.5)
-			box.pack_start(label_wid, FALSE, TRUE, 0)
-			box.pack_start(entry, TRUE, TRUE, 0)
+			box.pack_start(label_wid, False, True, 0)
+			box.pack_start(entry, True, True, 0)
 		else:
 			box = None
 
@@ -373,9 +370,9 @@ class OptionsBox(g.Dialog):
 
 		self.may_add_tip(button, node)
 
-		hbox = g.HBox(FALSE, 4)
-		hbox.pack_start(g.Label(label), FALSE, TRUE, 0)
-		hbox.pack_start(button, FALSE, TRUE, 0)
+		hbox = g.HBox(False, 4)
+		hbox.pack_start(g.Label(label), False, True, 0)
+		hbox.pack_start(button, False, True, 0)
 
 		self.handlers[option] = (button.get, button.set)
 
@@ -387,9 +384,9 @@ class OptionsBox(g.Dialog):
 
 		self.may_add_tip(button, node)
 
-		hbox = g.HBox(FALSE, 4)
-		hbox.pack_start(g.Label(label), FALSE, TRUE, 0)
-		hbox.pack_start(button, FALSE, TRUE, 0)
+		hbox = g.HBox(False, 4)
+		hbox.pack_start(g.Label(label), False, True, 0)
+		hbox.pack_start(button, False, True, 0)
 
 		self.handlers[option] = (button.get, button.set)
 
@@ -407,19 +404,19 @@ class OptionsBox(g.Dialog):
 			step = 1
 		unit = node.getAttribute('unit')
 
-		hbox = g.HBox(FALSE, 4)
+		hbox = g.HBox(False, 4)
 		if label:
 			widget = g.Label(label)
 			widget.set_alignment(1.0, 0.5)
-			hbox.pack_start(widget, FALSE, TRUE, 0)
+			hbox.pack_start(widget, False, True, 0)
 
 		spin = g.SpinButton(g.Adjustment(minv, minv, maxv, step))
 		spin.set_width_chars(max(len(str(minv)), len(str(maxv))))
-		hbox.pack_start(spin, FALSE, TRUE, 0)
+		hbox.pack_start(spin, False, True, 0)
 		self.may_add_tip(spin, node)
 
 		if unit:
-			hbox.pack_start(g.Label(unit), FALSE, TRUE, 0)
+			hbox.pack_start(g.Label(unit), False, True, 0)
 
 		self.handlers[option] = (
 			lambda: str(spin.get_value()),
@@ -452,7 +449,7 @@ class OptionsBox(g.Dialog):
 			except:
 				print "Value '%s' not in radio group!" % option.value
 				i = 0
-			radios[i].set_active(TRUE)
+			radios[i].set_active(True)
 		def get():
 			for r, v in zip(radios, values):
 				if r.get_active():

@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+04-Jun-2003
+~~~~~~~~~~~
+Code tidying, thanks to pychecker.
+
 26-May-2003
 ~~~~~~~~~~~
 Added fileutils module, which provides an interactive makedirs() function

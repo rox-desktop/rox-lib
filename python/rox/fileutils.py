@@ -60,7 +60,7 @@ def _makedirs_recursive(path, mode):
 			continue
 		try:
 			os.mkdir(path, mode)
-			return True
+			return
 		except OSError, msg:
 			report_patherror(("%s.\n" + _("Could not create directory `%s'.\n")) \
 				% (msg[1], path), path)

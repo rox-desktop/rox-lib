@@ -20,7 +20,6 @@ Note: see the rox.Options module for a higher-level API for managing options.
 
 from __future__ import generators
 import os
-import stat
 
 _home = os.environ.get('HOME', '/')
 xdg_data_home = os.environ.get('XDG_DATA_HOME',

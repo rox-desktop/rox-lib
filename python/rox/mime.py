@@ -209,7 +209,7 @@ def get_type(path, follow=1, name_pri=100):
 	elif stat.S_ISBLK(st.st_mode): return inode_block
 	elif stat.S_ISFIFO(st.st_mode): return inode_fifo
 	elif stat.S_ISLNK(st.st_mode): return inode_symlink
-	elif stat.S_ISSOCK(st.st_mode): return inode_sock
+	elif stat.S_ISSOCK(st.st_mode): return inode_socket
 	return inode_door
 
 def install_mime_info(application, package_file = None):

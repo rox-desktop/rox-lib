@@ -5,7 +5,7 @@ import traceback
 import gobject
 import linecache
 
-from rox import g, ButtonMixed, TRUE, FALSE, toplevel_ref, toplevel_unref, _
+from rox import g, ButtonMixed, toplevel_ref, toplevel_unref, _
 from rox import info, alert
 from saving import StringSaver
 
@@ -65,20 +65,20 @@ def show_exception(type, value, tb):
 		if resp == QUIT:
 			sys.exit(1)
 		assert resp == DETAILS
-		box.set_response_sensitive(DETAILS, FALSE)
-		box.set_has_separator(FALSE)
+		box.set_response_sensitive(DETAILS, False)
+		box.set_has_separator(False)
 
 		button = ButtonMixed(g.STOCK_SAVE, _('_Bug Report'))
 		button.set_flags(g.CAN_DEFAULT)
 		button.show()
 		box.add_action_widget(button, SAVE)
-		box.action_area.set_child_secondary(button, TRUE)
+		box.action_area.set_child_secondary(button, True)
 
 		button = ButtonMixed(g.STOCK_QUIT, _('Forced Quit'))
 		button.set_flags(g.CAN_DEFAULT)
 		button.show()
 		box.add_action_widget(button, QUIT)
-		box.action_area.set_child_secondary(button, TRUE)
+		box.action_area.set_child_secondary(button, True)
 
 		ee = ExceptionExplorer(tb)
 		box.vbox.pack_start(ee)
@@ -94,12 +94,12 @@ class ExceptionExplorer(g.Frame):
 	def __init__(self, tb):
 		g.Frame.__init__(self, _('Stack trace (innermost last)'))
 
-		vbox = g.VBox(FALSE, 0)
+		vbox = g.VBox(False, 0)
 		self.add(vbox)
 
 		inner = g.Frame()
 		inner.set_shadow_type(g.SHADOW_IN)
-		vbox.pack_start(inner, FALSE, TRUE, 0)
+		vbox.pack_start(inner, False, True, 0)
 
 		self.savebox = None
 
@@ -178,7 +178,7 @@ class ExceptionExplorer(g.Frame):
 		tree = g.TreeView(vars)
 
 		vbox.pack_start(g.Label(_('Local variables in selected frame:')),
-				FALSE, TRUE, 0)
+				False, True, 0)
 
 		cell = g.CellRendererText()
 		column = g.TreeViewColumn('Name', cell, text = 0)
@@ -194,18 +194,18 @@ class ExceptionExplorer(g.Frame):
 		inner.set_shadow_type(g.SHADOW_IN)
 		inner.add(tree)
 		inner.set_border_width(5)
-		vbox.pack_start(inner, TRUE, TRUE, 0)
+		vbox.pack_start(inner, True, True, 0)
 
 		if new:
 			sel.select_iter(new)
 
-		hbox = g.HBox(FALSE, 4)
+		hbox = g.HBox(False, 4)
 		hbox.set_border_width(5)
-		vbox.pack_start(hbox, FALSE, TRUE, 0)
-		hbox.pack_start(g.Label('>>>'), FALSE, TRUE, 0)
+		vbox.pack_start(hbox, False, True, 0)
+		hbox.pack_start(g.Label('>>>'), False, True, 0)
 
 		expr = g.Entry()
-		hbox.pack_start(expr, TRUE, TRUE, 0)
+		hbox.pack_start(expr, True, True, 0)
 		def activate(entry):
 			expr = entry.get_text()
 			frame = selected_frame()

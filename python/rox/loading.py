@@ -2,7 +2,7 @@
 to allow drops onto widgets in your application."""
 
 import rox
-from rox import g, alert, get_local_path, _, TRUE, FALSE
+from rox import g, alert, get_local_path, _
 
 gdk = g.gdk
 
@@ -61,10 +61,10 @@ class XDSLoader:
 		target = widget.drag_dest_find_target(context, self.targets)
 		if target is None:
 			# Error?
-			context.drop_finish(FALSE, time)
+			context.drop_finish(False, time)
 		else:
 			widget.drag_get_data(context, target, time)
-		return TRUE
+		return True
 
 	def xds_data_received(self, widget, context, x, y, selection, info, time):
 		"Called when we get some data. Internal."
@@ -72,9 +72,9 @@ class XDSLoader:
 			try:
 				self.xds_load_from_selection(selection)
 			except:
-				context.drop_finish(FALSE, time)
+				context.drop_finish(False, time)
 				raise
-			context.drop_finish(TRUE, time)
+			context.drop_finish(True, time)
 			return 1
 		if info != TARGET_URILIST:
 			return 0
@@ -82,7 +82,7 @@ class XDSLoader:
 		uris = extract_uris(selection.data)
 		if not uris:
 			alert("Nothing to load!")
-			context.drop_finish(FALSE, time)
+			context.drop_finish(False, time)
 			return 1
 
 		try:
@@ -94,10 +94,10 @@ class XDSLoader:
 				widget.drag_get_data(context, 'application/octet-stream', time)
 				return 1	# Don't do drag_finish
 		except:
-			context.drop_finish(FALSE, time)
+			context.drop_finish(False, time)
 			rox.report_exception()
 		else:
-			context.drop_finish(TRUE, time)
+			context.drop_finish(True, time)
 
 		return 1
 	
