@@ -3,6 +3,9 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+17-Jul-2003
+~~~~~~~~~~~
+Cope with % escaped URIs.
 
 04-Jul-2003
 ~~~~~~~~~~~

@@ -9,15 +9,22 @@ gdk = g.gdk
 TARGET_URILIST = 0
 TARGET_RAW = 1
 
+def unescape(uri):
+	if '%' not in uri: return uri
+	import re
+	return re.sub('%[0-9a-fA-F][0-9a-fA-F]',
+		lambda match: chr(int(match.group(0)[1:], 16)),
+		uri)
+
 def extract_uris(data):
-	"""Convert a text/uri-list to a python list of URIs"""
+	"""Convert a text/uri-list to a python list of (unescaped) URIs"""
 	lines = data.split('\r\n')
 	out = []
 	for l in lines:
 		if l == chr(0):
 			continue	# (gmc adds a '\0' line)
 		if l and l[0] != '#':
-			out.append(l)
+			out.append(unescape(l))
 	return out
 
 def provides(context, type): return type in map(str, context.targets)
