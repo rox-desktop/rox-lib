@@ -80,7 +80,8 @@ def icon_for_type(window, media, subtype):
 		p, m = load_pixmap(window, path)
 	else:
 		p = None
-	# XXX: Missing icon?
+	if not p:
+		p, m = create_pixmap_from_xpm_d(window, None, bad_xpm)
 	return p, m
 
 def report_error(message, title = 'Error'):
