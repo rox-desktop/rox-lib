@@ -9,7 +9,7 @@ where it is named 'g'.
 The AppRun script of a simple application might look like this:
 
 	#!/usr/bin/env python
-	import findrox
+	import findrox; findrox.version(1, 9, 12)
 	import rox
 
 	window = rox.Window()

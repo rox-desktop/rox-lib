@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+20-Feb-2003
+~~~~~~~~~~~
+Updated examples in documentation for new findrox (Yuri Bongiorno).
+
 10-Feb-2004
 ~~~~~~~~~~~
 New API for menus. Instead of passing tuples for menu items, python classes
