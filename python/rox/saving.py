@@ -7,7 +7,7 @@ the purpose and pass that to the SaveBox."""
 
 import os, sys
 import rox
-from rox import alert, info, g
+from rox import alert, info, g, _
 from rox import choices, get_local_path, TRUE, FALSE
 
 gdk = g.gdk
@@ -112,7 +112,7 @@ class Saveable:
 			_report_save_error()
 			if tmp and os.path.exists(tmp):
 				if os.path.getsize(tmp) == 0 or \
-				   rox.confirm("Delete temporary file '%s'?" % tmp,
+				   rox.confirm(_("Delete temporary file '%s'?") % tmp,
 				   		g.STOCK_DELETE):
 					os.unlink(tmp)
 			raise AbortSave(None)
@@ -247,8 +247,8 @@ class SaveArea(g.VBox):
 			except:
 				_report_save_error()
 		else:
-			rox.info("Drag the icon to a directory viewer\n" +
-					  "(or enter a full pathname)")
+			rox.info(_("Drag the icon to a directory viewer\n"
+				   "(or enter a full pathname)"))
 	
 	def drag_begin(self, drag_box, context):
 		self.drag_in_progress = 1
@@ -265,7 +265,7 @@ class SaveArea(g.VBox):
 			else:
 				leaf = uri[i + 1:]
 		else:
-			leaf = 'Unnamed'
+			leaf = _('Unnamed')
 		_write_xds_property(context, leaf)
 	
 	def drag_data_get(self, widget, context, selection_data, info, time):
@@ -350,8 +350,8 @@ class SaveArea(g.VBox):
 			return 1
 		if not os.path.exists(path):
 			return 1
-		return rox.confirm("File '%s' already exists -- overwrite it?" % path,
-				   g.STOCK_DELETE, '_Overwrite')
+		return rox.confirm(_("File '%s' already exists -- overwrite it?") % path,
+				   g.STOCK_DELETE, _('_Overwrite'))
 	
 	def set_uri(self, uri):
 		"Data is safely saved somewhere. Update the document's URI. Internal."
@@ -386,7 +386,7 @@ class SaveBox(g.Dialog):
 			def discard_clicked(event):
 				document.discard()
 				self.destroy()
-			button = rox.ButtonMixed(g.STOCK_DELETE, '_Discard')
+			button = rox.ButtonMixed(g.STOCK_DELETE, _('_Discard'))
 			discard_area.pack_start(button, FALSE, TRUE, 2)
 			button.connect('clicked', discard_clicked)
 			button.unset_flags(g.CAN_FOCUS)
@@ -396,7 +396,7 @@ class SaveBox(g.Dialog):
 			
 			discard_area.show_all()
 
-		self.set_title('Save As:')
+		self.set_title(_('Save As:'))
 		self.set_position(g.WIN_POS_MOUSE)
 		self.set_wmclass('savebox', 'Savebox')
 		self.set_border_width(1)

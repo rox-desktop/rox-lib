@@ -6,7 +6,7 @@ You can sub-class OptionsBox to provide new types of
 option widget.
 """
 
-from rox import g, options
+from rox import g, options, _
 import rox
 from xml.dom import Node, minidom
 import gobject
@@ -66,13 +66,13 @@ class OptionsBox(g.Dialog):
 		self.set_has_separator(FALSE)
 
 		self.options = options_group
-		self.set_title(options_group.program + ' options')
+		self.set_title(('%s options') % options_group.program)
 		self.set_position(g.WIN_POS_CENTER)
 
-		button = rox.ButtonMixed(g.STOCK_UNDO, '_Revert')
+		button = rox.ButtonMixed(g.STOCK_UNDO, _('_Revert'))
 		self.add_action_widget(button, REVERT)
-		self.tips.set_tip(button, 'Restore all options to how they were '
-					  'when the window was opened', "XXX")
+		self.tips.set_tip(button, _('Restore all options to how they were '
+					    'when the window was opened'))
 
 		self.add_button(g.STOCK_OK, g.RESPONSE_OK)
 
@@ -278,7 +278,7 @@ class OptionsBox(g.Dialog):
 		else:
 			data = None
 		if data:
-			self.tips.set_tip(widget, data, "XXX")
+			self.tips.set_tip(widget, data)
 	
 	# Each type of widget has a method called 'build_NAME' where name is
 	# the XML element name. This method is called as method(node, label,

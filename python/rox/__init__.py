@@ -30,11 +30,14 @@ sys.argv)."""
 
 import sys, os
 
+_ = lambda x: x
+
 try:
 	import gtk2 as g
 except:
-	sys.stderr.write('The pygtk2 package must be ' +
-			 'installed to use this program!')
+	sys.stderr.write(_('The pygtk2 package must be '
+			   'installed to use this program:\n'
+			   'http://rox.sourceforge.net/rox_lib.php3'))
 	raise
 
 TRUE = g.TRUE
@@ -47,7 +50,7 @@ def alert(message):
 	toplevel_ref()
 	box = g.MessageDialog(None, 0, g.MESSAGE_ERROR, g.BUTTONS_OK, message)
 	box.set_position(g.WIN_POS_CENTER)
-	box.set_title('Error')
+	box.set_title(_('Error'))
 	box.run()
 	box.destroy()
 	toplevel_unref()
@@ -63,7 +66,7 @@ def info(message):
 	toplevel_ref()
 	box = g.MessageDialog(None, 0, g.MESSAGE_INFO, g.BUTTONS_OK, message)
 	box.set_position(g.WIN_POS_CENTER)
-	box.set_title('Information')
+	box.set_title(_('Information'))
 	box.run()
 	box.destroy()
 	toplevel_unref()
@@ -85,7 +88,7 @@ def confirm(message, stock_icon, action = None):
 	button.show()
 	box.add_action_widget(button, g.RESPONSE_OK)
 	box.set_position(g.WIN_POS_CENTER)
-	box.set_title('Confirm:')
+	box.set_title(_('Confirm:'))
 	box.set_default_response(g.RESPONSE_OK)
 	resp = box.run()
 	box.destroy()
@@ -246,7 +249,7 @@ def edit_options(options_file = None):
 try:
 	import xml
 except:
-	alert("You do not have the Python 'xml' module installed, which " \
-	      "ROX-Lib2 requires. You need to install python-xmlbase " \
-	      "(this is a small package; the full PyXML package is not " \
-	      "required).")
+	alert(_("You do not have the Python 'xml' module installed, which "
+	        "ROX-Lib2 requires. You need to install python-xmlbase "
+	        "(this is a small package; the full PyXML package is not "
+	        "required)."))
