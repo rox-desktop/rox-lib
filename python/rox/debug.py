@@ -99,7 +99,7 @@ class ExceptionExplorer(g.Frame):
 
 		inner = g.Frame()
 		inner.set_shadow_type(g.SHADOW_IN)
-		vbox.add(inner)
+		vbox.pack_start(inner, FALSE, TRUE, 0)
 
 		self.savebox = None
 
@@ -167,8 +167,11 @@ class ExceptionExplorer(g.Frame):
 		def select_frame(tree):
 			vars.clear()
 			for n, v in selected_frame().f_locals.iteritems():
+				value = `v`
+				if len(value) > 500:
+					value = value[:500] + ' ...'
 				new = vars.append()
-				vars.set(new, 0, str(n), 1, `v`)
+				vars.set(new, 0, str(n), 1, value)
 		sel.connect('changed', select_frame)
 
 		# Area to show the local variables
@@ -185,7 +188,9 @@ class ExceptionExplorer(g.Frame):
 		column = g.TreeViewColumn('Value', cell, text = 1)
 		tree.append_column(column)
 
-		inner = g.Frame()
+		inner = g.ScrolledWindow()
+		inner.set_size_request(-1, 200)
+		inner.set_policy(g.POLICY_AUTOMATIC, g.POLICY_ALWAYS)
 		inner.set_shadow_type(g.SHADOW_IN)
 		inner.add(tree)
 		inner.set_border_width(5)
