@@ -37,7 +37,8 @@ class RemoteFiles(Exception):
 
 class XDSLoader:
 	"""A mix-in class for widgets that can have files/data dropped on
-	them. Object should also be a GtkWidget."""
+	them. If object is also a GtkWidget, xds_proxy_for(self) is called
+	automatically."""
 
 	def __init__(self, types):
 		"""Call this after initialising the widget.
@@ -49,7 +50,8 @@ class XDSLoader:
 				targets.append((type, 0, TARGET_RAW))
 		
 		self.targets = targets
-		self.xds_proxy_for(self)
+		if isinstance(self, g.Widget):
+			self.xds_proxy_for(self)
 	
 	def xds_proxy_for(self, widget):
 		"Handle drops on this widget as if they were to 'self'."

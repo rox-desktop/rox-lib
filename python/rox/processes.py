@@ -1,4 +1,28 @@
-"""This module makes it easier to use other programs to process data."""
+"""This module makes it easier to use other programs to process data.
+
+The Process class provides the low-level interface, which you can extend
+by subclassing. Processes run in the background, so users can still work
+with your application while they are running. If you don't care about that,
+you might like to look at Python's builtin popen2 module.
+
+The PipeThroughCommand class extends Process to provide an easy way to
+run other commands. It also, optionally, allows a stream of data to be fed
+in to the process's standard input, and can collect the output to another
+stream. Typical usage:
+
+rox.processes.PipeThroughCommand(('echo', 'hello'), None, file('output', 'w')).wait()
+
+This creates a new process, and execs 'echo hello' in it with output sent
+to the file 'output' (any file-like object can be used). The wait() runs a
+recursive mainloop, so that your application can still be used while the
+command runs, but the wait() itself doesn't return until the command
+completes.
+
+Instead of using a tuple for the command, a string may be passed (eg, "echo
+hello"). In this case, the shell is used to interpret the command, allowing
+pipes, wildcards and so on. Be very careful of escaping in this case (think
+about filenames containing spaces, quotes, apostrophes, etc).
+"""
 
 from rox import g, saving
 
