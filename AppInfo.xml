@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <AppInfo>
+  <Summary>Shared code for other ROX applications</Summary>
   <About>
     <Purpose>Shared library for ROX</Purpose>
     <Author>Thomas Leonard</Author>
-    <Version>1.9.7 PREVIEW</Version>
+    <Version>1.9.7 (21-May-2003)</Version>
     <License>GNU General Public License</License>
     <Homepage>http://rox.sourceforge.net</Homepage>
   </About>
