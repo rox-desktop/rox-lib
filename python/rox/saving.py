@@ -5,6 +5,7 @@ methods to actually do the save.
 If you want to save a selection then you can create a new object specially for
 the purpose and pass that to the SaveBox."""
 
+import os
 import rox
 from rox import alert, info, g, report_exception, choices, get_local_path, TRUE, FALSE
 
@@ -67,16 +68,32 @@ class Saveable:
 
 	def save_to_file(self, path):
 		"""Write data to file, and return TRUE on success.
-		The default creates the file and uses save_to_stream()."""
+		The default creates a temporary file, uses save_to_stream() to
+		write to it, then renames it over the original. If the temporary file
+		can't be created, it writes directly over the original."""
+		import random
+		tmp = 'tmp-' + `random.randrange(1000000)`
+		tmp = os.path.join(os.path.dirname(path), tmp)
 		try:
-			# TODO: Save to temp file and rename...
+			file = open(tmp, 'wb')
+		except:
+			# Can't create backup... try a direct write
+			tmp = None
 			file = open(path, 'wb')
+		try:
 			try:
 				self.save_to_stream(file)
 			finally:
 				file.close()
+			if tmp:
+				os.rename(tmp, path)
 		except:
 			report_exception()
+			if tmp and os.path.exists(tmp):
+				if os.path.getsize(tmp) == 0 or \
+				   rox.confirm("Delete temporary file '%s'?" % tmp,
+				   		g.STOCK_DELETE):
+					os.unlink(tmp)
 			return 0
 		return 1
 
@@ -132,6 +149,7 @@ class SaveArea(g.VBox):
 		g.VBox.__init__(self, FALSE, 0)
 
 		self.document = document
+		self.initial_uri = uri
 
 		drag_area = self._create_drag_area(type)
 		self.pack_start(drag_area, TRUE, TRUE, 0)
@@ -196,6 +214,8 @@ class SaveArea(g.VBox):
 		path = get_local_path(uri)
 
 		if path:
+			if not self.confirm_new_path(path):
+				return
 			try:
 				self.set_sensitive(FALSE)
 				if self.document.save_to_file(path):
@@ -262,16 +282,19 @@ class SaveArea(g.VBox):
 		if uri:
 			path = get_local_path(uri)
 			if path:
-				try:
-					self.set_sensitive(FALSE)
-					self.data_sent = self.document.save_to_file(path)
-					self.set_sensitive(TRUE)
-				except:
-					report_exception()
-					self.set_sensitive(TRUE)
-					self.data_sent = FALSE
-				if self.data_sent:
-					to_send = 'S'
+				if not self.confirm_new_path(path):
+					to_send = 'E'
+				else:
+					try:
+						self.set_sensitive(FALSE)
+						self.data_sent = self.document.save_to_file(path)
+						self.set_sensitive(TRUE)
+					except:
+						report_exception()
+						self.set_sensitive(TRUE)
+						self.data_sent = FALSE
+					if self.data_sent:
+						to_send = 'S'
 				# (else Error)
 			else:
 				to_send = 'F'	# Non-local transfer
@@ -292,6 +315,17 @@ class SaveArea(g.VBox):
 				self.set_uri(uri)
 		if self.data_sent:
 			self.save_done()
+	
+	def confirm_new_path(self, path):
+		"""Use wants to save to this path. If it's different to the original path,
+		check that it doesn't exist and ask for confirmation if it does. Returns true
+		to go ahead with the save."""
+		if path == self.initial_uri:
+			return 1
+		if not os.path.exists(path):
+			return 1
+		return rox.confirm("File '%s' already exists -- overwrite it?" % path,
+				   g.STOCK_DELETE, '_Overwrite')
 	
 	def set_uri(self, uri):
 		"Data is safely saved somewhere. Update the document's URI. Internal."
