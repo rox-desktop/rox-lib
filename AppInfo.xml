@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <AppInfo>
   <Summary xml:lang="en">Shared code for other ROX applications</Summary>
+  <Summary xml:lang="fr">Code partagé pour les autres applications ROX</Summary>
   <Summary xml:lang="it">Codice condiviso per altre applicazioni ROX</Summary>
   <About xml:lang="en">
     <Purpose>Shared library for ROX</Purpose>
@@ -8,6 +9,12 @@
     <Version>1.9.10 (04-Oct-2003)</Version>
     <License>GNU General Public License</License>
     <Homepage>http://rox.sourceforge.net</Homepage>
+  </About>
+  <About xml:lang="fr">
+    <Purpose label="Fonction">Bibliothèque partagée pour ROX</Purpose>
+    <Author label="Auteur"/>
+    <License label="Licence"/>
+    <Homepage label="Page web"/>
   </About>
   <About xml:lang="it">
     <Purpose label="Scopo">librerie condivise per ROX</Purpose>

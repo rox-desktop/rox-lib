@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+08-Oct-2003
+~~~~~~~~~~~
+Added French translation in AppInfo.xml (Vincent Lefèvre).
+
 03-Oct-2003
 ~~~~~~~~~~~
 Added support for icon themes (doesn't do inheritance yet).
