@@ -449,9 +449,6 @@ class SaveBox(g.Dialog):
 				return 1
 		self.connect('key-press-event', key_press)
 
-		rox.toplevel_ref()
-		self.connect('destroy', lambda w: rox.toplevel_unref())
-
 		i = uri.rfind('/')
 		i = i + 1
 		# Have to do this here, or the selection gets messed up
@@ -469,6 +466,9 @@ class SaveBox(g.Dialog):
 			else:
 				raise Exception('Unknown response!')
 		self.connect('response', got_response)
+
+		rox.toplevel_ref()
+		self.connect('destroy', lambda w: rox.toplevel_unref())
 	
 	def set_type(self, type, icon = None):
 		"""See SaveArea's method of the same name."""

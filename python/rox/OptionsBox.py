@@ -104,7 +104,10 @@ class OptionsBox(g.Dialog):
 		def destroyed(widget):
 			rox.toplevel_unref()
 			if self.changed():
-				self.options.save()
+				try:
+					self.options.save()
+				except:
+					rox.report_exception()
 		self.connect('destroy', destroyed)
 
 		def got_response(widget, response):
