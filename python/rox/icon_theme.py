@@ -30,42 +30,6 @@ class Index:
 		"None if not found"
 		return self.sections.get(section, {}).get(key, None)
 
-def DirectoryMatchesSize(index, subdir, iconsize):
-	type = index.get(subdir, 'Type')
-	size = int(index.get(subdir, 'Size'))
-	print index, subdir, iconsize, type, size
-	if type == "Fixed":
-		return size == iconsize
-	if type == "Scaled":
-		min_size = int(index.get(subdir, 'MinSize'))
-		max_size = int(index.get(subdir, 'MaxSize'))
-		return min_size <= iconsize <= max_size
-	if type == "Threshold":
-		threshold = int(index.get(subdir, 'Threshold'))
-		return size - threshold <= iconsize <= size + threshold
-	return False
-
-def DirectorySizeDistance(index, subdir, iconsize):
-	type = index.get(subdir, 'Type')
-	size = int(index.get(subdir, 'Size'))
-	if type == "Fixed":
-		return abs(size - iconsize)
-	if type == "Threshold":
-		threshold = int(index.get(subdir, 'Threshold'))
-		min_size = size - threshold
-		max_size = size + threshold
-	elif type == "Scaled":
-		min_size = int(index.get(subdir, 'MinSize'))
-		max_size = int(index.get(subdir, 'MaxSize'))
-	else:
-		return 1000
-
-	if iconsize < min_size:
-		return min_size - iconsize
-	if iconsize > max_size:
-		return iconsize - max_size
-	return 0
-
 class SubDir:
 	def __init__(self, index, subdir):
 		type = index.get(subdir, 'Type')
