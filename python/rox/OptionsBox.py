@@ -627,22 +627,32 @@ class FontButton(g.Button):
 class ColourButton(g.Button):
 	def __init__(self, option_box, option, title):
 		g.Button.__init__(self)
+		self.c_box = g.EventBox()
+		self.add(self.c_box)
 		self.option_box = option_box
 		self.option = option
 		self.title = title
-		self.set_size_request(64, 12)
+		self.set_size_request(64, 14)
 		self.dialog = None
 		self.connect('clicked', self.clicked)
-	
+		self.connect('expose-event', self.expose)
+
+	def expose(self, widget, event):
+		# Some themes draw images and stuff here, so we have to
+		# override it manually.
+		self.c_box.window.draw_rectangle(
+			self.c_box.style.bg_gc[g.STATE_NORMAL], True,
+			0, 0,
+			self.c_box.allocation.width,
+			self.c_box.allocation.height)
+
 	def set(self, c = None):
 		if c is None:
 			c = g.gdk.color_parse(self.option.value)
-		self.modify_bg(g.STATE_NORMAL, c)
-		self.modify_bg(g.STATE_PRELIGHT, c)
-		self.modify_bg(g.STATE_ACTIVE, c)
-	
+		self.c_box.modify_bg(g.STATE_NORMAL, c)
+
 	def get(self):
-		c = self.get_style().bg[g.STATE_NORMAL]
+		c = self.c_box.get_style().bg[g.STATE_NORMAL]
 		return '#%04x%04x%04x' % (c.red, c.green, c.blue)
 
 	def clicked(self, button):

@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+20-Mar-2004
+~~~~~~~~~~~
+Stop themes from overriding the display of the colour-picker buttons in
+the options box (Rene Ejury).
+
 17-Mar-2004
 ~~~~~~~~~~~
 Warn about old versions of findrox.py.
