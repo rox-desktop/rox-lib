@@ -1,0 +1,128 @@
+#!/usr/bin/env python
+
+# Find ROX-Lib...
+
+import os, sys
+from os.path import join, dirname, islink
+
+me = sys.argv[0]
+if islink(me):
+	me = os.readlink(me)
+
+sys.path.append(join(dirname(me), '../python'))
+
+# Parse the command-line options...
+
+import getopt
+
+def usage():
+	print "Usage: %s [-dhv] [-t TYPE] PATH" % sys.argv[0]
+	sys.exit(1)
+def help():
+	print """Usage: savebox [OPTION]... [PATH]
+Read data from standard input and allow it to be saved by drag and
+drop. PATH is the suggested name to save under (default 'Output').
+
+  -d, --dir		create a directory instead of a file
+  -h, --help            display this help and exit
+  -t, --type=TYPE       data has MIME type TYPE (default 'text/plain')
+  -v, --version         display the version information and exit
+ 
+The latest version can be found at:
+        http://rox.sourceforge.net
+ 
+Report bugs to <tal197@users.sourceforge.net>."""
+	sys.exit(1)
+
+def version():
+	print """Savebox 0.1.5
+Copyright (C) 2001 Thomas Leonard.
+ROX-Filer comes with ABSOLUTELY NO WARRANTY,
+to the extent permitted by law.
+You may redistribute copies of ROX-Filer
+under the terms of the GNU General Public License.
+For more information about these matters, see the file named COPYING."""
+	sys.exit(1)
+
+try:
+	optlist, args = getopt.getopt(sys.argv[1:], 'dht:v',
+			['dir', 'help', 'type=', 'version'])
+except getopt.GetoptError:
+	print sys.argv[0] + ': ' + str(sys.exc_info()[1])
+	usage()
+
+if args:
+	if len(args) > 1:
+		usage()
+	else:
+		path = args[0]
+else:
+	path = 'Output'
+
+# Defaults
+dir = 0
+type = 'text/plain'
+
+for (x, y) in optlist:
+	if x == 'd' or x == '--dir':
+		dir = 1
+	elif x == 'h' or x == '--help':
+		help()
+	elif x == 't' or x == '--type':
+		type = y
+	elif x == 'v' or x == '--version':
+		version()
+
+if dir:
+	type = 'special/directory'
+
+# A class to hold the file data...
+
+import gtk, GDK
+
+if dir:
+	class Data:
+		def save_as_file(self, path):
+			try:
+				os.mkdir(path)
+				return 1
+			except:
+				support.report_exception()
+			return 0
+
+		def set_uri(self, uri):
+			print uri
+else:
+	class Data:
+		def __init__(self):
+			self.data = ""
+
+		def save_get_data(self):
+			return self.data
+
+		def set_uri(self, uri):
+			print uri
+		
+		def add_data(self, src, cond):
+			new = os.read(src, 1024)
+			if new:
+				self.data = self.data + new
+			else:
+				gtk.input_remove(input_tag)
+				savebox.set_sensitive(gtk.TRUE)
+data = Data()
+
+# Create the SaveBox...
+
+from rox.SaveBox import SaveBox
+from rox import support
+
+savebox = SaveBox(data, path, type)
+savebox.show()
+
+if not dir:
+	savebox.set_sensitive(gtk.FALSE)
+	input_tag = gtk.input_add(0, GDK.INPUT_READ, data.add_data)
+
+support.rox_toplevel_unref()
+support.rox_mainloop()

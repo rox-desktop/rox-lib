@@ -2,6 +2,9 @@
 			Shared code for ROX applications
 			by Thomas Leonard
 			http://rox.sourceforge.net
+15-Nov-2001
+~~~~~~~~~~~
+Added 'savebox' example program to ROX-Lib.
 
 10-Nov-2001
 ~~~~~~~~~~~

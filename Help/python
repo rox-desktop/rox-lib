@@ -156,6 +156,8 @@ Example:
 	support.rox_toplevel_unref()
 	support.rox_mainloop()
 
+See also the 'ROX-Lib/bin/savebox' example program.
+
 You may also use the save_area.set_type() method to change the MIME type
 and icon of the data being saved. This can be used if the application can
 save in several formats (perhaps selected from a menu in the savebox). The

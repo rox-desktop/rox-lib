@@ -29,6 +29,19 @@ ROX-Lib in there.
 If you do have root access, move ROX-Lib into /usr/local/lib.
 
 
+Saving from the shell
+~~~~~~~~~~~~~~~~~~~~~
+The 'ROX-Lib/bin' directory contains a program called 'savebox', which you
+may find useful. You can pipe data to it to save it with drag-and-drop.
+Symlink it into a directory in your PATH, and then you can do:
+
+	$ echo Hello | savebox SomeText
+
+The output (if any) is the new name for the data. For more help, do:
+
+	$ savebox --help
+
+
 Developers
 ~~~~~~~~~~
 For people wishing to write programs using this library, read the 'python'
