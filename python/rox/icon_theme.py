@@ -59,7 +59,7 @@ class IconTheme:
 				try:
 					self.indexes.append(Index(theme_dir))
 				except:
-					rox.report_error()
+					rox.report_exception()
 	
 	def lookup_icon(self, iconname, size):
 		icon = self._lookup_this_theme(iconname, size)
@@ -81,7 +81,6 @@ class IconTheme:
 		# Sort by closeness of size
 		dirs.sort()
 
-		minimal_size = 1000000
 		for _, subdir in dirs:
 			for extension in ("png", "svg"):
 				filename = os.path.join(subdir,

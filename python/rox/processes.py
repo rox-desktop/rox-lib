@@ -304,9 +304,9 @@ class PipeThroughCommand(Process):
 		if self.done is not True:
 			raise self.done
 	
-	def kill(self):
+	def kill(self, sig = signal.SIGTERM):
 		self.killed = 1
-		Process.kill(self)
+		Process.kill(self, sig)
 
 def _Tmp(mode = 'w+b', suffix = '-tmp'):
 	"Create a seekable, randomly named temp file (deleted automatically after use)."

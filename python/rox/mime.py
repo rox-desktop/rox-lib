@@ -91,7 +91,7 @@ app_exe = lookup('application', 'executable')
 _cache_uptodate = False
 
 def _cache_database():
-	global exts, globs, literals
+	global exts, globs, literals, _cache_database
 
 	_cache_uptodate = True
 
