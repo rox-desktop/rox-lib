@@ -1,6 +1,6 @@
 """This module provides features to help with debugging ROX applications."""
 
-import sys
+import sys, os
 import traceback
 import gobject
 import linecache
@@ -73,7 +73,10 @@ class ExceptionExplorer(g.Frame):
 		cell = g.CellRendererText()
 
 		column = g.TreeViewColumn('File', cell, text = ExceptionExplorer.FILE)
+		cell.set_property('xalign', 1)
 		tree.append_column(column)
+
+		cell = g.CellRendererText()
 		column = g.TreeViewColumn('Line', cell, text = ExceptionExplorer.LINE)
 		tree.append_column(column)
 		column = g.TreeViewColumn('Func', cell, text = ExceptionExplorer.FUNC)
@@ -84,42 +87,27 @@ class ExceptionExplorer(g.Frame):
 		inner.set_border_width(5)
 		inner.show_all()
 
+		frames = []
 		while tb is not None:
-			f = tb.tb_frame
-			lineno = traceback.tb_lineno(tb)
+			frames.insert(0, (tb.tb_frame, traceback.tb_lineno(tb)))
+			tb = tb.tb_next
+		f = self.tb.tb_frame
+		if f:
+			f = f.f_back	# Skip the reporting frame
+		while f is not None:
+			frames.append((f, f.f_lineno))
+			f = f.f_back
+
+		for f, lineno in frames:
 			co = f.f_code
 			filename = co.co_filename
 			name = co.co_name
 			line = linecache.getline(filename, lineno).strip()
+
+			filename = os.path.basename(filename)
 			
 			new = self.model.append()
 			self.model.set(new, ExceptionExplorer.FILE, filename,
 					    ExceptionExplorer.LINE, lineno,
 					    ExceptionExplorer.FUNC, name,
 					    ExceptionExplorer.CODE, line)
-			tb = tb.tb_next
-
-		f = self.tb.tb_frame
-		if f:
-			f = f.f_back	# Skip the frame that called report_exception
-			
-		while f is not None:
-			try:
-				lineno = f.f_lineno     # XXX Too bad if -O is used
-			except:
-				lineno = -1
-			co = f.f_code
-			filename = co.co_filename
-			name = co.co_name
-			line = linecache.getline(filename, lineno)
-			if line: line = line.strip()
-			else: line = None
-
-			new = self.model.append()
-			self.model.set(new, ExceptionExplorer.FILE, filename,
-					    ExceptionExplorer.LINE, lineno,
-					    ExceptionExplorer.FUNC, name,
-					    ExceptionExplorer.CODE, line)
-
-			f = f.f_back
-		
