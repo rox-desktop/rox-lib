@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+16-Aug-2003
+~~~~~~~~~~~
+Give windows a default icon from .DirIcon (Chris Shaffer).
+
 01-Aug-2003
 ~~~~~~~~~~~
 Try to get pygtk through ZeroInstall.
