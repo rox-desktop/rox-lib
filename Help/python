@@ -1,0 +1,147 @@
+To use the python libraries, add the filerox.py file to your application
+and include it right at the start (from the AppRun). This will find ROX-Lib
+and add ROX-Lib/python to sys.path.
+
+You can then include the other files, eg:
+
+	import findrox
+	from rox.MultipleChoice import MultipleChoice
+
+The following modules are provided:
+
+	choices		- Load and save user choices
+	MultipleChoice	- A message box with buttons along the bottom
+	SaveBox		- Drag and drop saving
+
+
+choices
+~~~~~~~
+The Choices system is explained at:
+	http://rox.sourceforge.net/choices.php3
+
+When you want to load some settings, use:
+
+	path = choices.load('MyProgram', 'Filename')
+
+If path is not None then load it, else use internal defaults.
+
+To save choices:
+
+	path = choices.save('MyProgram', 'Filename')
+
+If path is not None then save the choices there, else do not save (saving
+is disabled at the user's request).
+
+This creates any missing directories - pass 'create = 0' if you don't want
+that (eg, to show the user where you will save without actually saving).
+
+
+MultipleChoice
+~~~~~~~~~~~~~~
+This is a dialog box with a message and some buttons along the bottom.
+You can use it like this:
+
+	box = MultipleChoice('Really quit?', ['OK', 'Cancel'])
+	box.set_title('Question:')
+	result = box.wait()
+
+Result is 0 if OK was chosen, 1 if Cancel was chosen and -1 if the box was
+closed without a choice being made. When used this way, the box is modal
+(no other widgets in your program will do anything until the user makes a
+choice).
+
+You may also specify callback functions, by using a tuple instead of a string
+for a button. If you use use show() instead of wait() then the call returns
+immediately and the box isn't modal.
+
+	box = MultipleChoice('Really quit?', [('OK', mainquit), 'Cancel'])
+	box.set_title('Question:')
+	box.show()
+
+Finally, you can pass extra arguments to the button callback functions, make
+a callback function None to make an insensitive button and give a callback
+for when the box is cancelled:
+
+	box = MultipleChoice('Really quit?',
+				[('OK', mainquit), 
+				 ('Help', show_help, 'box_help'),
+				 ('Crash', None),
+				 'No'],
+				box_cancelled)
+	box.show()
+
+
+SaveBox
+~~~~~~~
+When you want to let the user save some data somewhere, use a SaveBox.
+You need to pass the constructor an object which can save and the MIME type
+(media and subtype) for the data:
+
+	box = SaveBox(my_doc, 'text', 'plain')
+	box.show()
+
+'my_doc.uri' is used for the default pathname.
+
+If the users tries to save the data as a file on the local machine then SaveBox
+will do:
+
+	my_doc.save_as(path)
+
+save_as() should return TRUE on success and FALSE on failure. Do not change
+the document's pathname - 'path' may be a scrap file.
+
+You may also provide:
+	
+	my_doc.send_raw(selection_data)
+
+This is called when the file is dragged to another application (or a remote
+filer). Set the selection data to the file contents.
+
+If the data is safely saved to the filesystem (locally or remotely) then
+
+	my_doc.set_uri(new_uri)
+
+is called. If the data is saved to another application then this isn't used.
+
+If the user tries to close a document window containing modified data then you
+may wish to create the savebox with 'discard = 1'. This adds a Discard button
+which, if clicked, does:
+
+	my_doc.discard()
+
+Example:
+
+	import findrox
+	from rox.SaveBox import SaveBox
+	from rox.support import report_exception
+	from gtk import *
+
+	class Doc:
+		uri = 'TextFile'
+		data = 'Some Text'
+
+		def save_as(self, path):
+			try:
+				file = open(path, 'w')
+				file.write(self.data)
+				file.close()
+			except:
+				report_exception()
+				return FALSE
+			return TRUE
+		
+		def set_uri(self, uri):
+			print "New URI:", uri
+			self.uri = uri
+		
+		def send_raw(self, selection):
+			selection.set(selection.target, 8, self.data)
+
+	doc = Doc()
+
+	box = SaveBox(doc, 'text', 'plain')
+	box.show()
+	box.connect('destroy', mainquit)
+
+	mainloop()
+

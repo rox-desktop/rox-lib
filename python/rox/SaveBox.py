@@ -4,25 +4,11 @@ from gtk import *
 from GDK import *
 import _gtk
 
-import __main__
+from MultipleChoice import MultipleChoice
 from support import *
-import choices
 
 TARGET_XDS = 0
 TARGET_RAW = 1
-
-def icon_for_type(window, media, subtype):
-	'''Search <Choices> for a suitable icon. Returns (pixmap, mask) '''
-	path = choices.load('MIME-icons', media + '_' + subtype + '.xpm')
-	if not path:
-		path = choices.load('MIME-icons', media + '.xpm')
-	if path:
-		p, m = load_pixmap(window, path)
-	else:
-		p = None
-	if not p:
-		p, m = load_pixmap(window, __main__.app_dir + '/icons/File.xpm')
-	return p, m
 
 def write_xds_property(context, value):
 	XdndDirectSave = _gtk.gdk_atom_intern('XdndDirectSave0', FALSE)

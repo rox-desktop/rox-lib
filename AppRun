@@ -10,15 +10,12 @@ path.append(app_dir + '/python')
 
 from rox.MultipleChoice import MultipleChoice
 
-def show_help(app_dir = app_dir):
+def show_help(app_dir):
 	import os
-	os.system("rox %s/Help" % app_dir)
-	mainquit()
+	os.system("rox %s/Help &" % app_dir)
 
 box = MultipleChoice(
 	"This library contains shared code used by other applications.",
-	(('Help', show_help), ('OK', mainquit)), mainquit)
+	(('Help', show_help, app_dir), 'OK'))
 box.set_title('ROX-Lib')
-box.show()
-
-mainloop()
+box.wait()
