@@ -100,13 +100,39 @@ def report_error(message, title = 'Error'):
 	error_box = MultipleChoice(message, ['OK'])
 	error_box.connect('destroy', clear_error_box)
 	error_box.set_title(title)
+	rox_toplevel_ref()
 	error_box.show()
 
 def clear_error_box(eb):
 	global error_box
 	error_box = None
+	rox_toplevel_unref()
 
 def report_exception():
 	type, value, tb = sys.exc_info()
 	ex = format_exception_only(type, value)
 	report_error(join(ex, ''))
+
+in_rox_mainloop = 0
+top_level_windows = 1
+
+def rox_mainloop():
+	if in_rox_mainloop:
+		raise Exception('Already in rox_mainloop!')
+	if top_level_windows > 0:
+		global in_rox_mainloop
+		in_rox_mainloop = 1
+		try:
+			mainloop()
+		finally:
+			in_rox_mainloop = 0
+
+def rox_toplevel_ref():
+	global top_level_windows
+	top_level_windows = top_level_windows + 1
+
+def rox_toplevel_unref():
+	global top_level_windows
+	top_level_windows = top_level_windows - 1
+	if top_level_windows == 0 and in_rox_mainloop:
+		mainquit()
