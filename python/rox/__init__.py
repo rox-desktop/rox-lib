@@ -147,10 +147,10 @@ def report_exception():
 	debug.show_exception(type, value, tb)
 
 _icon_path = os.path.join(app_dir, '.DirIcon')
+_window_icon=None
 if os.path.exists(_icon_path):
 	try:
 		g.window_set_default_icon_list(g.gdk.pixbuf_new_from_file(_icon_path))
-		_window_icon=None
 	except:
 		# Older pygtk
 		_window_icon = g.gdk.pixbuf_new_from_file(_icon_path)
