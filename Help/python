@@ -12,14 +12,14 @@ You can then include the other files, eg:
 
 The following modules are provided:
 
-	choices		- Load and save user choices
-	filer		- Open directories with ROX-Filer, etc
-	MultipleChoice	- A message box with buttons along the bottom
-	SaveBox		- Drag and drop saving
-	Toolbar		- A ROX-Filer style toolbar
-	XDSLoader	- Allow files to be dropped on your widgets
-	options		- Load, save and edit settings
-	Menu		- Menus with key-bindings
+	choices		 - Load and save user choices
+	filer		 - Open directories with ROX-Filer, etc
+	MultipleChoice	 - A message box with buttons along the bottom
+	SaveBox/SaveArea - Drag and drop saving
+	Toolbar		 - A ROX-Filer style toolbar
+	XDSLoader	 - Allow files to be dropped on your widgets
+	options		 - Load, save and edit settings
+	Menu		 - Menus with key-bindings
 
 
 choices
@@ -95,8 +95,8 @@ for when the box is cancelled:
 	box.show()
 
 
-SaveBox
-~~~~~~~
+SaveBox/SaveArea
+~~~~~~~~~~~~~~~~
 When you want to let the user save some data somewhere, use a SaveBox.
 You need to pass the constructor an object which can save, the default
 filename, and the MIME type for the data, eg:
@@ -155,6 +155,20 @@ Example:
 	
 	support.rox_toplevel_unref()
 	support.rox_mainloop()
+
+You may also use the save_area.set_type() method to change the MIME type
+and icon of the data being saved. This can be used if the application can
+save in several formats (perhaps selected from a menu in the savebox). The
+optional icon field is a pair (pixmap, mask) to use for the icon. If not given,
+or None, the appropriate icon for the type is used.
+
+	savebox.set_type('text/plain', icon = (pixmap, mask))
+
+The SaveArea widget is similar to SaveBox, but can be added to an existing
+window. In fact, a SaveBox is just a window with a SaveArea inside it.
+The widget is created and used in the same way, except that there is no
+'discard' field.
+
 
 Toolbar
 ~~~~~~~
