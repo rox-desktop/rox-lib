@@ -1,12 +1,11 @@
 # ROX-Lib2 Italian Translation.
 # Copyright @ 2003 Free Software Foundation, Inc.
 # Current translator: Yuri Bongiorno http://yuri.webhop.org, 2003.
-# Traduttori Italiani GNU:   http://www.linux.it/tp
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 1.9.9\n"
-"POT-Creation-Date: Tue Aug 19 16:39:25 2003\n"
-"PO-Revision-Date: 2003-08-19 16:40+0200\n"
+"POT-Creation-Date: 2003-08-30Tue Aug 19 16:39:25 2003\n"
+"PO-Revision-Date: 2003-08-30 16:40+0200\n"
 "Last-Translator: Yuri Bongiorno http://yuri.webhop.org\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +19,7 @@ msgstr "_Ripristina"
 #: OptionsBox.py:71
 msgid "Restore all options to how they were when the window was opened"
 msgstr ""
-"Ripristina tutte le opzioni come erano prima dell'apertura della finestra"
+"Rimette tutte le opzioni come erano prima dell'apertura della finestra"
 
 #: __init__.py:80
 msgid ""
@@ -101,7 +100,7 @@ msgid ""
 "application/octet-stream not provided)"
 msgstr ""
 "Impossibile caricare i file dalla macchina remota (file multipli o "
-"application/octet-stream non forniti)"
+"target application/octet-stream non forniti)"
 
 #: mime.py:50
 msgid ""
@@ -118,7 +117,7 @@ msgid ""
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 msgstr ""
 "Il comando «update-mime-database» ha restituito un codice di errore.\n"
-"Assicurarsi di avere installato il pacchetto shared MIME:\n"
+"Assicurarsi di avere installato il pacchetto shared MIME di freedesktop.org:\n"
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 
 #: saving.py:124
