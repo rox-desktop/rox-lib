@@ -141,12 +141,12 @@ class InstallList(rox.Dialog):
 
     def get_active(self):
 	"""Return list of selected types"""    
-        iter=self.model.get_iter_first()
+        titer=self.model.get_iter_first()
         active=[]
-        while iter:
-            if self.model.get_value(iter, _INSTALL):
-                active.append(self.model.get_value(iter, _TNAME))
-            iter=self.model.iter_next(iter)
+        while titer:
+            if self.model.get_value(titer, _INSTALL):
+                active.append(self.model.get_value(titer, _TNAME))
+            titer=self.model.iter_next(iter)
 
         return active
 
@@ -224,10 +224,10 @@ def install_send_to_types(types, application=None):
 	types=win.get_active()
 
 	for tname in types:
-		type=mime.lookup(tname)
+		mime_type=mime.lookup(tname)
 		
-		sname=choices.save('SendTo/.%s_%s' %  (type.media,
-							    type.subtype),
+		sname=choices.save('SendTo/.%s_%s' %  (mime_type.media,
+							    mime_type.subtype),
 					  win.aname)
 		os.symlink(application, sname+'.tmp')
 		os.rename(sname+'.tmp', sname)

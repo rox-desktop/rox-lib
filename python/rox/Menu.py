@@ -112,6 +112,13 @@ def _walk(items):
 				yield "/" + x.label + l, y
 
 class Menu:
+	"""A popup menu. This wraps GtkMenu. It handles setting, loading and saving of
+	keyboard-shortcuts, applies translations, and has a simpler API."""
+	fns = None		# List of MenuItem objects which can be activated
+	update_callbacks = None	# List of functions to call just before popping up the menu
+	accel_group = None
+	menu = None		# The actual GtkMenu
+	
 	def __init__(self, name, items):
 		"""names should be unique (eg, 'popup', 'main', etc).
 		items is a list of menu items:

@@ -49,13 +49,15 @@ def data(node):
 			if text.nodeType == Node.TEXT_NODE])
 
 class OptionsBox(g.Dialog):
+	"""A dialog box which lets the user edit the options. The file
+	Options.xml specifies the layout of this box."""
+
 	tips = None	# GtkTooltips
 	options = None	# The OptionGroup we are editing
 	revert = None	# Option -> old value
 	handlers = None	# Option -> (get, set)
+	_ = None	# Translation function (application's, not ROX-Lib's)
 
-	"""A dialog box which lets the user edit the options. The file
-	Options.xml specifies the layout of this box."""
 	def __init__(self, options_group, options_xml, translation = None):
 		"""options_xml is an XML file, usually <app_dir>/Options.xml,
 		which defines the layout of the OptionsBox.
@@ -234,8 +236,8 @@ class OptionsBox(g.Dialog):
 			selected = sel.get_selected()
 			if not selected:
 				return
-			model, iter = selected
-			page = model.get_value(iter, 1)
+			model, titer = selected
+			page = model.get_value(titer, 1)
 
 			notebook.set_current_page(page)
 		sel.connect('changed', change_page)
@@ -265,8 +267,8 @@ class OptionsBox(g.Dialog):
 		page.set_border_width(4)
 		self.notebook.append_page(page, g.Label('unused'))
 
-		iter = self.sections.append(parent)
-		self.sections.set(iter,
+		titer = self.sections.append(parent)
+		self.sections.set(titer,
 				0, self._(section.getAttribute('title')),
 				1, self.notebook.page_num(page))
 		for node in section.childNodes:
@@ -274,7 +276,7 @@ class OptionsBox(g.Dialog):
 				continue
 			name = node.localName
 			if name == 'section':
-				self.build_section(node, iter)
+				self.build_section(node, titer)
 			else:
 				self.build_widget(node, page)
 		page.show_all()
@@ -333,15 +335,15 @@ class OptionsBox(g.Dialog):
 
 	def build_label(self, node, label):
 		widget = g.Label(self._(data(node)))
-		help = int(node.getAttribute('help') or '0')
-		if help:
+		help_flag = int(node.getAttribute('help') or '0')
+		if help_flag:
 			widget.set_alignment(0, 0.5)
 		else:
 			widget.set_alignment(0, 1)
 		widget.set_justify(g.JUSTIFY_LEFT)
 		widget.set_line_wrap(True)
 
-		if help:
+		if help_flag:
 			hbox = g.HBox(False, 4)
 			image = g.Image()
 			image.set_from_stock(g.STOCK_DIALOG_INFO,
@@ -611,6 +613,7 @@ class OptionsBox(g.Dialog):
 		return [toggle]
 	
 class FontButton(g.Button):
+	"""A button that opens a GtkFontSelectionDialog"""
 	def __init__(self, option_box, option, title):
 		g.Button.__init__(self)
 		self.option_box = option_box
@@ -653,6 +656,7 @@ class FontButton(g.Button):
 		self.dialog.show()
 
 class ColourButton(g.Button):
+	"""A button that opens a GtkColorSelectionDialog"""
 	def __init__(self, option_box, option, title):
 		g.Button.__init__(self)
 		self.c_box = g.EventBox()

@@ -178,11 +178,11 @@ def get_type_by_name(path):
 		ext = ext[p+1:]
 		if ext in exts:
 			return exts[ext]
-	for (glob, type) in globs:
+	for (glob, mime_type) in globs:
 		if fnmatch.fnmatch(leaf, glob):
-			return type
+			return mime_type
 		if fnmatch.fnmatch(lleaf, glob):
-			return type
+			return mime_type
 	return None
 
 def get_type(path, follow=1, name_pri=100):

@@ -9,6 +9,7 @@ theme_dirs = [os.path.join(os.environ.get('HOME', '/'), '.icons')] + \
 		list(basedir.load_data_paths('icons'))
 
 class Index:
+	"""A theme's index.theme file."""
 	def __init__(self, dir):
 		self.dir = dir
 		sections = file(os.path.join(dir, "index.theme")).read().split('\n[')
@@ -39,6 +40,7 @@ class Index:
 		return self.sections.get(section, {}).get(key, None)
 
 class SubDir:
+	"""A subdirectory within a theme."""
 	def __init__(self, index, subdir):
 		icontype = index.get(subdir, 'Type')
 		self.name = subdir
@@ -56,6 +58,9 @@ class SubDir:
 			self.min_size = self.max_size = 100000
 
 class IconTheme:
+	"""Icon themes are located by searching through various directories. You can use an IconTheme
+	to convert an icon name into a suitable image."""
+	
 	def __init__(self, name):
 		self.name = name
 

@@ -159,7 +159,7 @@ class Process:
 		got = os.read(self.err_from_child, 100)
 		if got:
 			self.got_error_output(got)
-			return 1
+			return True
 
 		os.close(self.err_from_child)
 		g.input_remove(self.tag)
@@ -168,7 +168,7 @@ class Process:
 		pid, status = os.waitpid(self.child, 0)
 		self.child = None
 		self.child_died(status)
-		return
+		return False
 		
 	def child_died(self, status):
 		"""Called when the child died (actually, when the child
@@ -177,6 +177,8 @@ class Process:
 		returned by os.waitpid."""
 	
 class PipeThroughCommand(Process):
+	"""A Process that runs a command with given input and output (Python) streams."""
+
 	def __init__(self, command, src, dst):
 		"""Execute 'command' with src as stdin and writing to stream
 		dst. If either stream is not a fileno() stream, temporary files

@@ -61,6 +61,7 @@ def show_exception(type, value, tb, auto_details = False):
 			if savebox:
 				savebox.destroy()
 			def destroy(box):
+				global savebox	# For pychecker
 				savebox = None
 			from saving import StringSaver
 			savebox = StringSaver(bug_report, 'BugReport')
@@ -163,8 +164,8 @@ class ExceptionExplorer(g.Frame):
 		def selected_frame():
 			selected = sel.get_selected()
 			assert selected
-			model, iter = selected
-			frame, = model.get_path(iter)
+			model, titer = selected
+			frame, = model.get_path(titer)
 			return frames[frame][0]
 
 		vars = g.ListStore(str, str)
@@ -218,8 +219,8 @@ class ExceptionExplorer(g.Frame):
 			try:
 				info(`eval(expr, frame.f_locals, frame.f_globals)`)
 			except:
-				type, value = sys.exc_info()[:2]
-				brief = ''.join(traceback.format_exception_only(type, value))
+				extype, value = sys.exc_info()[:2]
+				brief = ''.join(traceback.format_exception_only(extype, value))
 				alert(brief)
 			entry.grab_focus()
 		expr.connect('activate', activate)

@@ -208,12 +208,13 @@ class Saveable:
 		raise Exception("Lazy programmer error: can't abort save!")
 
 class SaveArea(g.VBox):
+	"""A SaveArea contains the widgets used in a save box. You can use
+	this to put a savebox area in a larger window."""
+	
 	document = None		# The Saveable with the data
 	entry = None
 	initial_uri = None	# The pathname supplied to the constructor
 	
-	"""A SaveArea contains the widgets used in a save box. You can use
-	this to put a savebox area in a larger window."""
 	def __init__(self, document, uri, type):
 		"""'document' must be a subclass of Saveable.
 		'uri' is the file's current location, or a simple name (eg 'TextFile')
