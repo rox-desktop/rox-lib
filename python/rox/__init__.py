@@ -61,6 +61,8 @@ import i18n
 _roxlib_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 _ = i18n.translation(os.path.join(_roxlib_dir, 'Messages'))
 
+_old_sys_path = sys.path[:]
+
 try:
 	zhost = 'zero-install.sourceforge.net'
 	zpath = '/uri/0install/' + zhost
@@ -79,10 +81,17 @@ try:
 	import gtk; g = gtk	# Don't syntax error for python1.5
 	assert g.Window		# Ensure not 1.2 bindings
 except:
-	sys.stderr.write(_('The pygtk2 package (1.99.13 or later) must be '
+	try:
+		# Try again without Zero Install
+		sys.path = _old_sys_path
+		import pygtk; pygtk.require('2.0')
+		import gtk; g = gtk	# Don't syntax error for python1.5
+		assert g.Window		# Ensure not 1.2 bindings
+	except:
+		sys.stderr.write(_('The pygtk2 package (1.99.13 or later) must be '
 			   'installed to use this program:\n'
 			   'http://rox.sourceforge.net/rox_lib.php3\n'))
-	raise
+		raise
 
 # Put argv back the way it was, now that Gtk has initialised
 sys.argv[0] = _path

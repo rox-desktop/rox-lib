@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+11-Nov-2003
+~~~~~~~~~~~
+If we can't get pygtk through Zero Install, try the local copy.
+
 05-Nov-2003
 ~~~~~~~~~~~
 Added support in mime.py for an application to set MIME-type run
