@@ -1,0 +1,61 @@
+When an unexpected error occurs, ROX-Lib displays an error box with a short
+summary message and a Details button.
+
+Most errors are not fatal. The summary may tell you what the problem is on its
+own. For example, 'Permission denied' usually means you tried to save somewhere
+you shouldn't (you'll also see this if you try to save to a removeable disk
+without mounting it). In these cases, you can just click OK to continue.
+
+If you don't understand the cause of the error from the summary, click on the
+Details button for more information. The window expands to show more
+information, and two extra buttons appear:
+
+- 'Bug Report' lets you save the information in the window as a text file. You
+  can then email this to the program's author.
+
+- 'Forced Quit' quits without saving. Use this only if trying to exit the
+  program normally just brings up another error box.
+
+Above the buttons, three new areas appear. The top list shows exactly what the
+program was doing when the error occurred. Programs work by performing
+functions and sub-functions (and sub-sub-functions, etc). The first line is
+the most general task ('run the program'). If we take the example of saving
+from Edit to somewhere where we don't have write permission, the list shows
+these functions after dragging the file:
+
+?		- the whole program, not a specific function
+mainloop	- repeatedly handling requests from you and other programs
+drag_data_get	- handling a request from the filer to get the dragged data
+save_to_file	- the request is satisfied by saving the data to a file
+open_private	- a new file is opened for writing
+
+Note that all of these operations were still on-going. Each line is a part of
+the task on the line above (creating a new empty file is the first part of
+saving the data to a file, which is part of responding to the filer's request
+for data, which is part of running the program).
+
+Each of these functions has some information that it is working with. When you
+select a function in the list at the top, this information (its variables)
+are shown in the lower list. So, when 'open_private' is selected, we see a
+single variable:
+
+	Name	Value
+
+	path	'/cdrom/TextFile'
+
+This shows the name of the new file that it was trying to create. If you
+select 'drag_data_get', you'll see a variable called 'uri' with the value
+'file:///cdrom/TextFile'. This is where the filer asked the data to be saved
+to. drag_data_get saw that it was a file location, worked out the filename,
+and called save_to_file to handle it.
+
+Below the list of variables is a prompt (>>>) into which you can type a Python
+expression. This allows people who know Python to investigate the problem
+further. The expression is evaluated in the context of the selected stack
+frame. The stack trace also shows the file and line number of the instruction
+in each function that was being executed (for all but the last one, this is the
+instruction that called the function on the line below).
+
+If after looking at all this information you still don't understand what the
+problem is, click on Bug Report and save the stack trace somewhere, then email
+it to the author of the program.

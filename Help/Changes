@@ -2,6 +2,12 @@
 			Shared code for ROX applications
 			by Thomas Leonard
 			http://rox.sourceforge.net
+
+22-Sep-2004
+~~~~~~~~~~~
+Added a Help button to the exception dialog, which opens the new Help/Errors
+file (Thomas Leonard).
+
 06-Sep-2004
 ~~~~~~~~~~~
 Simplified su code and interface.

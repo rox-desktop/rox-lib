@@ -12,6 +12,9 @@ want it somewhere else, set the LIBDIRPATH environment variable to a
 colon separated list of directories to search for ROX-Lib2 and other
 libraries.
 
+Zero Install users don't have to do anything. Except for some very old
+ones, programs will get it directly through Zero Install.
+
 
 Introduction
 ~~~~~~~~~~~~

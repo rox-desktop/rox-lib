@@ -67,7 +67,7 @@ class AbortSave(rox.UserAbort):
 	it!)"""
 	def __init__(self, message):
 		self.message = message
-		rox.UserAbort(self, message)
+		rox.UserAbort.__init__(self, message)
 	
 	def show(self):
 		if self.message:

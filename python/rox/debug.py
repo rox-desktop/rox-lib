@@ -10,6 +10,12 @@ from rox import info, alert
 
 savebox = None
 
+def _show_debug_help():
+	from os.path import join, dirname
+	help = join(dirname(dirname(dirname(__file__))), 'Help', 'Errors')
+	from rox import filer
+	filer.spawn_rox((help,))
+
 def show_exception(type, value, tb, auto_details = False):
 	"""Display this exception in an error box. The user has the options
 	of ignoring the error, quitting the application and examining the
@@ -30,6 +36,7 @@ def show_exception(type, value, tb, auto_details = False):
 		button.show()
 		box.add_action_widget(button, DETAILS)
 
+	box.add_button(g.STOCK_HELP, g.RESPONSE_HELP)
 	box.add_button(g.STOCK_OK, g.RESPONSE_OK)
 	box.set_default_response(g.RESPONSE_OK)
 
@@ -70,6 +77,9 @@ def show_exception(type, value, tb, auto_details = False):
 			continue
 		if resp == QUIT:
 			sys.exit(1)
+		elif resp == g.RESPONSE_HELP:
+			_show_debug_help()
+			continue
 		assert resp == DETAILS
 		box.set_response_sensitive(DETAILS, False)
 
