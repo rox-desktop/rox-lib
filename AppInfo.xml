@@ -23,4 +23,18 @@
     <License label="Licenza"/>
     <Homepage label="Sito web"/>
   </About>
+  <About xml:lang="zh_CN">
+    <Purpose label="功能"/>
+    <Version label="版本"/>
+    <Author label="作者"/>
+    <License label="版权"/>
+    <Homepage label="网页"/>
+  </About>
+  <About xml:lang="zh_TW">
+    <Purpose label="功能"/>
+    <Version label="版本"/>
+    <Author label="作者"/>
+    <License label="版權"/>
+    <Homepage label="網頁"/>
+  </About>
 </AppInfo>

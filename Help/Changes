@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+23-Dec-2004
+~~~~~~~~~~~
+Added Chinese translation (Babyfai Cheung).
+
 11-Dec-2004
 ~~~~~~~~~~~
 Suppress warning when we use GtkItemFactory under pygtk 2.4 (Stephen Watson).
