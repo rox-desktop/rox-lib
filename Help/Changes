@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+18-Aug-2003
+~~~~~~~~~~~
+Better way to set the default icon.
+
 16-Aug-2003 (Release 1.9.9)
 ~~~~~~~~~~~
 Give windows a default icon from .DirIcon (Chris Shaffer).

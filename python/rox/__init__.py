@@ -148,9 +148,7 @@ def report_exception():
 
 _icon_path = os.path.join(app_dir, '.DirIcon')
 if os.path.exists(_icon_path):
-	window_icon = g.gdk.pixbuf_new_from_file(_icon_path)
-else:
-	window_icon = None
+	g.window_set_default_icon_list(g.gdk.pixbuf_new_from_file(_icon_path))
 del _icon_path
 
 class Window(g.Window):
@@ -161,9 +159,6 @@ class Window(g.Window):
 		apply(g.Window.__init__, args, kwargs)
 		toplevel_ref()
 		args[0].connect('destroy', toplevel_unref)
-
-		if window_icon:
-			args[0].set_icon(window_icon)
 
 class Dialog(g.Dialog):
 	"""This works in exactly the same way as a GtkDialog, except that
