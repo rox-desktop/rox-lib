@@ -148,7 +148,18 @@ def _import_glob_file(dir):
 
 for dir in mimedirs:
 	_import_glob_file(dir)
-	# XXX: globs should be sorted by length!
+
+def longest_first(a, b):
+	stra=a[0]
+	strb=b[0]
+	if len(stra)>len(strb):
+		return -1
+	elif len(stra)<len(strb):
+		return 1
+	return 0
+
+# Sort globs by length
+globs.sort(longest_first)
 
 def get_type_by_name(path):
 	"""Returns type of file by its name, or None if not known"""
@@ -266,3 +277,4 @@ if __name__=='__main__':
 	else:
 		for f in sys.argv[1:]:
 			test(f)
+	print globs
