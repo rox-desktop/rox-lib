@@ -323,13 +323,15 @@ class OptionsBox(g.Dialog):
 		frame.set_shadow_type(g.SHADOW_NONE)
 
 		# Make the label bold...
+		# (bug in pygtk => use set_markup)
 		label_widget = frame.get_label_widget()
-		attr = pango.AttrWeight(pango.WEIGHT_BOLD)
-		attr.start_index = 0
-		attr.end_index = -1
-		list = pango.AttrList()
-		list.insert(attr)
-		label_widget.set_attributes(list)
+		label_widget.set_markup('<b>' + label + '</b>')
+		#attr = pango.AttrWeight(pango.WEIGHT_BOLD)
+		#attr.start_index = 0
+		#attr.end_index = -1
+		#list = pango.AttrList()
+		#list.insert(attr)
+		#label_widget.set_attributes(list)
 
 		vbox = g.VBox(FALSE, 4)
 		vbox.set_border_width(12)

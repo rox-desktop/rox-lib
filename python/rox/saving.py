@@ -171,6 +171,12 @@ class Saveable:
 		if not hasattr(self.save_to_selection, '_rox_default'):
 			return 1	# Have user-provided save_to_file
 		return 0
+	
+	def save_cancelled(self):
+		"""If you multitask during a save (using a recursive mainloop) then the
+		user may click on the Cancel button. This function gets called if so, and
+		should cause the recursive mainloop to return."""
+		raise Exception("Lazy programmer error: can't abort save!")
 
 class SaveArea(g.VBox):
 	"""A SaveArea contains the widgets used in a save box. You can use
@@ -429,6 +435,7 @@ class SaveBox(g.Dialog):
 		self.set_border_width(1)
 
 		# Might as well make use of the new nested scopes ;-)
+		self.set_save_in_progress(0)
 		class BoxedArea(SaveArea):
 			def set_uri(area, uri):
 				document.set_uri(uri)
@@ -437,17 +444,17 @@ class SaveBox(g.Dialog):
 			def save_done(area):
 				document.save_done()
 				self.destroy()
+
+			def set_sensitive(area, sensitive):
+				if self.window:
+					# Might have been destroyed by now...
+					self.set_save_in_progress(not sensitive)
+					SaveArea.set_sensitive(area, sensitive)
 		save_area = BoxedArea(document, uri, type)
 		self.save_area = save_area
 
 		save_area.show_all()
 		self.build_main_area()
-
-		def key_press(window, event):
-			if event.keyval == g.keysyms.Escape:
-				self.destroy()
-				return 1
-		self.connect('key-press-event', key_press)
 
 		i = uri.rfind('/')
 		i = i + 1
@@ -457,6 +464,12 @@ class SaveBox(g.Dialog):
 		#save_area.entry.select_region(i, -1)
 
 		def got_response(widget, response):
+			if self.save_in_progress:
+				try:
+					document.save_cancelled()
+				except:
+					rox.report_exception()
+				return
 			if response == g.RESPONSE_CANCEL:
 				self.destroy()
 			elif response == g.RESPONSE_OK:
@@ -478,6 +491,14 @@ class SaveBox(g.Dialog):
 		"""Place self.save_area somewhere in self.vbox. Override this
 		for more complicated layouts."""
 		self.vbox.add(self.save_area)
+	
+	def set_save_in_progress(self, in_progress):
+		"""Called when saving starts and ends. Shade/unshade any widgets as
+		required. Make sure you call the default method too!
+		Not called if box is destroyed from a recursive mainloop inside
+		a save_to_* function."""
+		self.set_response_sensitive(g.RESPONSE_OK, not in_progress)
+		self.save_in_progress = in_progress
 
 class StringSaver(SaveBox, Saveable):
 	"""A very simple SaveBox which saves the string passed to its constructor."""
@@ -488,3 +509,107 @@ class StringSaver(SaveBox, Saveable):
 	
 	def save_to_stream(self, stream):
 		stream.write(self.string)
+
+class SaveFilter(Saveable):
+	"""This Saveable runs a process in the background to generate the
+	save data. Any python streams can be used as the input to and
+	output from the process.
+	
+	The output from the subprocess is saved to the output stream (either
+	directly, for fileno() streams, or via another temporary file).
+
+	If the process returns a non-zero exit status or writes to stderr,
+	the save fails (messages written to stderr are displayed).
+	"""
+
+	stdin = None
+
+	def set_stdin(self, stream):
+		"""Use 'stream' as stdin for the process. If stream is not a
+		seekable fileno() stream then it is copied to a temporary file
+		at this point. If None, the child process will get /dev/null on
+		stdin."""
+		if stream is not None:
+			if hasattr(stream, 'fileno') and hasattr(stream, 'seek'):
+				self.stdin = stream
+			else:
+				import tempfile
+				import shutil
+				self.stdin = tempfile.TemporaryFile()
+				shutil.copyfileobj(stream, self.stdin)
+		else:
+			self.stdin = None
+	
+	def save_to_stream(self, stream):
+		from processes import Process
+		from cStringIO import StringIO
+		errors = StringIO()
+		done = []
+
+		# Get the FD for the output, creating a tmp file if needed
+		if hasattr(stream, 'fileno'):
+			stdout_fileno = stream.fileno()
+			tmp = None
+		else:
+			import tempfile
+			tmp = tempfile.TemporaryFile()
+			stdout_fileno = tmp.fileno()
+
+		# Get the FD for the input, creating a tmp file if needed
+		if self.stdin:
+			stdin_fileno = self.stdin.fileno()
+			self.stdin.seek(0)
+		else:
+			stdin_fileno = os.open('/dev/null', os.O_RDONLY)
+			
+		class FilterProcess(Process):
+			def child_post_fork(self):
+				if stdout_fileno != 1:
+					os.dup2(stdout_fileno, 1)
+					os.close(stdout_fileno)
+				if stdin_fileno is not None and stdin_fileno != 0:
+					os.dup2(stdin_fileno, 0)
+					os.close(stdin_fileno)
+			def got_error_output(self, data):
+				errors.write(data)
+			def child_died(self, status):
+				done.append(status)
+				g.mainquit()
+			def child_run(proc):
+				self.child_run()
+		self.process = FilterProcess()
+		self.killed = 0
+		self.process.start()
+		while not done:
+			g.mainloop()
+		self.process = None
+		status = done[0]
+		if self.killed:
+			print >> errors, '\nProcess terminated at user request'
+		error = errors.getvalue().strip()
+		if error:
+			raise AbortSave(error)
+		if status:
+			raise AbortSave('child_run() returned an error code, but no error message!')
+		if tmp:
+			# Data went to a temp file
+			tmp.seek(0)
+			stream.write(tmp.read())
+
+	def child_run(self):
+		"""This is run in the child process. The default method runs 'self.command'
+		using os.system() and prints a message to stderr if the exit code is non-zero.
+		DO NOT call gtk functions here!
+
+		Be careful to escape shell special characters when inserting filenames!
+		"""
+		command = self.command
+		if os.system(command):
+			print >>sys.stderr, "Command:\n%s\nreturned an error code" % command
+		os._exit(0)	# Writing to stderr indicates error...
+	
+	def save_cancelled(self):
+		"""Send SIGTERM to the child processes."""
+		if self.process:
+			self.killed = 1
+			self.process.kill()

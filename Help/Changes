@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+16-Dec-2002
+~~~~~~~~~~~
+Work around bug in some versions of pygtk that stopped the options window
+from working.
+
 12-Dec-2002 (Release 13-Dec-2002)
 ~~~~~~~~~~~
 Upgrade Options box to new style.

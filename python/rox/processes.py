@@ -11,8 +11,6 @@ class Process:
 	run another process in the background, but still be able to
 	communicate with it."""
 	def __init__(self):
-		from cStringIO import StringIO
-		self.errors = StringIO()
 		self.child = None
 	
 	def start(self):
