@@ -327,8 +327,31 @@ class OptionsBox(g.Dialog):
 	# and, if it's for an Option, set self.handlers[option] = (get, set).
 
 	def build_label(self, node, label):
-		"""<label>Text</label>"""
-		return [g.Label(self._(data(node)))]
+		widget = g.Label(self._(data(node)))
+		help = int(node.getAttribute('help') or '0')
+		if help:
+			widget.set_alignment(0, 0.5)
+		else:
+			widget.set_alignment(0, 1)
+		widget.set_justify(g.JUSTIFY_LEFT)
+		widget.set_line_wrap(True)
+
+		if help:
+			hbox = g.HBox(False, 4)
+			image = g.Image()
+			image.set_from_stock(g.STOCK_DIALOG_INFO,
+						g.ICON_SIZE_BUTTON)
+			align = g.Alignment(0, 0, 0, 0)
+
+			align.add(image)
+			hbox.pack_start(align, False, True, 0)
+			hbox.pack_start(widget, False, True, 0)
+
+			spacer = g.EventBox()
+			spacer.set_size_request(6, 6)
+
+			return [hbox, spacer]
+		return [widget]
 	
 	def build_spacer(self, node, label):
 		"""<spacer/>"""

@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+15-Apr-2004
+~~~~~~~~~~~
+Better <label> widgets (wrapping and icon). Taken from LookAndFeel.
+
 20-Mar-2004
 ~~~~~~~~~~~
 Stop themes from overriding the display of the colour-picker buttons in
