@@ -1,3 +1,11 @@
+"""The OptionsBox widget is used to edit an OptionGroup.
+For simple applications, rox.edit_options() provides an
+easy way to edit the options.
+
+You can sub-class OptionsBox to provide new types of
+option widget.
+"""
+
 from rox import g, options
 import rox
 from xml.dom import Node, minidom
@@ -9,11 +17,48 @@ TRUE = g.TRUE
 REVERT = 1
 
 def data(node):
+	"""Return all the text directly inside this DOM Node."""
 	return ''.join([text.nodeValue for text in node.childNodes
 			if text.nodeType == Node.TEXT_NODE])
 
 class OptionsBox(g.Dialog):
+	"""OptionsBox can be sub-classed to provide your own widgets, by
+	creating extra build_* functions. Each build funtion takes a DOM
+	Element from the <app_dir>/Options.xml file and returns a list of
+	GtkWidgets to add to the box. The function should be named after
+	the element (<foo> -> def build_foo()).
+	
+	When creating the widget, self.handlers[option] should be set to
+	a pair of functions (get, set) called to get and set the value
+	shown in the widget.
+
+	When the widget is modified, call self.check_widget(option) to
+	update the stored values.
+	"""
 	def __init__(self, options_group, options_xml):
+		"""options_xml is an XML file, usually <app_dir>/Options.xml,
+		which defines the layout of the OptionsBox.
+
+		It contains an <options> root element containing (nested)
+		<section> elements. Each <section> contains a number of widgets,
+		some of which correspond to options. The build_* functions are
+		used to create them.
+
+		Example:
+
+		<?xml version='1.0'?>
+		<options>
+		  <section title='First section'>
+		    <label>Here are some options</label>
+		    <entry name='default_name' label='Default file name'>
+		      When saving an untitled file, use this name as the default.
+		    </entry>
+		    <section title='Nested section'>
+		      ...
+		    </section>
+		  </section>
+		</options>
+		"""
 		assert isinstance(options_group, options.OptionGroup)
 
 		g.Dialog.__init__(self)
@@ -30,7 +75,6 @@ class OptionsBox(g.Dialog):
 					  'when the window was opened', "XXX")
 
 		self.add_button(g.STOCK_OK, g.RESPONSE_OK)
-		self.connect('response', self.got_response)
 
 		doc = minidom.parse(options_xml)
 		assert doc.documentElement.localName == 'options'
@@ -39,28 +83,44 @@ class OptionsBox(g.Dialog):
 		self.revert = {}	# Option -> old value
 		
 		self.build_window_frame()
-		self.build_sections(doc.documentElement)
+
+		# Add each section
+		n = 0
+		for section in doc.documentElement.childNodes:
+			if section.nodeType != Node.ELEMENT_NODE:
+				continue
+			if section.localName != 'section':
+				print "Unknown section", section
+				continue
+			self.build_section(section, parent)
+			n += 1
+		if n > 1:
+			self.tree_view.expand_all()
+		else:
+			self.sections_swin.hide()
 
 		self.updating = 0
 
+		def destroyed(widget):
+			rox.toplevel_unref()
+			if self.changed():
+				self.options.save()
 		self.connect('destroy', self.destroyed)
-	
-	def destroyed(self, widget):
-		rox.toplevel_unref()
-		if self.changed():
-			self.options.save()
-	
-	def got_response(self, widget, response):
-		if response == g.RESPONSE_OK:
-			self.destroy()
-		elif response == REVERT:
-			for o in self.options:
-				o.set(self.revert[o])
-			self.update_widgets()
-			self.options.notify()
-			self.update_revert()
+
+		def got_response(self, widget, response):
+			if response == g.RESPONSE_OK:
+				self.destroy()
+			elif response == REVERT:
+				for o in self.options:
+					o._set(self.revert[o])
+				self.update_widgets()
+				self.options.notify()
+				self.update_revert()
+		self.connect('response', self.got_response)
 	
 	def open(self):
+		"""Show the window, updating all the widgets at the same
+		time. Use this instead of show()."""
 		rox.toplevel_ref()
 		for option in self.options:
 			self.revert[option] = option.value
@@ -69,18 +129,19 @@ class OptionsBox(g.Dialog):
 		self.show()
 	
 	def update_revert(self):
-		"Shade/unshade the Revert button."
+		"Shade/unshade the Revert button. Internal."
 		self.set_response_sensitive(REVERT, self.changed())
 	
 	def changed(self):
-		"Check whether any options have different values."
+		"""Check whether any options have different values (ie, whether Revert
+		will do anything)."""
 		for option in self.options:
 			if option.value != self.revert[option]:
 				return TRUE
 		return FALSE
 	
 	def update_widgets(self):
-		"Make widgets show current values."
+		"Make widgets show current values. Internal."
 		assert not self.updating
 		self.updating = 1
 		
@@ -96,6 +157,7 @@ class OptionsBox(g.Dialog):
 			self.updating = 0
 	
 	def build_window_frame(self):
+		"Create the main structure of the window."
 		hbox = g.HBox(FALSE, 4)
 		self.vbox.pack_start(hbox, TRUE, TRUE, 0)
 
@@ -138,7 +200,7 @@ class OptionsBox(g.Dialog):
 		self.vbox.show_all()
 	
 	def check_widget(self, option):
-		"A widget call this when the user changes its value."
+		"A widgets call this when the user changes its value."
 		if self.updating:
 			return
 
@@ -149,26 +211,13 @@ class OptionsBox(g.Dialog):
 		if new == option.value:
 			return
 
-		option.set(new)
+		option._set(new)
 		self.options.notify()
 		self.update_revert()
 	
-	def build_sections(self, options, parent = None):
-		n = 0
-		for section in options.childNodes:
-			if section.nodeType != Node.ELEMENT_NODE:
-				continue
-			if section.localName != 'section':
-				print "Unknown section", section
-				continue
-			self.build_section(section, parent)
-			n += 1
-		if n > 1:
-			self.tree_view.expand_all()
-		else:
-			self.sections_swin.hide()
-	
 	def build_section(self, section, parent):
+		"""Create a new page for the notebook and a new entry in the
+		sections tree, and build all the widgets inside the page."""
 		page = g.VBox(FALSE, 4)
 		page.set_border_width(4)
 		self.notebook.append_page(page, g.Label('unused'))
@@ -186,6 +235,8 @@ class OptionsBox(g.Dialog):
 		page.show_all()
 	
 	def build_widget(self, node, box):
+		"""Dispatches the job of dealing with a DOM Node to the
+		appropriate build_* function."""
 		label = node.getAttribute('label')
 		name = node.getAttribute('name')
 
@@ -210,6 +261,7 @@ class OptionsBox(g.Dialog):
 				box.pack_start(w, FALSE, TRUE, 0)
 		
 	def may_add_tip(self, widget, node):
+		"""If 'node' contains any text, use that as the tip for 'widget'."""
 		if node.childNodes:
 			data = ''.join([n.nodeValue for n in node.childNodes]).strip()
 		else:
@@ -224,19 +276,24 @@ class OptionsBox(g.Dialog):
 	# and, if it's for an Option, set self.handlers[option] = (get, set).
 
 	def build_label(self, node, label):
+		"""<label>Text</label>"""
 		return [g.Label(data(node))]
 	
 	def build_spacer(self, node, label):
+		"""<spacer/>"""
 		eb = g.EventBox()
 		eb.set_size_request(8, 8)
 		return [eb]
 
 	def build_hbox(self, node, label):
+		"""<hbox>...</hbox> to layout child widgets horizontally."""
 		self.do_box(node, label, g.HBox(FALSE, 4))
 	def build_vbox(self, node, label):
+		"""<vbox>...</vbox> to layout child widgets vertically."""
 		self.do_box(node, label, g.VBox(FALSE, 0))
 		
 	def do_box(self, node, label, widget):
+		"Helper function for building hbox, vbox and frame widgets."
 		if label:
 			widget.pack_start(g.Label(label), FALSE, TRUE, 4)
 
@@ -247,6 +304,8 @@ class OptionsBox(g.Dialog):
 		return [widget]
 
 	def build_frame(self, node, label):
+		"""<frame label='Title'>...</frame> to put a border around a group
+		of options."""
 		frame = g.Frame(label)
 		vbox = g.VBox(FALSE, 0)
 		vbox.set_border_width(4)
@@ -257,6 +316,7 @@ class OptionsBox(g.Dialog):
 		return [frame]
 
 	def build_entry(self, node, label, option):
+		"<entry name='...' label='...'>Tooltip</entry>"
 		box = g.HBox(FALSE, 4)
 		entry = g.Entry()
 
@@ -281,6 +341,7 @@ class OptionsBox(g.Dialog):
 		return [box or entry]
 
 	def build_font(self, node, label, option):
+		"<font name='...' label='...'>Tooltip</font>"
 		button = FontButton(self, option, label)
 
 		self.may_add_tip(button, node)
@@ -294,6 +355,7 @@ class OptionsBox(g.Dialog):
 		return [hbox]
 
 	def build_colour(self, node, label, option):
+		"<colour name='...' label='...'>Tooltip</colour>"
 		button = ColourButton(self, option, label)
 
 		self.may_add_tip(button, node)
@@ -307,6 +369,8 @@ class OptionsBox(g.Dialog):
 		return [hbox]
 	
 	def build_numentry(self, node, label, option):
+		"""<numentry name='...' label='...' min='0' max='100' step='1'>Tooltip</numentry>.
+		Lets the user choose a number from min to max."""
 		minv = int(node.getAttribute('min'))
 		maxv = int(node.getAttribute('max'))
 		step = node.getAttribute('step')
@@ -339,6 +403,11 @@ class OptionsBox(g.Dialog):
 		return [hbox]
 	
 	def build_radio_group(self, node, label, option):
+		"""Build a list of radio buttons, only one of which may be selected.
+		<radio-group name='...'>
+		  <radio value='...' label='...'>Tooltip</radio>
+		  <radio value='...' label='...'>Tooltip</radio>
+		</radio-group>"""
 		radios = []
 		values = []
 		button = None
@@ -368,6 +437,7 @@ class OptionsBox(g.Dialog):
 		return radios
 	
 	def build_toggle(self, node, label, option):
+		"<toggle name='...' label='...'>Tooltip</toggle>"
 		toggle = g.CheckButton(label)
 		self.may_add_tip(toggle, node)
 

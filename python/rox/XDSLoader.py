@@ -1,3 +1,6 @@
+"""ROX applications should provide good drag-and-drop support. Use this module
+to allow drops onto widgets in your application."""
+
 from rox import g, alert, get_local_path
 
 gdk = g.gdk
@@ -33,6 +36,7 @@ class XDSLoader:
 		self.xds_proxy_for(self)
 	
 	def xds_proxy_for(self, widget):
+		"Handle drops on this widget as if they were to 'self'."
 		# (Konqueror requires ACTION_MOVE)
 		widget.drag_dest_set(g.DEST_DEFAULT_MOTION | g.DEST_DEFAULT_HIGHLIGHT,
 				self.targets,
@@ -42,7 +46,7 @@ class XDSLoader:
 
 
 	def xds_data_received(self, widget, context, x, y, selection, info, time):
-		print "xds_data_received!"
+		"Called when we get some data. Internal."
 		if info == TARGET_RAW:
 			self.xds_load_from_selection(selection)
 		elif info == TARGET_URILIST:
@@ -56,6 +60,9 @@ class XDSLoader:
 		return 1
 	
 	def xds_load_uris(self, uris):
+		"""Try to load each URI in the list. Override this if you can handle URIs
+		directly. The default method passes each local path to xds_load_from_file()
+		and displays an error for anything else."""
 		paths = []
 		for uri in uris:
 			path = get_local_path(uri)
@@ -67,6 +74,8 @@ class XDSLoader:
 			self.xds_load_from_file(path)
 	
 	def xds_load_from_file(self, path):
+		"""Try to load this local file. Override this if you have a better way
+		to load files. The default method loads the file and calls xds_load_data()."""
 		try:
 			file = open(path, 'rb')
 			data = file.read()
@@ -77,4 +86,12 @@ class XDSLoader:
 		self.xds_load_data(data)
 	
 	def xds_load_from_selection(self, selection):
+		"""Try to load this selection (data from another application). The default
+		fetches the data in one go and calls xds_load_data()."""
 		self.xds_load_data(selection.data)
+	
+	def xds_load_data(self, data):
+		"""Called when we get any data sent via drag-and-drop in any way (local
+		file or remote application transfer). You should override this and do
+		something with the data."""
+		alert('Got some data, but missing code to handle it!')

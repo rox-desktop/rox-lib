@@ -1,3 +1,33 @@
+"""To use ROX-Lib2 you need to copy the findrox.py script into your application
+directory and import that before anything else. This module will locate
+ROX-Lib2 and add ROX-Lib2/python to sys.path. If ROX-Lib2 is not found, it
+will display a suitable error and quit.
+
+Since the name of the gtk2 module can vary, it is best to import it from rox,
+where it is named 'g'.
+
+The AppRun script of a simple application might look like this:
+
+	import findrox
+	import rox
+	from rox import g
+
+	window = g.Window()
+	rox.toplevel_ref()
+	window.connect('destroy', lambda w: rox.toplevel_unref())
+	window.show()
+
+	rox.mainloop()
+
+This program creates and displays a GtkWindow. When it is destroyed, the
+toplevel_unref function will cause rox.mainloop() to return.
+
+Other useful values from this module are:
+
+TRUE and FALSE  (copied from g.TRUE and g.FALSE as a convenience), and
+'app_dir', which is the absolute pathname of your application (extracted from
+sys.argv)."""
+
 import sys, os
 
 try:
@@ -10,10 +40,10 @@ except:
 TRUE = g.TRUE
 FALSE = g.FALSE
 
-app_dir = os.path.dirname(sys.argv[0])
+app_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
 
 def alert(message):
-	"Display message in an error box."
+	"Display message in an error box. Return when the user closes the box."
 	toplevel_ref()
 	box = g.MessageDialog(None, 0, g.MESSAGE_ERROR, g.BUTTONS_OK, message)
 	box.set_position(g.WIN_POS_CENTER)
@@ -23,12 +53,13 @@ def alert(message):
 	toplevel_unref()
 
 def croak(message):
-	"Display message in an error box, then die."
+	"""Display message in an error box, then quit the program, returning
+	with a non-zero exit status."""
 	alert(message)
 	sys.exit(1)
 
 def info(message):
-	"Display informational message."
+	"Display informational message. Returns when the user closes the box."
 	toplevel_ref()
 	box = g.MessageDialog(None, 0, g.MESSAGE_INFO, g.BUTTONS_OK, message)
 	box.set_position(g.WIN_POS_CENTER)
@@ -38,8 +69,11 @@ def info(message):
 	toplevel_unref()
 
 def confirm(message, stock_icon, action = None):
-	"Display a <Cancel>/<Action> dialog. Returns 1 if the user chooses the "
-	"action."
+	"""Display a <Cancel>/<Action> dialog. Result is true if the user
+	chooses the action, false otherwise. If action is given then that
+	is used as the text instead of the default for the stock item. Eg:
+	if rox.confirm('Really delete everything?', g.STOCK_DELETE): delete()
+	"""
 	toplevel_ref()
 	box = g.MessageDialog(None, 0, g.MESSAGE_QUESTION,
 				g.BUTTONS_CANCEL, message)
@@ -59,6 +93,9 @@ def confirm(message, stock_icon, action = None):
 	return resp == g.RESPONSE_OK
 
 def report_exception():
+	"""Display the current python exception in an error box, returning
+	when the user closes the box. This is useful in the 'except' clause
+	of a 'try' block."""
 	import traceback
 	type, value, tb = sys.exc_info()
 	traceback.print_exception(type, value, tb)
@@ -66,8 +103,13 @@ def report_exception():
 	alert(''.join(ex))
 
 class ButtonMixed(g.Button):
-	"A button with a stock icon, but any label."
+	"""A button with a standard stock icon, but any label. This is useful
+	when you want to express a concept similar to one of the stock ones."""
 	def __init__(self, stock, message):
+		"""Specify the icon and text for the new button. The text
+		may specify the mnemonic for the widget by putting a _ before
+		the letter, eg:
+		button = ButtonMixed(g.STOCK_DELETE, '_Delete message')."""
 		g.Button.__init__(self)
 	
 		label = g.Label('')
@@ -88,6 +130,9 @@ class ButtonMixed(g.Button):
 _toplevel_windows = 0
 _in_mainloops = 0
 def mainloop():
+	"""This is a wrapper around the gtk2.mainloop function. It only runs
+	the loop if there are top level references, and exits when
+	rox.toplevel_unref() reduces the count to zero."""
 	global _toplevel_windows, _in_mainloops
 
 	_in_mainloops += 1
@@ -98,10 +143,15 @@ def mainloop():
 		_in_mainloops -= 1
 
 def toplevel_ref():
+	"""Increment the toplevel ref count. rox.mainloop() won't exit until
+	toplevel_unref() is called the same number of times."""
 	global _toplevel_windows
 	_toplevel_windows += 1
 
 def toplevel_unref():
+	"""Decrement the toplevel ref count. If this is called while in
+	rox.mainloop() and the count has reached zero, then rox.mainloop()
+	will exit."""
 	global _toplevel_windows
 	assert _toplevel_windows > 0
 	_toplevel_windows -= 1
@@ -110,6 +160,9 @@ def toplevel_unref():
 
 _host_name = None
 def our_host_name():
+	"""Try to return the canonical name for this computer. This is used
+	in the drag-and-drop protocol to work out whether a drop is coming from
+	a remote machine (and therefore has to be fetched differently)."""
 	from socket import gethostbyaddr, gethostname
 	global _host_name
 	if _host_name:
@@ -127,8 +180,8 @@ def our_host_name():
 		return "localhost"
 	
 def get_local_path(uri):
-	"Convert uri to a local path and return, if possible. Otherwise,"
-	"return None."
+	"""Convert 'uri' to a local path and return, if possible. If 'uri'
+	is a resource on a remote machine, return None."""
 	if not uri:
 		return None
 
@@ -153,6 +206,11 @@ def get_local_path(uri):
 
 app_options = None
 def setup_app_options(program, leaf = 'Options.xml'):
+	"""Most applications only have one set of options. This function can be
+	used to set up the default group. 'program' is the name of the
+	directory to use in <Choices> and 'leaf' is the name of the file used
+	to store the group. You can refer to the group using rox.app_options.
+	See rox.options.OptionGroup."""
 	global app_options
 	assert not app_options
 	from options import OptionGroup
@@ -160,8 +218,10 @@ def setup_app_options(program, leaf = 'Options.xml'):
 
 _options_box = None
 def edit_options(options_file = None):
-	"""Edit the app_options using the GUI specified in 'options_file'
-	 (default <app_dir>/Options.xml)"""
+	"""Edit the app_options (set using setup_app_options()) using the GUI
+	specified in 'options_file' (default <app_dir>/Options.xml).
+	If this function is called again while the box is still open, the
+	old box will be redisplayed to the user."""
 	assert app_options
 
 	global _options_box
