@@ -197,7 +197,8 @@ class OptionsBox(g.Dialog):
 				print "Unknown option '%s'" % name
 
 		try:
-			fn = getattr(self, 'build_' + node.localName)
+			name = node.localName.replace('-', '_')
+			fn = getattr(self, 'build_' + name)
 		except AttributeError:
 			print "Unknown widget type '%s'" % node.localName
 		else:
@@ -210,7 +211,7 @@ class OptionsBox(g.Dialog):
 		
 	def may_add_tip(self, widget, node):
 		if node.childNodes:
-			data = node.childNodes[0].nodeValue.strip()
+			data = ''.join([n.nodeValue for n in node.childNodes]).strip()
 		else:
 			data = None
 		if data:
@@ -239,12 +240,22 @@ class OptionsBox(g.Dialog):
 		if label:
 			widget.pack_start(g.Label(label), FALSE, TRUE, 4)
 
-		for child in widget.childNodes:
+		for child in node.childNodes:
 			if child.nodeType == Node.ELEMENT_NODE:
 				self.build_widget(child, widget)
 
 		return [widget]
-		
+
+	def build_frame(self, node, label):
+		frame = g.Frame(label)
+		vbox = g.VBox(FALSE, 0)
+		vbox.set_border_width(4)
+		frame.add(vbox)
+
+		self.do_box(node, None, vbox)
+
+		return [frame]
+
 	def build_entry(self, node, label, option):
 		box = g.HBox(FALSE, 4)
 		entry = g.Entry()
@@ -269,12 +280,6 @@ class OptionsBox(g.Dialog):
 
 		return [box or entry]
 
-	def set_font(self, font, value):
-		font.set_value(value)
-	
-	def get_font(self, font):
-		return font.get_value()
-	
 	def build_font(self, node, label, option):
 		button = FontButton(self, option, label)
 
@@ -300,7 +305,68 @@ class OptionsBox(g.Dialog):
 		self.handlers[option] = (button.get, button.set)
 
 		return [hbox]
+	
+	def build_numentry(self, node, label, option):
+		minv = int(node.getAttribute('min'))
+		maxv = int(node.getAttribute('max'))
+		step = node.getAttribute('step')
+		if step:
+			step = int(step)
+		else:
+			step = 1
+		unit = node.getAttribute('unit')
 
+		hbox = g.HBox(FALSE, 4)
+		if label:
+			widget = g.Label(label)
+			widget.set_alignment(1.0, 0.5)
+			hbox.pack_start(widget, FALSE, TRUE, 0)
+
+		spin = g.SpinButton(g.Adjustment(minv, minv, maxv, step))
+		spin.set_width_chars(max(len(str(minv)), len(str(maxv))))
+		hbox.pack_start(spin, FALSE, TRUE, 0)
+		self.may_add_tip(spin, node)
+
+		if unit:
+			hbox.pack_start(g.Label(unit), FALSE, TRUE, 0)
+
+		self.handlers[option] = (
+			lambda: str(spin.get_value()),
+			lambda: spin.set_value(option.int_value))
+
+		spin.connect('value-changed', lambda w: self.check_widget(option))
+
+		return [hbox]
+	
+	def build_radio_group(self, node, label, option):
+		radios = []
+		values = []
+		button = None
+		for radio in node.getElementsByTagName('radio'):
+			label = radio.getAttribute('label')
+			button = g.RadioButton(button, label)
+			self.may_add_tip(button, radio)
+			radios.append(button)
+			values.append(radio.getAttribute('value'))
+			button.connect('toggled', lambda b: self.check_widget(option))
+
+		def set():
+			try:
+				i = values.index(option.value)
+			except:
+				print "Value '%s' not in radio group!" % option.value
+				i = 0
+			radios[i].set_active(TRUE)
+		def get():
+			for r, v in zip(radios, values):
+				if r.get_active():
+					return v
+			raise Exception('Nothing selected!')
+
+		self.handlers[option] = (get, set)
+			
+		return radios
+	
 	def set_toggle(self, toggle, value):
 		toggle.set_active(not not value)
 	def get_toggle(self, toggle):

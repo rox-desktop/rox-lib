@@ -41,6 +41,7 @@ class Option:
 		self.default_value = str(value)
 		self.registered = 0
 		self.value = None
+		self.int_value = None
 	
 	def register(self):
 		"Called by OptionGroup"
@@ -53,6 +54,10 @@ class Option:
 		if self.value != value:
 			self.value = str(value)
 			self.has_changed = 1
+			try:
+				self.int_value = int(float(self.value))
+			except:
+				self.int_value = -1
 	
 	def to_xml(self, parent):
 		doc = parent.ownerDocument
