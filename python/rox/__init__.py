@@ -285,6 +285,8 @@ except:
 	        "(this is a small package; the full PyXML package is not "
 	        "required)."))
 
-if g.pygtk_version[:2] == (1, 99) and g.pygtk_version[2] < 13:
+if g.pygtk_version[:2] == (1, 99) and g.pygtk_version[2] < 12:
+	# 1.99.12 is really too old too, but RH8.0 uses it so we'll have
+	# to work around any problems...
 	sys.stderr.write('Your version of pygtk (%d.%d.%d) is too old. '
 	      'Things might not work correctly.' % g.pygtk_version)
