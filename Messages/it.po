@@ -1,22 +1,22 @@
 # ROX-Lib2 Italian Translation.
 # Copyright @ 2003 Free Software Foundation, Inc.
-# Current translator: Yuri Bongiorno http://yuri.webhop.org, 2003.
+# Current translator: Yuri Bongiorno http://yuri.webhop.org, 2004.
 msgid ""
 msgstr ""
-"Project-Id-Version: ROX-Lib2 1.9.12\n"
-"POT-Creation-Date: 2004-02-08 16:40+0200\n"
-"PO-Revision-Date: 2004-02-08 16:40+0200\n"
+"Project-Id-Version: ROX-Lib2 1.9.13\n"
+"POT-Creation-Date: 2004-03-18 16:40+0200\n"
+"PO-Revision-Date: 2004-03-18 16:40+0200\n"
 "Last-Translator: Yuri Bongiorno http://yuri.webhop.org\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: OptionsBox.py:77
+#: OptionsBox.py:107
 msgid "_Revert"
 msgstr "_Ripristina"
 
-#: OptionsBox.py:79
+#: OptionsBox.py:109
 msgid "Restore all options to how they were when the window was opened"
 msgstr "Rimette tutte le opzioni come erano prima dell'apertura della finestra"
 
@@ -26,11 +26,11 @@ msgid ""
 "program:\n"
 "http://rox.sourceforge.net/rox_lib.php3\n"
 msgstr ""
-"Per usare questo programma è necessario installare il pacchetto "
-"pygtk2 (1.99.13 o successivo):\n"
+"Per usare questo programma è necessario installare il pacchetto pygtk2 "
+"(1.99.13 o successivo):\n"
 "http://rox.sourceforge.net/rox_lib.php3\n"
 
-#: __init__.py:112 debug.py:38
+#: __init__.py:112 debug.py:37
 msgid "Error"
 msgstr "Errore"
 
@@ -52,7 +52,7 @@ msgstr ""
 "necessario installare «python-xmlbase» (è un pacchetto piccolo: non è "
 "richiesto l'intero PyXML)."
 
-#: debug.py:29
+#: debug.py:28
 msgid "_Details"
 msgstr "_Dettagli"
 
@@ -64,11 +64,11 @@ msgstr "Segnala _bug"
 msgid "Forced Quit"
 msgstr "Esci subito"
 
-#: debug.py:100
+#: debug.py:101
 msgid "Stack trace (innermost last)"
-msgstr "Stack trace (innermost last)"
+msgstr "Stack trace (il più interno è l'ultimo)"
 
-#: debug.py:185
+#: debug.py:186
 msgid "Local variables in selected frame:"
 msgstr "Variabili locali nel frame selezionato:"
 
@@ -134,9 +134,10 @@ msgid ""
 "file.  The filer can generate thumbnails for most types of image (JPEG, PNG, "
 "etc.) but relies on helper applications for the others."
 msgstr ""
-"I gestori di miniature fornisco il supporto per creare le miniature di vari tipi di file. "
-"Il filer può generare le miniature di molti tipi di immagine (jpeg, png, ecc...), "
-"ma occorrono opportune applicazioni per gli altri tipi di file."
+"I gestori di miniature fornisco il supporto per creare le miniature di vari "
+"tipi di file. Il filer può generare le miniature di molti tipi di immagine "
+"(jpeg, png, ecc...), ma occorrono opportune applicazioni per gli altri tipi "
+"di file."
 
 #: mime_handler.py:217
 msgid "type handler"
@@ -150,11 +151,11 @@ msgstr ""
 "L'applicazione può gestire i file di questo tipo. Cliccare su «Ok» per "
 "aggiungerla nei menù «File» e «Invia a...»."
 
-#: saving.py:134
+#: saving.py:138
 msgid "Delete temporary file '%s'?"
 msgstr "Eliminare il file temporaneo «%s»?"
 
-#: saving.py:300
+#: saving.py:309
 msgid ""
 "Drag the icon to a directory viewer\n"
 "(or enter a full pathname)"
@@ -162,23 +163,34 @@ msgstr ""
 "Trascinare l'icona su un visualizzatore di directory\n"
 "(o inserire un percorso completo)"
 
-#: saving.py:321
+#: saving.py:335
 msgid "Unnamed"
 msgstr "SenzaNome"
 
-#: saving.py:406
+#: saving.py:427
+msgid "Permissions changed from %o to %o."
+msgstr "Permessi cambiati da %o a %o."
+
+#: saving.py:430
+msgid "Size was %d bytes; now %d bytes."
+msgstr "La dimensione era %d byte, ora è di %d byte."
+
+#: saving.py:433
+msgid "Modification time changed."
+msgstr "La data dell'ultima modifica è cambiata."
+
+#: saving.py:439
 msgid "File '%s' already exists -- overwrite it?"
 msgstr "Il file «%s» esiste già: sovrascrivere?"
 
-#: saving.py:407
+#: saving.py:440
 msgid "_Overwrite"
 msgstr "S_ovrascrivi"
 
-#: saving.py:442
+#: saving.py:479
 msgid "_Discard"
 msgstr "Abban_dona"
 
-#: saving.py:452
+#: saving.py:489
 msgid "Save As:"
 msgstr "Salva come:"
-
