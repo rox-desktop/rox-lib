@@ -3,6 +3,12 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+26-Nov-2003
+~~~~~~~~~~~
+Escape and unescape URIs, as required by ROX-Filer 2.1.0 (reported by
+Peter Geer).
+Note that the xds_load_uris() method is now called with escaped URIs.
+
 11-Nov-2003
 ~~~~~~~~~~~
 If we can't get pygtk through Zero Install, try the local copy.

@@ -7,7 +7,7 @@ the purpose and pass that to the SaveBox."""
 
 import os, sys
 import rox
-from rox import alert, info, g, _, filer
+from rox import alert, info, g, _, filer, escape
 from rox import choices, get_local_path, TRUE, FALSE
 from icon_theme import rox_theme
 
@@ -281,7 +281,7 @@ class SaveArea(g.VBox):
 	def save_to_file_in_entry(self):
 		"""Call this when the user clicks on an OK button you provide."""
 		uri = self.entry.get_text()
-		path = get_local_path(uri)
+		path = get_local_path(escape(uri))
 
 		if path:
 			if not self.confirm_new_path(path):

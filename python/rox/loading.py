@@ -9,22 +9,15 @@ gdk = g.gdk
 TARGET_URILIST = 0
 TARGET_RAW = 1
 
-def unescape(uri):
-	if '%' not in uri: return uri
-	import re
-	return re.sub('%[0-9a-fA-F][0-9a-fA-F]',
-		lambda match: chr(int(match.group(0)[1:], 16)),
-		uri)
-
 def extract_uris(data):
-	"""Convert a text/uri-list to a python list of (unescaped) URIs"""
+	"""Convert a text/uri-list to a python list of (still escaped) URIs"""
 	lines = data.split('\r\n')
 	out = []
 	for l in lines:
 		if l == chr(0):
 			continue	# (gmc adds a '\0' line)
 		if l and l[0] != '#':
-			out.append(unescape(l))
+			out.append(l)
 	return out
 
 def provides(context, type): return type in map(str, context.targets)
@@ -122,7 +115,8 @@ class XDSLoader:
 	def xds_load_uris(self, uris):
 		"""Try to load each URI in the list. Override this if you can handle URIs
 		directly. The default method passes each local path to xds_load_from_file()
-		and displays an error for anything else."""
+		and displays an error for anything else.
+		The uris are escaped, so a space will appear as '%20'"""
 		paths = []
 		for uri in uris:
 			path = get_local_path(uri)

@@ -29,7 +29,9 @@ The builtin names True and False are defined to 1 and 0, if your version of
 python is old enough not to include them already.
 """
 
-import sys, os
+import sys, os, codecs
+
+to_utf8 = codecs.getencoder('utf-8')
 
 roxlib_version = (1, 9, 11)
 
@@ -273,29 +275,45 @@ def our_host_name():
 		alert("ROX-Lib socket.getfqdn() failed!")
 	return _host_name
 
+def escape(uri):
+	"Convert each space to %20, etc"
+	import re
+	return re.sub('[^-_./a-zA-Z0-9]',
+		lambda match: '%%%02x' % ord(match.group(0)),
+		to_utf8(uri)[0])
+
+def unescape(uri):
+	"Convert each %20 to a space, etc"
+	if '%' not in uri: return uri
+	import re
+	return re.sub('%[0-9a-fA-F][0-9a-fA-F]',
+		lambda match: chr(int(match.group(0)[1:], 16)),
+		uri)
+
 def get_local_path(uri):
 	"""Convert 'uri' to a local path and return, if possible. If 'uri'
-	is a resource on a remote machine, return None."""
+	is a resource on a remote machine, return None. URI is in the escaped form
+	(%20 for space)."""
 	if not uri:
 		return None
 
 	if uri[0] == '/':
 		if uri[1:2] != '/':
-			return uri	# A normal Unix pathname
+			return unescape(uri)	# A normal Unix pathname
 		i = uri.find('/', 2)
 		if i == -1:
 			return None	# //something
 		if i == 2:
-			return uri[2:]	# ///path
+			return unescape(uri[2:])	# ///path
 		remote_host = uri[2:i]
 		if remote_host == our_host_name():
-			return uri[i:]	# //localhost/path
+			return unescape(uri[i:])	# //localhost/path
 		# //otherhost/path
 	elif uri[:5].lower() == 'file:':
 		if uri[5:6] == '/':
 			return get_local_path(uri[5:])
 	elif uri[:2] == './' or uri[:3] == '../':
-		return uri
+		return unescape(uri)
 	return None
 
 app_options = None
