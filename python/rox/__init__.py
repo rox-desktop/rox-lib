@@ -102,7 +102,10 @@ except:
 sys.argv[0] = _path
 
 def _warn_old_findrox():
-	import findrox
+	try:
+		import findrox
+	except:
+		return	# Don't worry too much if it's missing
 	if not hasattr(findrox, 'version'):
 		print >>sys.stderr, "WARNING from ROX-Lib: the version of " \
 			"findrox.py used by this application (%s) is very " \
