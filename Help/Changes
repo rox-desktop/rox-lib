@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+24-Jul-2002
+~~~~~~~~~~~
+Bugfix: saving code didn't cope with missing images (reported by Musus Umbra).
+
 21-Jul-2002
 ~~~~~~~~~~~
 If 'gtk2' isn't available, see if 'gtk' is actually the 2.0 version.

@@ -32,20 +32,15 @@ def _read_xds_property(context, delete):
 	return None
 	
 def image_for_type(type):
-	'Search <Choices> for a suitable icon. Returns a GtkImage.'
+	'Search <Choices> for a suitable icon. Returns a pixbuf, or None.'
 	media, subtype = type.split('/', 1)
 	path = choices.load('MIME-icons', media + '_' + subtype + '.png')
 	if not path:
 		path = choices.load('MIME-icons', media + '.png')
 	if path:
-		pixbuf = gdk.pixbuf_new_from_file(path)
+		return gdk.pixbuf_new_from_file(path)
 	else:
-		pixbuf = None
-	if pixbuf:
-		image = g.Image()
-		image.set_from_pixbuf(pixbuf)
-		return image
-	return g.image_new_from_stock(g.STOCK_MISSING_IMAGE)
+		return None
 
 def _report_save_error():
 	"Report a SaveAbort nicely, otherwise use report_exception()"
@@ -203,6 +198,13 @@ class SaveArea(g.VBox):
 
 		entry.set_text(uri)
 	
+	def _set_icon(self, type):
+		pixbuf = image_for_type(type)
+		if pixbuf:
+			self.icon.set_from_pixbuf(pixbuf)
+		else:
+			self.icon.set_from_stock(g.STOCK_MISSING_IMAGE, g.ICON_SIZE_DND)
+
 	def _create_drag_area(self, type):
 		align = g.Alignment()
 		align.set(.5, .5, 0, 0)
@@ -212,7 +214,8 @@ class SaveArea(g.VBox):
 		self.drag_box.add_events(gdk.BUTTON_PRESS_MASK)
 		align.add(self.drag_box)
 
-		self.icon = image_for_type(type)
+		self.icon = g.Image()
+		self._set_icon(type)
 
 		self._set_drag_source(type)
 		self.drag_box.connect('drag_begin', self.drag_begin)
@@ -228,9 +231,10 @@ class SaveArea(g.VBox):
 		"""Change the icon and drag target to 'type'.
 		If 'icon' is given (as a GtkImage) then that icon is used,
 		otherwise an appropriate icon for the type is used."""
-		if not icon:
-			icon = image_for_type(type)
-		self.icon.set_from_pixbuf(icon.get_pixbuf())
+		if icon:
+			self.icon.set_from_pixbuf(icon.get_pixbuf())
+		else:
+			self._set_icon(type)
 		self._set_drag_source(type)
 	
 	def _set_drag_source(self, type):
@@ -275,7 +279,10 @@ class SaveArea(g.VBox):
 		self.destroy_on_drag_end = 0
 		self.using_xds = 0
 		self.data_sent = 0
-		drag_box.drag_source_set_icon_pixbuf(self.icon.get_pixbuf())
+
+		pixbuf = self.icon.get_pixbuf()
+		if pixbuf:
+			drag_box.drag_source_set_icon_pixbuf(pixbuf)
 
 		uri = self.entry.get_text()
 		if uri:
