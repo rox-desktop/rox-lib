@@ -50,7 +50,8 @@ def save_config_path(resource):
 	for loading."""
 	assert not resource.startswith('/')
 	path = os.path.join(xdg_config_home, resource)
-	os.makedirs(path, 0700)
+	if not os.path.isdir(path):
+		os.makedirs(path, 0700)
 	return path
 
 def save_data_path(resource):
@@ -60,7 +61,8 @@ def save_data_path(resource):
 	for loading."""
 	assert not resource.startswith('/')
 	path = os.path.join(xdg_data_home, resource)
-	os.makedirs(path)
+	if not os.path.isdir(path):
+		os.makedirs(path)
 	return path
 
 def load_config_paths(resource):
