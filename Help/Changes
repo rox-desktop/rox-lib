@@ -5,6 +5,9 @@
 
 14-Mar-2004
 ~~~~~~~~~~~
+Added widget_registry to OptionsBox, to provide an easy way to register
+new option types. Removed build_button in favour of this method.
+
 Bugfix: If an error occurred loading the ROX theme at startup it could not
 	be reported, because icon_theme wants debug, debug wants saving, and
 	saving wants icon_theme (reported by Thomas Zajic).

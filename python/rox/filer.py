@@ -3,7 +3,6 @@
 # Note: do a double-fork in case it's an old version of the filer
 # and doesn't automatically background itself.
 def _spawn(argv):
-	"""Run a new process and forget about it."""
 	from os import fork, _exit, execvp, waitpid
 	child = fork()
 	if child == 0:

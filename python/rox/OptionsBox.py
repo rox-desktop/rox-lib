@@ -2,8 +2,38 @@
 For simple applications, rox.edit_options() provides an
 easy way to edit the options.
 
-You can sub-class OptionsBox to provide new types of
-option widget.
+You can add new types of option by appending to widget_registry. Return
+a list of widgets (which are packed into either an HBox or a VBox). For
+example, to add a button widget:
+
+def build_button(box, node, label):
+	button = g.Button(label)
+	box.may_add_tip(button, node)
+	button.connect('clicked', my_button_handler)
+	return [button]
+OptionsBox.widget_registry['button'] = build_button
+
+You can then create such a button in Options.xml with:
+
+  <button label='...'>Tooltip</button>
+
+For widgets that have options, your build function will be called with
+the option as a third parameter. You should register get and set methods,
+and arrange for box.check_widget to be called when the user changes the
+value:
+
+def build_toggle(box, node, label, option):
+	toggle = g.CheckButton(label)
+	box.may_add_tip(toggle, node)
+
+	box.handlers[option] = (
+		lambda: str(toggle.get_active()),
+		lambda: toggle.set_active(option.int_value))
+
+	toggle.connect('toggled', lambda w: box.check_widget(option))
+
+	return [toggle]
+OptionsBox.widget_registry['mytoggle'] = build_toggle
 """
 
 from rox import g, options, _
@@ -270,18 +300,27 @@ class OptionsBox(g.Dialog):
 			except KeyError:
 				raise Exception("Unknown option '%s'" % name)
 
-		try:
-			name = node.localName.replace('-', '_')
-			fn = getattr(self, 'build_' + name)
-		except AttributeError:
-			print "Unknown widget type '%s'" % node.localName
+		# Check for a new-style function in the registry...
+		new_fn = widget_registry.get(node.localName, None)
+		if new_fn:
+			# Wrap it up so it appears old-style
+			fn = lambda *args: new_fn(self, *args)
 		else:
-			if option:
-				widgets = fn(node, label, option)
-			else:
-				widgets = fn(node, label)
-			for w in widgets:
-				box.pack_start(w, False, True, 0)
+			# Not in the registry... look in the class instead
+			try:
+				name = node.localName.replace('-', '_')
+				fn = getattr(self, 'build_' + name)
+			except AttributeError:
+				print "Unknown widget type '%s'" \
+						% node.localName
+				return
+
+		if option:
+			widgets = fn(node, label, option)
+		else:
+			widgets = fn(node, label)
+		for w in widgets:
+			box.pack_start(w, False, True, 0)
 		
 	def may_add_tip(self, widget, node):
 		"""If 'node' contains any text, use that as the tip for 'widget'."""
@@ -554,20 +593,6 @@ class OptionsBox(g.Dialog):
 
 		return [toggle]
 	
-	def build_button(self, node, label, option):
-		"""<button name='...' label='...'>Tooltip</button>
-
-		Check the int_value for this option.  It is 1 if clicked,
-		0 if not clicked.  Ignore the not clicked."""
-
-		button=ActionButton(label, self, option)
-
-		self.may_add_tip(button, node)
-		
-		self.handlers[option] = (button.get, button.set)
-	
-		return [button]
-
 class FontButton(g.Button):
 	def __init__(self, option_box, option, title):
 		g.Button.__init__(self)
@@ -675,3 +700,6 @@ class ActionButton(rox.g.Button):
 		self.has_click=False
 		self.option_box.check_widget(self.option)
 
+# Add your own options here... (maps element localName to build function)
+widget_registry = {
+}
