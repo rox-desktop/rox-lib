@@ -73,18 +73,19 @@ try:
 		if os.path.exists(zpath):
 			sys.path.insert(0, zpath +
 				'/lib/python%d.%d/site-packages' % sys.version_info[:2])
-	try:
-		# Try to support 1.99.12, at least to show an error
-		import pygtk; pygtk.require('2.0')
-	except:
-		pass
+	import pygtk; pygtk.require('2.0')
+	import gtk._gtk		# If this fails, don't leave a half-inited gtk
 	import gtk; g = gtk	# Don't syntax error for python1.5
 	assert g.Window		# Ensure not 1.2 bindings
 except:
 	try:
 		# Try again without Zero Install
 		sys.path = _old_sys_path
-		import pygtk; pygtk.require('2.0')
+		try:
+			# Try to support 1.99.12, at least to show an error
+			import pygtk; pygtk.require('2.0')
+		except:
+			print "Warning: very old pygtk!"
 		import gtk; g = gtk	# Don't syntax error for python1.5
 		assert g.Window		# Ensure not 1.2 bindings
 	except:
