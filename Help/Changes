@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+22-Jul-2003
+~~~~~~~~~~~
+Work out correct application name even if invoked via a symlink. This stops
+applications from calling themselves 'text_plain', etc (reported by Joe Hill).
+
 19-Jul-2003 (Release 1.9.8)
 ~~~~~~~~~~~
 Make default menu positioning function keep the pointer inside the menu.
