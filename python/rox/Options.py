@@ -314,19 +314,23 @@ class ColourButton(GtkButton):
 		try:
 			c = GdkColor(red, green, blue)
 		except:
-			red = min(0x7fff, red)
-			green = min(0x7fff, green)
-			blue = min(0x7fff, blue)
+			# Slight bug in gnome-python... just
+			# needs a bit of lateral thinking ;-)
+			if red > 0x7fff:
+				red -= 0x10000
+			if green > 0x7fff:
+				green -= 0x10000
+			if blue > 0x7fff:
+				blue -= 0x10000
 			c = GdkColor(red, green, blue)
-			print "Due to a bug in gnome-python, this colour "
-			print "cannot be displayed correctly!"
 		
 		style = self.da.get_style().copy()
 		style.bg[STATE_NORMAL] = c
 		self.da.set_style(style)
 
 		if self.da.flags() & REALIZED:
-			self.da.queue_draw()
+			self.da.hide()
+			self.da.show()
 	
 	def closed(self, dialog):
 		self.dialog = None
