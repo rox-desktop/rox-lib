@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+06-Mar-2004
+~~~~~~~~~~~
+Added secretentry and button options to the OptionsBox (Stephen Watson).
+
 26-Feb-2004
 ~~~~~~~~~~~
 Cope with option values split into multiple DOM text nodes (Rene Ejury).

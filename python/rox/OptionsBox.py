@@ -350,8 +350,8 @@ class OptionsBox(g.Dialog):
 
 		return [frame]
 
-	def build_entry(self, node, label, option):
-		"<entry name='...' label='...'>Tooltip</entry>"
+	def do_entry(self, node, label, option):
+		"Helper function for entry and secretentry widgets"
 		box = g.HBox(False, 4)
 		entry = g.Entry()
 
@@ -373,7 +373,29 @@ class OptionsBox(g.Dialog):
 			entry.set_text(option.value)
 		self.handlers[option] = (get, set)
 
-		return [box or entry]
+		return (entry, [box or entry])
+
+	def build_entry(self, node, label, option):
+		"<entry name='...' label='...'>Tooltip</entry>"
+		entry, result=self.do_entry(node, label, option)
+		return result
+
+	def build_secretentry(self, node, label, option):
+		"<secretentry name='...' label='...' char='*'>Tooltip</secretentry>"
+		entry, result=self.do_entry(node, label, option)
+		try:
+			ch=node.getAttribute('char')
+			if len(ch)>=1:
+				ch=ch[0]
+			else:
+				ch=u'\0'
+		except:
+			ch='*'
+		
+		entry.set_visibility(g.FALSE)
+		entry.set_invisible_char(ch)
+
+		return result
 
 	def build_font(self, node, label, option):
 		"<font name='...' label='...'>Tooltip</font>"
@@ -532,6 +554,20 @@ class OptionsBox(g.Dialog):
 
 		return [toggle]
 	
+	def build_button(self, node, label, option):
+		"""<button name='...' label='...'>Tooltip</button>
+
+		Check the int_value for this option.  It is 1 if clicked,
+		0 if not clicked.  Ignore the not clicked."""
+
+		button=ActionButton(label, self, option)
+
+		self.may_add_tip(button, node)
+		
+		self.handlers[option] = (button.get, button.set)
+	
+		return [button]
+
 class FontButton(g.Button):
 	def __init__(self, option_box, option, title):
 		g.Button.__init__(self)
@@ -618,3 +654,24 @@ class ColourButton(g.Button):
 		c = self.get_style().bg[g.STATE_NORMAL]
 		self.dialog.colorsel.set_current_color(c)
 		self.dialog.show()
+		
+class ActionButton(rox.g.Button):
+	def __init__(self, label, option_box, option):
+		rox.g.Button.__init__(self, label)
+		self.option_box = option_box
+		self.option = option
+		self.has_click=False
+		self.connect('clicked', self.clicked)
+	
+	def set(self):
+		pass
+	
+	def get(self):
+		return str(self.has_click)
+
+	def clicked(self, button):
+		self.has_click=True
+		self.option_box.check_widget(self.option)
+		self.has_click=False
+		self.option_box.check_widget(self.option)
+
