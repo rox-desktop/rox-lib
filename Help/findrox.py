@@ -23,7 +23,7 @@ else:
 	err = "This program needs ROX-Lib2 to run.\n" + \
 		"I tried all of these places:\n\n" + \
 	   	string.join(paths, '\n') + '\n\n' + \
-		"ROX-Lib3 is available from:\nhttp://rox.sourceforge.net"
+		"ROX-Lib2 is available from:\nhttp://rox.sourceforge.net"
 	try:
 		sys.stderr.write('*** ' + err + '\n')
 	except:
