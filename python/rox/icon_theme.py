@@ -3,6 +3,7 @@ that replace those defined here."""
 
 import os
 import basedir
+import rox
 
 theme_dirs = [os.path.join(os.environ.get('HOME', '/'), '.icons')] + \
 		list(basedir.load_data_paths('icons'))
@@ -91,7 +92,10 @@ class IconTheme:
 			theme_dir = os.path.join(dir, name)
 			index_file = os.path.join(theme_dir, 'index.theme')
 			if os.path.exists(os.path.join(index_file)):
-				self.indexes.append(Index(theme_dir))
+				try:
+					self.indexes.append(Index(theme_dir))
+				except:
+					rox.report_error()
 	
 	def lookup_icon(self, iconname, size):
 		icon = self._lookup_this_theme(iconname, size)
