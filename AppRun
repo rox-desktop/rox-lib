@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+
+from sys import argv, path
+from os.path import dirname
+
+from gtk import *
+
+app_dir = dirname(argv[0])
+path.append(app_dir + '/python')
+
+from rox.MultipleChoice import MultipleChoice
+
+def show_help(app_dir = app_dir):
+	import os
+	os.system("rox %s/Help" % app_dir)
+	mainquit()
+
+box = MultipleChoice(
+	"This library contains shared code used by other applications.",
+	(('Help', show_help), ('OK', mainquit)), mainquit)
+box.set_title('ROX-Lib')
+box.show()
+
+mainloop()
