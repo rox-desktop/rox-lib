@@ -16,6 +16,6 @@ def show_help(app_dir):
 
 box = MultipleChoice(
 	"This library contains shared code used by other applications.",
-	(('Help', show_help, app_dir), 'OK'))
+	(('Help', show_help, app_dir), 'Cancel'))
 box.set_title('ROX-Lib')
 box.wait()
