@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+13-Mar-2005
+~~~~~~~~~~~
+Added TODO file to track bugs and changes needed for 2.0.0 release.
+
 10-Mar-2005
 ~~~~~~~~~~~
 Bugfix: Set default in Options box to OK to avoid triggering a GTK bug

@@ -1,0 +1,20 @@
+                        ROX-Lib2
+                        Shared code for ROX applications
+                        by Thomas Leonard
+                        http://rox.sourceforge.net
+ 
+This is a list of features that should be added, plus a list of current bugs.
+
+KNOWN BUGS
+
+None currently.
+
+FEATURES
+
+For 2.0.0
+
+Need a stable release soon, so only vital features should go here.
+
+For 2.2.0
+
+Use GtkUIManager instead of GtkItemFactory when GTK+ 2.4 or later present
