@@ -102,7 +102,10 @@ class OptionGroup:
 					print "Warning: Non Option element", o
 					continue
 				name = o.getAttribute('name')
-				value = o.childNodes[0].nodeValue
+				if o.childNodes:
+					value = o.childNodes[0].nodeValue
+				else:
+					value = ''
 				self.pending[name] = value
 		except:
 			rox.report_exception()
