@@ -154,7 +154,7 @@ msgstr "S_ovrascrivi"
 
 #: saving.py:442
 msgid "_Discard"
-msgstr "_Annulla"
+msgstr "Abban_dona"
 
 #: saving.py:452
 msgid "Save As:"
