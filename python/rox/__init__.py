@@ -98,6 +98,15 @@ def alert(message):
 	box.destroy()
 	toplevel_unref()
 
+def bug(message = "A bug has been detected in this program. Please report "
+		  "the problem to the authors."):
+	try:
+		raise Exception(message)
+	except:
+		type, value, tb = sys.exc_info()
+		import debug
+		debug.show_exception(type, value, tb, auto_details = True)
+
 def croak(message):
 	"""Display message in an error box, then quit the program, returning
 	with a non-zero exit status."""
@@ -144,7 +153,7 @@ def report_exception():
 	of a 'try' block. Uses rox.debug.show_exception()."""
 	type, value, tb = sys.exc_info()
 	import debug
-	debug.show_exception(type, value, tb)
+	debug.show_exception(type, value, tb, skip)
 
 _icon_path = os.path.join(app_dir, '.DirIcon')
 _window_icon=None

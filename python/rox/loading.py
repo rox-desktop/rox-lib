@@ -79,6 +79,10 @@ class XDSLoader:
 
 	def xds_data_received(self, widget, context, x, y, selection, info, time):
 		"Called when we get some data. Internal."
+		if selection.data is None:
+			# Timeout?
+			context.drop_finish(False, time)
+			return
 
 		if info == TARGET_RAW:
 			try:

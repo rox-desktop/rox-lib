@@ -11,7 +11,7 @@ from saving import StringSaver
 
 savebox = None
 
-def show_exception(type, value, tb):
+def show_exception(type, value, tb, auto_details = False):
 	"""Display this exception in an error box. The user has the options
 	of ignoring the error, quitting the application and examining the
 	exception in more detail. See also rox.report_exception()."""
@@ -25,10 +25,11 @@ def show_exception(type, value, tb):
 	toplevel_ref()
 	box = g.MessageDialog(None, 0, g.MESSAGE_ERROR, g.BUTTONS_NONE, brief)
 	
-	button = ButtonMixed(g.STOCK_ZOOM_IN, _('_Details'))
-	button.set_flags(g.CAN_DEFAULT)
-	button.show()
-	box.add_action_widget(button, DETAILS)
+	if not auto_details:
+		button = ButtonMixed(g.STOCK_ZOOM_IN, _('_Details'))
+		button.set_flags(g.CAN_DEFAULT)
+		button.show()
+		box.add_action_widget(button, DETAILS)
 
 	box.add_button(g.STOCK_OK, g.RESPONSE_OK)
 	box.set_default_response(g.RESPONSE_OK)
@@ -48,8 +49,12 @@ def show_exception(type, value, tb):
 			     traceback.format_exception_only(type, value))
 
 	while 1:
-		g.mainloop()
-		resp = reply.pop()
+		if auto_details:
+			resp = DETAILS
+			auto_details = False
+		else:
+			g.mainloop()
+			resp = reply.pop()
 		if resp == g.RESPONSE_OK or resp == g.RESPONSE_DELETE_EVENT:
 			break
 		if resp == SAVE:
