@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+22-Jan-2003
+~~~~~~~~~~~
+If pygtk is not found, raise SystemExit instead of quitting.
+Ensure that True and False are defined.
+
 16-Dec-2002
 ~~~~~~~~~~~
 Work around bug in some versions of pygtk that stopped the options window

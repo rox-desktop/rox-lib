@@ -8,6 +8,7 @@ where it is named 'g'.
 
 The AppRun script of a simple application might look like this:
 
+	#!/usr/bin/env python
 	import findrox
 	import rox
 
@@ -21,13 +22,23 @@ This program creates and displays a window. The rox.Window widget keeps
 track of how many toplevel windows are open. rox.mainloop() will return
 when the last one is closed.
 
-Other useful values from this module are:
+'rox.app_dir' is set to the absolute pathname of your application (extracted
+from sys.argv).
 
-TRUE and FALSE  (copied from g.TRUE and g.FALSE as a convenience), and
-'app_dir', which is the absolute pathname of your application (extracted from
-sys.argv)."""
+The builtin names True and False are defined to 1 and 0, if your version of
+python is old enough not to include them already.
+"""
 
 import sys, os
+
+# In python2.3 there is a bool type. Later versions of 2.2 use ints, but
+# early versions don't support them at all, so create them here.
+try:
+	True
+except:
+	import __builtin__
+	__builtin__.False = 0
+	__builtin__.True = 1
 
 try:
 	iter
@@ -36,7 +47,7 @@ except:
 			 'must be the default version. You may be able to \n'
 			 'change the first line of your program\'s AppRun \n'
 			 'file to end \'python2.2\' as a workaround.\n')
-	sys.exit(1)
+	raise SystemExit(1)
 
 import i18n
 
