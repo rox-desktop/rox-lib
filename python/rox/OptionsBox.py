@@ -32,7 +32,7 @@ class OptionsBox(g.Dialog):
 	When the widget is modified, call self.check_widget(option) to
 	update the stored values.
 	"""
-	def __init__(self, options_group, options_xml):
+	def __init__(self, options_group, options_xml, translation = None):
 		"""options_xml is an XML file, usually <app_dir>/Options.xml,
 		which defines the layout of the OptionsBox.
 
@@ -57,6 +57,14 @@ class OptionsBox(g.Dialog):
 		</options>
 		"""
 		assert isinstance(options_group, options.OptionGroup)
+
+		if translation is None:
+			import __main__
+			if hasattr(__main__.__builtins__, '_'):
+				translation = __main__.__builtins__._
+			else:
+				translation = lambda x: x
+		self._ = translation
 
 		g.Dialog.__init__(self)
 		self.tips = g.Tooltips()
@@ -251,6 +259,8 @@ class OptionsBox(g.Dialog):
 		appropriate build_* function."""
 		label = node.getAttribute('label')
 		name = node.getAttribute('name')
+		if label:
+			label = self._(label)
 
 		option = None
 		if name:
@@ -279,7 +289,7 @@ class OptionsBox(g.Dialog):
 		else:
 			data = None
 		if data:
-			self.tips.set_tip(widget, data)
+			self.tips.set_tip(widget, self._(data))
 	
 	# Each type of widget has a method called 'build_NAME' where name is
 	# the XML element name. This method is called as method(node, label,
@@ -391,7 +401,7 @@ class OptionsBox(g.Dialog):
 		self.handlers[option] = (button.get, button.set)
 
 		return [hbox]
-	
+
 	def build_numentry(self, node, label, option):
 		"""<numentry name='...' label='...' min='0' max='100' step='1'>Tooltip</numentry>.
 		Lets the user choose a number from min to max."""
@@ -402,7 +412,7 @@ class OptionsBox(g.Dialog):
 			step = int(step)
 		else:
 			step = 1
-		unit = node.getAttribute('unit')
+		unit = self._(node.getAttribute('unit'))
 
 		hbox = g.HBox(False, 4)
 		if label:
@@ -425,7 +435,69 @@ class OptionsBox(g.Dialog):
 		spin.connect('value-changed', lambda w: self.check_widget(option))
 
 		return [hbox]
-	
+
+	def build_combo_group(self, node, label, option):
+		"""Build a list combo entry widget, only one of which may be
+		selected.
+		<combo-group name='...' label='...'>
+		  <combo value='...' label='...'/>
+		  <combo value='...' label='...'/>
+		</combo-group>"""
+
+		# List to be displayed in widget
+		labels = []
+		# Dictionary to equate labels to values
+		combos = {}
+
+		combo = g.Combo()
+
+		if label:
+			box = g.HBox(False, 4)
+			label_wid = g.Label(label)
+			label_wid.set_alignment(1.0, 0.5)
+			box.pack_start(label_wid, False, True, 0)
+			box.pack_start(combo, True, True, 0)
+		else:
+			box = None
+
+		#self.may_add_tip(combo, node)
+
+		# Build combo list
+		for cmb_option in node.getElementsByTagName('combo'):
+			value = cmb_option.getAttribute('value')
+			label_item = cmb_option.getAttribute('label') or value
+
+			labels.append(label_item)
+			combos[value] = label_item
+
+		# Now, add the list to the combo box
+		combo.set_popdown_strings(labels)
+
+		combo.entry.connect('changed',
+				lambda e: self.check_widget(option))
+
+		def get():
+			cmb_label = combo.entry.get_text()
+			"""Look for where the label that is selected equals a
+			value in the dictionary, then return the key"""
+			for key, item in combos.items():
+				if item == cmb_label:
+					return key
+
+		def set():
+			"""Paranoia check"""
+			#print combos[option.value]
+			try:
+				saved_value_label = combos[option.value]
+				combo.entry.set_text(saved_value_label)
+			except:
+				print "Value '%s' not in combo list" % option.value
+
+		self.handlers[option] = (get, set)
+
+		return [box or combo]
+
+
 	def build_radio_group(self, node, label, option):
 		"""Build a list of radio buttons, only one of which may be selected.
 		<radio-group name='...'>
@@ -436,7 +508,7 @@ class OptionsBox(g.Dialog):
 		values = []
 		button = None
 		for radio in node.getElementsByTagName('radio'):
-			label = radio.getAttribute('label')
+			label = self._(radio.getAttribute('label'))
 			button = g.RadioButton(button, label)
 			self.may_add_tip(button, radio)
 			radios.append(button)

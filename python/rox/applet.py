@@ -77,4 +77,4 @@ class Applet(g.Plug):
 		x = limit(x, 4, width - 4 - req[0])
 		y = limit(y, 4, height - 4 - req[1])
 		
-		return (x, y, g.TRUE)
+		return (x, y, True)
