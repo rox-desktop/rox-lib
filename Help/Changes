@@ -3,7 +3,12 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
-15-Oct-2003
+29-Oct-2003
+~~~~~~~~~~~
+Bugfix: Error reporting in mime.py failed to import the _ function (reported
+	by Christopher Haines).
+
+15-Oct-2003 (Release 1.9.11)
 ~~~~~~~~~~~
 Bugfix: Python 2.3's new bool type broke options saving (reported by Lars
 	Hansson).

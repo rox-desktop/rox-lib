@@ -16,7 +16,7 @@ import stat
 import fnmatch
 
 import rox
-from rox import i18n
+from rox import i18n, _
 
 from xml.dom import Node, minidom, XML_NAMESPACE
 
