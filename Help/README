@@ -1,0 +1,48 @@
+			ROX-Lib
+			Shared code for ROX applications
+			by Thomas Leonard
+			http://rox.sourceforge.net
+
+Quick start
+~~~~~~~~~~~
+Move the ROX-Lib directory inside ~/lib, /usr/local/lib or /usr/lib.
+
+Programs which require ROX-Lib should now be able to find it. If you
+want it somewhere else, set the LIBDIRPATH environment variable to a
+colon separated list of directories to search for ROX-Lib and other
+libraries.
+
+
+Introduction
+~~~~~~~~~~~~
+There is quite a lot of code which is needed by many ROX applications -- for
+example: save boxes, multiple choice dialogs and toolbars.
+
+Keeping all this code in one place makes these programs smaller. It also
+makes programs which use it more consistant.
+
+Programs which use ROX-Lib need to be able to find it, so you should put it
+inside one of the standard library directories. If you don't have root
+access, create a directory called 'lib' inside your home directory and move
+ROX-Lib in there.
+
+If you do have root access, move ROX-Lib into /usr/local/lib.
+
+
+Conditions
+~~~~~~~~~~
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+Please report any bugs to me, <tal197@users.sourceforge.net>.
