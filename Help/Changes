@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+27-Nov-2003
+~~~~~~~~~~~
+Fixed bug in findrox when not using Zero Install (Lionel Bringuier).
+
 26-Nov-2003
 ~~~~~~~~~~~
 Escape and unescape URIs, as required by ROX-Filer 2.1.0 (reported by
