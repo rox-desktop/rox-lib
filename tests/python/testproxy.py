@@ -4,13 +4,14 @@ import unittest
 import sys
 import os
 from os.path import dirname, abspath, join
+import tempfile
 
 rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
 sys.path.insert(0, join(rox_lib, 'python'))
 
-from rox import proxy, tasks, g
+from rox import proxy, tasks, g, suchild
 
-class Slave:
+class Slave(suchild.Slave):
 	def invoke(self, request):
 		request.send("Invoked")
 	
@@ -74,8 +75,46 @@ class TestProxy(unittest.TestCase):
 		tasks.Task(run())
 		g.mainloop()
 		self.assertEquals(self.sum, 10)
-	
 
+	def testMissing(self):
+		def run():
+			queue = self.master.root.missing('foo')
+			yield queue.blocker
+			try:
+				queue.dequeue_last()
+				assert 0, 'Expected an exception!'
+			except AttributeError:
+				pass
+			g.mainquit()
+		tasks.Task(run())
+		g.mainloop()
+	
+	# spawnvpe, waitpid, setuid and getuid are tested in testsu.py
+
+	def testRmTree(self):
+		tmp_dir = tempfile.mkdtemp('-roxlib-test')
+		def run():
+			assert os.path.isdir(tmp_dir)
+			queue = self.master.root.rmtree(tmp_dir)
+			yield queue.blocker
+			queue.dequeue_last()
+			assert not os.path.exists(tmp_dir)
+			g.mainquit()
+		tasks.Task(run())
+		g.mainloop()
+
+	def testUnlink(self):
+		fd, tmp = tempfile.mkstemp('-roxlib-test')
+		os.close(fd)
+		def run():
+			assert os.path.isfile(tmp)
+			queue = self.master.root.unlink(tmp)
+			yield queue.blocker
+			queue.dequeue_last()
+			assert not os.path.exists(tmp)
+			g.mainquit()
+		tasks.Task(run())
+		g.mainloop()
 
 sys.argv.append('-v')
 unittest.main()
