@@ -1,6 +1,9 @@
-To use the python libraries, add the filerox.py file to your application
-and include it right at the start (from the AppRun). This will find ROX-Lib
-and add ROX-Lib/python to sys.path.
+Documentation for developers - users read README instead!
+
+
+To use the python libraries, add the findrox.py file (in this directory) to
+your application and include it right at the start (from the AppRun). This
+will find ROX-Lib and add ROX-Lib/python to sys.path.
 
 You can then include the other files, eg:
 
