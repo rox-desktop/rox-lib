@@ -2,6 +2,9 @@
 			Shared code for ROX applications
 			by Thomas Leonard
 			http://rox.sourceforge.net
+06-May-2003
+~~~~~~~~~~~
+Added functions to read MIME database (Stephen Watson).
 
 27-Jan-2003
 ~~~~~~~~~~~
