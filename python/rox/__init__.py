@@ -31,7 +31,7 @@ python is old enough not to include them already.
 
 import sys, os, codecs
 
-to_utf8 = codecs.getencoder('utf-8')
+_to_utf8 = codecs.getencoder('utf-8')
 
 roxlib_version = (1, 9, 12)
 
@@ -280,7 +280,7 @@ def escape(uri):
 	import re
 	return re.sub('[^-_./a-zA-Z0-9]',
 		lambda match: '%%%02x' % ord(match.group(0)),
-		to_utf8(uri)[0])
+		_to_utf8(uri)[0])
 
 def unescape(uri):
 	"Convert each %20 to a space, etc"
