@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+08-Aug-2004
+~~~~~~~~~~~
+If the unit field for a <numentry> option is blank, don't try to translate it
+(reported by Guido Schimmels).
+
 30-Jun-2004
 ~~~~~~~~~~~
 Added 'su' module for performing operations as root.

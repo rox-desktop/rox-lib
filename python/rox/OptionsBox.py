@@ -519,11 +519,13 @@ class OptionsBox(g.Dialog):
 		minv = int(node.getAttribute('min'))
 		maxv = int(node.getAttribute('max'))
 		step = node.getAttribute('step')
+		unit = node.getAttribute('unit')
 		if step:
 			step = int(step)
 		else:
 			step = 1
-		unit = self._(node.getAttribute('unit'))
+		if unit:
+			unit = self._(unit)
 
 		hbox = g.HBox(False, 4)
 		if label:
