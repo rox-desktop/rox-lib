@@ -63,7 +63,7 @@ try:
 	zhost = 'zero-install.sourceforge.net'
 	zpath = '/uri/0install/' + zhost
 	if os.path.exists(zpath):
-		zpath = os.path.join(zpath, 'libs/pygtk2/latest')
+		zpath = os.path.join(zpath, 'libs/pygtk-2/platform/latest')
 		if not os.path.exists(zpath):
 			os.system('0refresh ' + zhost)
 		if os.path.exists(zpath):
@@ -146,13 +146,24 @@ def report_exception():
 	import debug
 	debug.show_exception(type, value, tb)
 
+_icon_path = os.path.join(app_dir, '.DirIcon')
+if os.path.exists(_icon_path):
+	window_icon = g.gdk.pixbuf_new_from_file(_icon_path)
+else:
+	window_icon = None
+del _icon_path
+
 class Window(g.Window):
 	"""This works in exactly the same way as a GtkWindow, except that
-	it calls the toplevel_(un)ref functions for you automatically."""
+	it calls the toplevel_(un)ref functions for you automatically,
+	and sets the window icon to <app_dir>/.DirIcon if it exists."""
 	def __init__(*args, **kwargs):
 		apply(g.Window.__init__, args, kwargs)
 		toplevel_ref()
 		args[0].connect('destroy', toplevel_unref)
+
+		if window_icon:
+			args[0].set_icon(window_icon)
 
 class Dialog(g.Dialog):
 	"""This works in exactly the same way as a GtkDialog, except that
