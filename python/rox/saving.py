@@ -25,6 +25,7 @@ def _write_xds_property(context, value):
 		win.property_delete('XdndDirectSave0')
 
 def _read_xds_property(context, delete):
+	"""Returns a UTF-8 encoded, non-escaped, URI."""
 	win = context.source_window
 	retval = win.property_get('XdndDirectSave0', 'text/plain', delete)
 	if retval:
@@ -87,7 +88,9 @@ class Saveable:
 		"""When the data is safely saved somewhere this is called
 		with its new name. Mark your data as unmodified and update
 		the filename for next time. Saving to another application
-		won't call this method. Default method does nothing."""
+		won't call this method. Default method does nothing.
+		The URI may be in the form of a URI or a local path.
+		It is UTF-8, not escaped (% really means %)."""
 		pass
 
 	def save_to_stream(self, stream):
@@ -307,7 +310,7 @@ class SaveArea(g.VBox):
 					self.document.save_to_file(path)
 				finally:
 					self.set_sensitive(True)
-				self.set_uri(path)
+				self.set_uri(uri)
 				self.save_done()
 			except:
 				_report_save_error()
@@ -377,7 +380,7 @@ class SaveArea(g.VBox):
 		to_send = 'E'
 		uri = _read_xds_property(context, False)
 		if uri:
-			path = get_local_path(uri)
+			path = get_local_path(escape(uri))
 			if path:
 				if not self.confirm_new_path(path):
 					to_send = 'E'
@@ -407,11 +410,7 @@ class SaveArea(g.VBox):
 	
 		if to_send != 'E':
 			_write_xds_property(context, None)
-			path = get_local_path(uri)
-			if path:
-				self.set_uri(path)
-			else:
-				self.set_uri(uri)
+			self.set_uri(uri)
 		if self.data_sent:
 			self.save_done()
 	
@@ -447,11 +446,11 @@ class SaveArea(g.VBox):
 	
 	def set_uri(self, uri):
 		"""Data is safely saved somewhere. Update the document's URI and save_last_stat (for local saves).
-		Internal."""
-		path = get_local_path(uri)
+		URI is not escaped. Internal."""
+		path = get_local_path(escape(uri))
 		if path is not None:
 			self.document.save_last_stat = os.stat(path)	# Record for next time
-		self.document.set_uri(uri)
+		self.document.set_uri(path or uri)
 	
 	def drag_end(self, widget, context):
 		self.drag_in_progress = 0
