@@ -97,18 +97,10 @@ class OptionsBox(GtkWindow):
 		tl_vbox = GtkVBox(FALSE, 4)
 		self.add(tl_vbox)
 
-		scrolled_area = GtkScrolledWindow()
-		scrolled_area.set_border_width(4)
-		scrolled_area.set_policy(POLICY_NEVER, POLICY_ALWAYS)
-		tl_vbox.pack_start(scrolled_area, TRUE, TRUE, 0)
-
-		border = GtkFrame()
-		border.set_shadow_type(SHADOW_NONE)
-		border.set_border_width(4)
-		scrolled_area.add_with_viewport(border)
-
-		self.sections_vbox = GtkVBox(FALSE, 0)
-		border.add(self.sections_vbox)
+		self.sections_box = GtkNotebook()
+		self.sections_box.set_scrollable(TRUE)
+		self.sections_box.set_tab_pos(POS_LEFT)
+		tl_vbox.pack_start(self.sections_box, TRUE, TRUE, 0)
 	
 		import choices
 		save_path = choices.save(self.options.program, '...', FALSE)
@@ -158,25 +150,22 @@ class OptionsBox(GtkWindow):
 		self.destroy()
 
 	def build_sections(self, options):
-		need_spacer = FALSE
-		vbox = self.sections_vbox
+		box = self.sections_box
 		for section in options.childNodes:
-			if need_spacer:
-				vbox.pack_start(GtkEventBox(), TRUE, TRUE, 8)
-			else:
-				need_spacer = TRUE
-
 			self.section_name = section.name
-			hbox = GtkHBox(FALSE, 4)
-			hbox.pack_start(GtkHSeparator(), TRUE, TRUE, 0)
-			hbox.pack_start(GtkLabel(section.title), FALSE, TRUE, 0)
-			hbox.pack_start(GtkHSeparator(), TRUE, TRUE, 0)
 
-			vbox.pack_start(hbox, FALSE, TRUE, 2)
+			page = GtkVBox(FALSE, 0)
+			page.set_border_width(4)
+
+			scrolled_area = GtkScrolledWindow()
+			scrolled_area.set_policy(POLICY_NEVER, POLICY_AUTOMATIC)
+			scrolled_area.add_with_viewport(page)
+
+			box.append_page(scrolled_area, GtkLabel(section.title))
 
 			for widget in section.childNodes:
-				self.build_widget(widget, vbox)
-		vbox.show_all()
+				self.build_widget(widget, page)
+		box.show_all()
 	
 	def build_widget(self, widget, box):
 		if widget.nodeName == 'label':
@@ -200,7 +189,7 @@ class OptionsBox(GtkWindow):
 
 		name = self.section_name + '_' + widget.name
 
-		if not self.options.options.has_key(name):
+		if not self.options.options.has_key(name) and 0:	 #XXX
 			print "No option for %s!" % name
 			return
 
@@ -208,9 +197,14 @@ class OptionsBox(GtkWindow):
 			cb = getattr(self, 'make_' + widget.nodeName)
 		except:
 			raise Exception('Unsupport option type: %s' %
-						widget.nodeName)
+							widget.nodeName)
 
 		self.widget_for[name] = cb(widget, box)
+	
+	def may_add_tip(self, widget, node):
+		data = string.strip(node.data)
+		if data:
+			self.tips.set_tip(widget, data)
 
 	def make_entry(self, widget, box):
 		hbox = GtkHBox(FALSE, 4)
@@ -220,177 +214,148 @@ class OptionsBox(GtkWindow):
 		self.may_add_tip(entry, widget)
 		box.pack_start(hbox, FALSE, TRUE, 0)
 		return entry
+
+	def make_toggle(self, widget, box):
+		toggle = GtkCheckButton(widget.label)
+		box.pack_start(toggle, FALSE, TRUE, 0)
+		self.may_add_tip(toggle, widget)
+		return toggle
+
+	def make_slider(self, widget, box):
+		min = int(widget.min)
+		max = int(widget.max)
+		if hasattr(widget, 'fixed'):
+			fixed = int(widget.fixed)
+		else:
+			fixed = 0
+		if hasattr(widget, 'showvalue'):
+			showvalue = int(widget.showvalue)
+		else:
+			showvalue = 0
+			
+		adj = GtkAdjustment(0, min, max, 1, 10, 0)
+		hbox = GtkHBox(FALSE, 4)
+		hbox.pack_start(GtkLabel(widget.label), FALSE, TRUE, 0)
+		slide = GtkHScale(adj)
+
+		if fixed:
+			slide.set_usize(adj.upper, 24)
+		slide.set_draw_value(showvalue)
+		if showvalue:
+			slide.set_value_pos(POS_LEFT)
+			slide.set_digits(0)
+		slide.unset_flags(CAN_FOCUS)
+		self.may_add_tip(slide, widget)
+		hbox.pack_start(slide, not fixed, TRUE, 0)
+		box.pack_start(hbox, FALSE, TRUE, 0)
+		return slide
+
+	def make_radios(self, widget, box):
+		button = None
+		for radio in widget.childNodes:
+			button = GtkRadioButton(button, radio.label)
+
+			box.pack_start(button, FALSE, TRUE, 0)
+			self.may_add_tip(button, widget)
+			button.set_data('value', radio.value)
+
+		return button
+
+	def make_colour(self, widget, box):
+		def open_coloursel(button):
+			pass		#XXX
+		hbox = GtkHBox(FALSE, 4)
+		hbox.pack_start(GtkLabel(widget.label), FALSE, TRUE, 0)
+		button = ColourButton(widget.label)
+		self.may_add_tip(button, widget)
+		hbox.pack_start(button, FALSE, TRUE, 0)
+		box.pack_start(hbox, FALSE, TRUE, 0)
+
+		return button
+
+	def make_menu(self, widget, box):
+		hbox = GtkHBox(FALSE, 4)
+		box.pack_start(hbox, FALSE, TRUE, 0)
+		hbox.pack_start(GtkLabel(widget.label), FALSE, TRUE, 0)
+		option_menu = GtkOptionMenu()
+		hbox.pack_start(option_menu, FALSE, TRUE, 0)
+
+		om = GtkMenu()
+		option_menu.set_menu(om)
+
+		max_w = 4
+		max_h = 4
+		for item in widget.childNodes:
+			mitem = GtkMenuItem(item.label)
+			om.append(mitem)
+			om.show_all()
+			mitem.set_data('value', item.value)
+			(w, h) = mitem.size_request()
+			max_w = max(w, max_w)
+			max_h = max(h, max_h)
+
+		option_menu.show_all()
+		option_menu.set_usize(max_w + 50, max_h + 4)
+		return option_menu
+
+class ColourButton(GtkButton):
+	def __init__(self, title):
+		GtkButton.__init__(self)
+		self.title = title
+		self.da = GtkDrawingArea()
+		self.da.size(64, 12)
+		self.add(self.da)
+		self.set_colour(1.0, 1.0, 1.0)
+		self.da.show()
+		self.dialog = None
+		self.connect('clicked', self.clicked)
+
+	def set_colour(self, red, green, blue):
+		try:
+			c = GdkColor(red, green, blue)
+		except:
+			red = min(0x7fff, red)
+			green = min(0x7fff, green)
+			blue = min(0x7fff, blue)
+			c = GdkColor(red, green, blue)
+			print "Due to a bug in gnome-python, this colour "
+			print "cannot be displayed correctly!"
+		
+		style = self.da.get_style().copy()
+		style.bg[STATE_NORMAL] = c
+		self.da.set_style(style)
+
+		if self.da.flags() & REALIZED:
+			self.da.queue_draw()
 	
-	def may_add_tip(self, widget, node):
-		data = string.strip(node.data)
-		if data:
-			self.tips.set_tip(widget, data)
-#
-#	if (strcmp(name, "toggle") == 0)
-#	{
-#		GtkWidget	*toggle;
-#
-#		toggle = gtk_check_button_new_with_label(_(label));
-#		
-#		gtk_box_pack_start(GTK_BOX(box), toggle, FALSE, TRUE, 0);
-#		may_add_tip(toggle, widget);
-#
-#		option->widget_type = OPTION_TOGGLE;
-#		option->widget = toggle;
-#	}
-#	else if (strcmp(name, "slider") == 0)
-#	{
-#		GtkAdjustment *adj;
-#		GtkWidget *hbox, *slide;
-#		int	min, max;
-#		int	fixed;
-#		int	showvalue;
-#
-#		min = get_int(widget, "min");
-#		max = get_int(widget, "max");
-#		fixed = get_int(widget, "fixed");
-#		showvalue = get_int(widget, "showvalue");
-#
-#		adj = GTK_ADJUSTMENT(gtk_adjustment_new(0,
-#					min, max, 1, 10, 0));
-#
-#		hbox = gtk_hbox_new(FALSE, 4);
-#		gtk_box_pack_start(GTK_BOX(hbox),
-#				gtk_label_new(_(label)),
-#				FALSE, TRUE, 0);
-#
-#		slide = gtk_hscale_new(adj);
-#
-#		if (fixed)
-#			gtk_widget_set_usize(slide, adj->upper, 24);
-#		if (showvalue)
-#		{
-#			gtk_scale_set_draw_value(GTK_SCALE(slide), TRUE);
-#			gtk_scale_set_value_pos(GTK_SCALE(slide),
-#						GTK_POS_LEFT);
-#			gtk_scale_set_digits(GTK_SCALE(slide), 0);
-#		}
-#		else 
-#			gtk_scale_set_draw_value(GTK_SCALE(slide), FALSE);
-#		GTK_WIDGET_UNSET_FLAGS(slide, GTK_CAN_FOCUS);
-#
-#		may_add_tip(slide, widget);
-#		
-#		gtk_box_pack_start(GTK_BOX(hbox), slide, !fixed, TRUE, 0);
-#
-#		gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, TRUE, 0);
-#
-#		option->widget_type = OPTION_SLIDER;
-#		option->widget = slide;
-#	}
-#	}
-#	else if (strcmp(name, "radio-group") == 0)
-#	{
-#		GtkWidget	*button = NULL;
-#		Node		*rn;
-#
-#		for (rn = widget->xmlChildrenNode; rn; rn = rn->next)
-#		{
-#			if (rn->type == XML_ELEMENT_NODE)
-#				button = build_radio(rn, box, button);
-#		}
-#
-#		option->widget_type = OPTION_RADIO_GROUP;
-#		option->widget = button;
-#	}
-#	else if (strcmp(name, "colour") == 0)
-#	{
-#		GtkWidget	*hbox, *da, *button;
-#
-#		hbox = gtk_hbox_new(FALSE, 4);
-#		gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_(label)),
-#				FALSE, TRUE, 0);
-#
-#		button = gtk_button_new();
-#		da = gtk_drawing_area_new();
-#		gtk_drawing_area_size(GTK_DRAWING_AREA(da), 64, 12);
-#		gtk_container_add(GTK_CONTAINER(button), da);
-#		gtk_signal_connect(GTK_OBJECT(button), "clicked",
-#				GTK_SIGNAL_FUNC(open_coloursel), button);
-#
-#		may_add_tip(button, widget);
-#		
-#		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 0);
-#
-#		gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, TRUE, 0);
-#
-#		option->widget_type = OPTION_COLOUR;
-#		option->widget = button;
-#	}
-#	else if (strcmp(name, "menu") == 0)
-#	{
-#		GtkWidget	*hbox, *om, *option_menu;
-#		Node		*item;
-#		GtkWidget	*menu;
-#		GList		*list, *kids;
-#		int		min_w = 4, min_h = 4;
-#
-#		hbox = gtk_hbox_new(FALSE, 4);
-#		gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, TRUE, 0);
-#
-#		gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_(label)),
-#				FALSE, TRUE, 0);
-#
-#		option_menu = gtk_option_menu_new();
-#		gtk_box_pack_start(GTK_BOX(hbox), option_menu, FALSE, TRUE, 0);
-#
-#		om = gtk_menu_new();
-#		gtk_option_menu_set_menu(GTK_OPTION_MENU(option_menu), om);
-#
-#		for (item = widget->xmlChildrenNode; item; item = item->next)
-#		{
-#			if (item->type == XML_ELEMENT_NODE)
-#				build_menu_item(item, option_menu);
-#		}
-#
-#		menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(option_menu));
-#		list = kids = gtk_container_children(GTK_CONTAINER(menu));
-#
-#		while (kids)
-#		{
-#			GtkWidget	*item = (GtkWidget *) kids->data;
-#			GtkRequisition	req;
-#
-#			gtk_widget_size_request(item, &req);
-#			if (req.width > min_w)
-#				min_w = req.width;
-#			if (req.height > min_h)
-#				min_h = req.height;
-#			
-#			kids = kids->next;
-#		}
-#
-#		g_list_free(list);
-#
-#		gtk_widget_set_usize(option_menu,
-#				min_w + 50,	/* Else widget doesn't work! */
-#				min_h + 4);
-#
-#		option->widget_type = OPTION_MENU;
-#		option->widget = option_menu;
-#	}
-#	else if (strcmp(name, "tool-options") == 0)
-#	{
-#		int		i = 0;
-#		GtkWidget	*hbox, *tool;
-#
-#		hbox = gtk_hbox_new(FALSE, 0);
-#
-#		while ((tool = toolbar_tool_option(i++)))
-#			gtk_box_pack_start(GTK_BOX(hbox), tool, FALSE, TRUE, 0);
-#
-#		gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, TRUE, 0);
-#
-#		option->widget_type = OPTION_TOOLS;
-#		option->widget = hbox;
-#	}
-#	else
-#		g_warning("Unknown option type '%s'\n", name);
-#
-#	g_free(label);
-#			
+	def closed(self, dialog):
+		self.dialog = None
+	
+	def cancel(self, button):
+		self.dialog.destroy()
+	
+	def ok(self, button):
+		(r, g, b) = self.dialog.colorsel.get_color()
+		self.set_colour(r * 0xffff, g * 0xffff, b * 0xffff)
+	
+		self.dialog.destroy()
+	
+	def clicked(self, button):
+		if self.dialog:
+			self.dialog.destroy()
+
+		self.dialog = GtkColorSelectionDialog()
+		self.dialog.set_position(WIN_POS_MOUSE)
+		self.dialog.set_title(self.title)
+		self.dialog.connect('destroy', self.closed)
+		self.dialog.help_button.hide()
+		self.dialog.cancel_button.connect('clicked', self.cancel)
+		self.dialog.ok_button.connect('clicked', self.ok)
+
+		colour = self.da.get_style().bg[STATE_NORMAL]
+		rgb = (float(colour.red) / 0xffff,
+		       float(colour.green) / 0xffff,
+		       float(colour.blue) / 0xffff)
+		self.dialog.colorsel.set_color(rgb)
+
+		self.dialog.show()
