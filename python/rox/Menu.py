@@ -77,10 +77,9 @@ class ToggleItem(MenuItem):
 	"""A menu item that has a check icon and toggles state each time it is activated."""
 	def __init__(self, label, property_name):
 		"""property_name is a boolean property on the caller object. You can use
-		the built-in Python function property() if you want to perform calculations when
+		the built-in Python class property() if you want to perform calculations when
 		getting or setting the value."""
 		MenuItem.__init__(self, label, property_name, '<ToggleItem>')
-		self.widget = None
 		self.updating = False
 	
 	def update(self, menu, widget):
