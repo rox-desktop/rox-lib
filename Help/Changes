@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+12-Aug-2001
+~~~~~~~~~~~
+Split SaveBox into SaveBox and SaveArea.
+Added filer.examine().
+
 11-Aug-2001
 ~~~~~~~~~~~
 Changed internal structure of SaveBox to allow better subclassing.

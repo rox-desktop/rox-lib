@@ -26,5 +26,8 @@ def spawn(argv):
 def open_dir(dir):
 	spawn(('rox', '-d', dir))
 
+def examine(file):
+	spawn(('rox', '-x', file))
+
 def show_file(file):
 	spawn(('rox', '-s', file))

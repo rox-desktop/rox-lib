@@ -55,6 +55,10 @@ If you want to indicate a particular file (make it flash), use:
 
 	filer.show_file('/path/to/dir/file')
 
+To make the filer notice that a file has changed in some way, use:
+
+	filer.examine('/path/to/dir/file')
+
 
 MultipleChoice
 ~~~~~~~~~~~~~~
