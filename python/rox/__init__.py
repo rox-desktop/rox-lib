@@ -28,6 +28,16 @@ TRUE and FALSE  (copied from g.TRUE and g.FALSE as a convenience), and
 sys.argv)."""
 
 import sys, os
+
+try:
+	iter
+except:
+	sys.stderr.write('Sorry, you need to have python 2.2, and it \n'
+			 'must be the default version. You may be able to \n'
+			 'change the first line of your program\'s AppRun \n'
+			 'file to end \'python2.2\' as a workaround.\n')
+	sys.exit(1)
+
 import i18n
 
 _roxlib_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
@@ -35,9 +45,9 @@ _ = i18n.translation(os.path.join(_roxlib_dir, 'Messages'))
 
 try:
 	import pygtk; pygtk.require('2.0')
-	import gtk as g
+	import gtk; g = gtk	# Don't syntax error for python1.5
 except:
-	sys.stderr.write(_('The pygtk2 package must be '
+	sys.stderr.write(_('The pygtk2 package (1.99.13 or later) must be '
 			   'installed to use this program:\n'
 			   'http://rox.sourceforge.net/rox_lib.php3\n'))
 	raise
@@ -146,18 +156,18 @@ def mainloop():
 	rox.toplevel_unref() reduces the count to zero."""
 	global _toplevel_windows, _in_mainloops
 
-	_in_mainloops += 1
+	_in_mainloops = _in_mainloops + 1	# Python1.5 syntax
 	try:
 		while _toplevel_windows:
 			g.mainloop()
 	finally:
-		_in_mainloops -= 1
+		_in_mainloops = _in_mainloops - 1
 
 def toplevel_ref():
 	"""Increment the toplevel ref count. rox.mainloop() won't exit until
 	toplevel_unref() is called the same number of times."""
 	global _toplevel_windows
-	_toplevel_windows += 1
+	_toplevel_windows = _toplevel_windows + 1
 
 def toplevel_unref(*unused):
 	"""Decrement the toplevel ref count. If this is called while in
@@ -166,7 +176,7 @@ def toplevel_unref(*unused):
 	easily as a callback function."""
 	global _toplevel_windows
 	assert _toplevel_windows > 0
-	_toplevel_windows -= 1
+	_toplevel_windows = _toplevel_windows - 1
 	if _toplevel_windows == 0 and _in_mainloops:
 		g.mainquit()
 

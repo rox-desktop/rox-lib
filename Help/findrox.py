@@ -30,7 +30,7 @@ else:
 		pass
 	try:
 		import pygtk; pygtk.require('2.0')
-		import gtk as g
+		import gtk; g = gtk
 	except:
 		import gtk
 		win = gtk.GtkDialog()

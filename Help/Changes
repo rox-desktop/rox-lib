@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+15-Oct-2002
+~~~~~~~~~~~
+Trying to use ROX-Lib2 with earlier versions of python now gives a sensible
+error message.
+
 10-Oct-2002
 ~~~~~~~~~~~
 Make clicking on ROX-Lib itself work again (Christopher Arndt).
