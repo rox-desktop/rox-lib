@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+15-Sep-2003
+~~~~~~~~~~~
+The glob patterns in mime.py are now sorted longest first.  Fix for setting 
+icon in the old way when there was no icon (Stephen Watson)
+
 24-Aug-2003
 ~~~~~~~~~~~
 Added InfoWin.py to provide standardized information window (Stephen Watson).
