@@ -12,6 +12,8 @@ _COMMENT = 1
 _CURRENT = 2
 _INSTALL = 3
 _ICON = 4
+_UNINSTALL = 5
+_IS_OURS = 6   # Hidden column
 
 class InstallList(rox.Dialog):
     """Dialog to select installation of MIME type handlers"""
@@ -43,7 +45,8 @@ class InstallList(rox.Dialog):
         swin.set_shadow_type(rox.g.SHADOW_IN)
         vbox.pack_start(swin, True, True, 0)
 
-        self.model = rox.g.ListStore(str, str, str, int, rox.g.gdk.Pixbuf)
+        self.model = rox.g.ListStore(str, str, str, int, rox.g.gdk.Pixbuf,
+                                     int, int)
         view = rox.g.TreeView(self.model)
         self.view = view
         swin.add(view)
@@ -71,10 +74,17 @@ class InstallList(rox.Dialog):
 
         cell = rox.g.CellRendererToggle()
         cell.set_property('activatable', True)
-        cell.connect('toggled', self.toggled, self.model)
+        cell.connect('toggled', self.install_toggled, self.model)
         column = rox.g.TreeViewColumn('Install?', cell, active = _INSTALL)
         view.append_column(column)
         column.set_sort_column_id(_INSTALL)
+
+        cell = rox.g.CellRendererToggle()
+        cell.connect('toggled', self.uninstall_toggled, self.model)
+        column = rox.g.TreeViewColumn('Uninstall?', cell, active = _UNINSTALL,
+                                      activatable= _IS_OURS)
+        view.append_column(column)
+        column.set_sort_column_id(_UNINSTALL)
 
         view.get_selection().set_mode(rox.g.SELECTION_NONE)
 
@@ -94,14 +104,31 @@ class InstallList(rox.Dialog):
         
         self.load_types()
 
-    def toggled(self, cell, path, model):
-	"""Handle the CellRedererToggle stuff"""    
+    def install_toggled(self, cell, path, model):
+	"""Handle the CellRedererToggle stuff for the install column"""    
 	if type(path) == str:
 		# Does this vary by pygtk version?
 		titer=model.iter_nth_child(None, int(path))
 	else:
 		titer=model.get_iter(path)
         model.set_value(titer, _INSTALL, not cell.get_active())
+        if not cell.get_active():
+            model.set_value(titer, _UNINSTALL, 0)
+
+    def uninstall_toggled(self, cell, path, model):
+	"""Handle the CellRedererToggle stuff for the uninstall column"""    
+	if type(path) == str:
+		# Does this vary by pygtk version?
+		titer=model.iter_nth_child(None, int(path))
+	else:
+		titer=model.get_iter(path)
+        avail=model.get_value(titer, _IS_OURS)
+        if avail:
+            model.set_value(titer, _UNINSTALL, not cell.get_active())
+            if not cell.get_active():
+                model.set_value(titer, _INSTALL, 0)
+        else:
+            model.set_value(titer, _UNINSTALL, 0)
 
     def load_types(self):
 	"""Load list of types into window"""    
@@ -122,17 +149,22 @@ class InstallList(rox.Dialog):
 
 		    if old==self.app:
 			    dinstall=False
+                            can_un=True
 		    else:
 			    dinstall=True
+                            can_un=False
 	    else:
 		    dinstall=True
+                    can_un=False
 		    oname=''
 		    
 	    icon=mime_type.get_icon(mime.ICON_SIZE_SMALL)
 
             titer=self.model.append()
-            self.model.set(titer, _TNAME, tname, _COMMENT, mime_type.get_comment(),
-			   _INSTALL, dinstall)
+            self.model.set(titer, _TNAME, tname,
+                           _COMMENT, mime_type.get_comment(),
+			   _INSTALL, dinstall,
+                           _UNINSTALL, False, _IS_OURS, can_un)
 	    if self.check:
 		    self.model.set(titer, _CURRENT, oname)
 	    if icon:
@@ -140,18 +172,31 @@ class InstallList(rox.Dialog):
 
 
     def get_active(self):
-	"""Return list of selected types"""    
+	"""Return list of types selected for installing"""    
         titer=self.model.get_iter_first()
         active=[]
         while titer:
             if self.model.get_value(titer, _INSTALL):
                 active.append(self.model.get_value(titer, _TNAME))
-            titer=self.model.iter_next(iter)
+            titer=self.model.iter_next(titer)
 
         return active
+    
+    def get_uninstall(self):
+	"""Return list of types selected for uninstalling"""    
+        titer=self.model.get_iter_first()
+        uninstall=[]
+        while titer:
+            if self.model.get_value(titer, _UNINSTALL) and self.model.get_value(titer, _IS_OURS):
+                uninstall.append(self.model.get_value(titer, _TNAME))
+            titer=self.model.iter_next(titer)
+
+        return uninstall
+
 
 def _install_type_handler(types, dir, desc, application=None, overwrite=True,
                           info=None):
+    """Internal function.  Does the work of setting MIME-types or MIME-thumb"""
 	if len(types)<1:
 		return
 	
@@ -165,18 +210,28 @@ def _install_type_handler(types, dir, desc, application=None, overwrite=True,
 	if win.run()!=rox.g.RESPONSE_ACCEPT:
 		win.destroy()
 		return
-	
-	types=win.get_active()
 
-	for tname in types:
+	try:
+            types=win.get_active()
+
+            for tname in types:
 		mime_type = mime.lookup(tname)
 
 		sname=choices.save(dir,
-					  '%s_%s' % (mime_type.media, mime_type.subtype))
+			      '%s_%s' % (mime_type.media, mime_type.subtype))
 		os.symlink(application, sname+'.tmp')
 		os.rename(sname+'.tmp', sname)
 
-	win.destroy()
+            types=win.get_uninstall()
+
+            for tname in types:
+		mime_type = mime.lookup(tname)
+
+		sname=choices.save(dir,
+			       '%s_%s' % (mime_type.media, mime_type.subtype))
+		os.remove(sname)
+        finally:
+            win.destroy()
 
 run_action_msg=_("""Run actions can be changed by selecting a file of the appropriate type in the Filer and selecting the menu option 'Set Run Action...'""")
 def install_run_action(types, application=None, overwrite=True):
@@ -231,6 +286,16 @@ def install_send_to_types(types, application=None):
 					  win.aname)
 		os.symlink(application, sname+'.tmp')
 		os.rename(sname+'.tmp', sname)
+	
+	types=win.get_uninstall()
+
+	for tname in types:
+		mime_type=mime.lookup(tname)
+		
+		sname=choices.save('SendTo/.%s_%s' %  (mime_type.media,
+							    mime_type.subtype),
+					  win.aname)
+		os.remove(sname)
 	
 	win.destroy()
 	
