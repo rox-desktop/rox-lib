@@ -4,18 +4,13 @@ import cPickle as pickle
 import time
 import shutil
 
-from select import select
-
-to_parent, from_parent = map(int, sys.argv[1:])
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0]))))
-
 import proxy
 
 read_watches = []
 write_watches = []
 
 class Watch:
+	"""Contains a file descriptor and a function to call when it's ready"""
 	def __init__(self, fd, fn):
 		self.fd = fd
 		self.ready = fn
@@ -24,6 +19,7 @@ class Watch:
 		return self.fd
 
 class SuSlave(proxy.SlaveProxy):
+	"""A simple implementation of SlaveProxy that doesn't use gtk"""
 	def __init__(self, to_parent, from_parent, slave):
 		self.read_watch = Watch(from_parent, self.read_ready)
 		self.write_watch = Watch(to_parent, self.write_ready)
@@ -38,6 +34,9 @@ class SuSlave(proxy.SlaveProxy):
 		write_watches.append(self.write_watch)
 	
 class Slave:
+	"""This object runs as another user. Most methods behave in a similar
+	way to the standard python methods of the same name."""
+
 	def spawnvpe(self, request, mode, file, args, env = None):
 		if env is None:
 			request.send(os.spawnvp(mode, file, args))
@@ -57,13 +56,20 @@ class Slave:
 		shutil.rmtree(path)
 		request.send(None)
 
-slave_proxy = SuSlave(to_parent, from_parent, Slave())
+if __name__ == '__main__':
+	from select import select
 
-while read_watches or write_watches:
-	readable, writable = select(read_watches, write_watches, [])[:2]
-	for w in readable:
-		if not w.ready():
-			read_watches.remove(w)
-	for w in writable:
-		if not w.ready():
-			write_watches.remove(w)
+	to_parent, from_parent = map(int, sys.argv[1:])
+
+	sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0]))))
+
+	slave_proxy = SuSlave(to_parent, from_parent, Slave())
+
+	while read_watches or write_watches:
+		readable, writable = select(read_watches, write_watches, [])[:2]
+		for w in readable:
+			if not w.ready():
+				read_watches.remove(w)
+		for w in writable:
+			if not w.ready():
+				write_watches.remove(w)
