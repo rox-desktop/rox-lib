@@ -333,11 +333,13 @@ class InstallList(rox.Dialog):
             type=rox.mime.lookup(tname)
 	    old=rox.choices.load(self.dir, '%s_%s' %
 				 (type.media, type.subtype))
-	    if os.path.islink(old):
+	    if old and os.path.islink(old):
 		    old=os.readlink(old)
 		    oname=os.path.basename(old)
-	    else:
+	    elif old:
 		    oname='script'
+	    else:
+		    oname=''
 	    #print oname, old, self.app
 	    if old==self.app:
 		    dinstall=False
@@ -384,7 +386,7 @@ def _install_type_handler(types, dir, desc, application=None, overwrite=True):
 		os.symlink(application, sname+'.tmp')
 		os.rename(sname+'.tmp', sname)
 
-	win.destory()
+	win.destroy()
 
 def install_run_action(types, application=None, overwrite=True):
 	"""Install application as the run action for 1 or more types.
