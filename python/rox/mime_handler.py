@@ -251,7 +251,7 @@ def install_from_appinfo(appdir = rox.app_dir):
 	if can_run or can_thumbnail:
 		install_run_action(can_run, appdir)
 		install_thumbnailer(can_thumbnail, appdir)
-                install_send_to_types(ainfo.getCanRun(), appdir)
+                install_send_to_types(can_run, appdir)
 	else:
 		raise Exception('Internal error: No actions found in %s. '
 				'Check your namespaces!' % app_info_path)
