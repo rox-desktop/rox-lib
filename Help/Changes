@@ -3,7 +3,7 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
-16-Mar-2004
+16-Mar-2004 (Release 1.9.13)
 ~~~~~~~~~~~
 Bugfix: Icon themes didn't work with python versions older than 2.2.2
 	(reported by Thomas Zajic).

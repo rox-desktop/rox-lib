@@ -6,7 +6,7 @@
   <About xml:lang="en">
     <Purpose>Shared library for ROX</Purpose>
     <Author>Thomas Leonard</Author>
-    <Version>1.9.12 (23-Jan-2004)</Version>
+    <Version>1.9.13 (16-Mar-2004)</Version>
     <License>GNU General Public License</License>
     <Homepage>http://rox.sourceforge.net</Homepage>
   </About>

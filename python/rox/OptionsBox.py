@@ -2,9 +2,9 @@
 For simple applications, rox.edit_options() provides an
 easy way to edit the options.
 
-You can add new types of option by appending to widget_registry. Return
-a list of widgets (which are packed into either an HBox or a VBox). For
-example, to add a button widget:
+You can add new types of option by appending to widget_registry (new
+in ROX-Lib 1.9.13). Return a list of widgets (which are packed into either an
+HBox or a VBox). For example, to add a button widget:
 
 def build_button(box, node, label):
 	button = g.Button(label)
@@ -680,26 +680,6 @@ class ColourButton(g.Button):
 		self.dialog.colorsel.set_current_color(c)
 		self.dialog.show()
 		
-class ActionButton(rox.g.Button):
-	def __init__(self, label, option_box, option):
-		rox.g.Button.__init__(self, label)
-		self.option_box = option_box
-		self.option = option
-		self.has_click=False
-		self.connect('clicked', self.clicked)
-	
-	def set(self):
-		pass
-	
-	def get(self):
-		return str(self.has_click)
-
-	def clicked(self, button):
-		self.has_click=True
-		self.option_box.check_widget(self.option)
-		self.has_click=False
-		self.option_box.check_widget(self.option)
-
 # Add your own options here... (maps element localName to build function)
 widget_registry = {
 }
