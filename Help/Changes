@@ -3,6 +3,15 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+31-Oct-2003
+~~~~~~~~~~~
+Simplified implementation of saving.SaveFilter by using the new
+processes.PipeThroughCommand class. The child_run() method of SaveFilter
+is no longer supported.
+In processes.PipeThroughCommand, a None input stream gets /dev/null instead
+of inheriting its parent's stream. The class has a new run_child_with_streams
+to make overriding the behaviour easier.
+
 29-Oct-2003
 ~~~~~~~~~~~
 Changed 'Dismiss' to 'Close' (Chris Shaffer).

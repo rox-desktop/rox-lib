@@ -561,72 +561,13 @@ class SaveFilter(Saveable):
 			self.stdin = None
 	
 	def save_to_stream(self, stream):
-		from processes import Process
-		from cStringIO import StringIO
-		errors = StringIO()
-		done = []
+		from processes import PipeThroughCommand
 
-		# Get the FD for the output, creating a tmp file if needed
-		if hasattr(stream, 'fileno'):
-			stdout_fileno = stream.fileno()
-			tmp = None
-		else:
-			import tempfile
-			tmp = tempfile.TemporaryFile()
-			stdout_fileno = tmp.fileno()
+		assert not hasattr(self, 'child_run')	# No longer supported
 
-		# Get the FD for the input
-		if self.stdin:
-			stdin_fileno = self.stdin.fileno()
-			self.stdin.seek(0)
-		else:
-			stdin_fileno = os.open('/dev/null', os.O_RDONLY)
-			
-		class FilterProcess(Process):
-			def child_post_fork(self):
-				if stdout_fileno != 1:
-					os.dup2(stdout_fileno, 1)
-					os.close(stdout_fileno)
-				if stdin_fileno is not None and stdin_fileno != 0:
-					os.dup2(stdin_fileno, 0)
-					os.close(stdin_fileno)
-			def got_error_output(self, data):
-				errors.write(data)
-			def child_died(self, status):
-				done.append(status)
-				g.mainquit()
-			def child_run(proc):
-				self.child_run()
-		self.process = FilterProcess()
-		self.killed = 0
-		self.process.start()
-		while not done:
-			g.mainloop()
+		self.process = PipeThroughCommand(self.command, self.stdin, stream)
+		self.process.wait()
 		self.process = None
-		status = done[0]
-		if self.killed:
-			print >> errors, '\nProcess terminated at user request'
-		error = errors.getvalue().strip()
-		if error:
-			raise AbortSave(error)
-		if status:
-			raise AbortSave('child_run() returned an error code, but no error message!')
-		if tmp:
-			# Data went to a temp file
-			tmp.seek(0)
-			stream.write(tmp.read())
-
-	def child_run(self):
-		"""This is run in the child process. The default method runs 'self.command'
-		using os.system() and prints a message to stderr if the exit code is non-zero.
-		DO NOT call gtk functions here!
-
-		Be careful to escape shell special characters when inserting filenames!
-		"""
-		command = self.command
-		if os.system(command):
-			print >>sys.stderr, "Command:\n%s\nreturned an error code" % command
-		os._exit(0)	# Writing to stderr indicates error...
 	
 	def save_cancelled(self):
 		"""Send SIGTERM to the child processes."""

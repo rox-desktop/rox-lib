@@ -222,23 +222,32 @@ class PipeThroughCommand(Process):
 		self.tmp_stream = None
 
 	def child_run(self):
-		src = self.src
+		"""Assigns file descriptors and calls child_run_with_streams."""
+		src = self.src or file('/dev/null', 'r')
 
-		if src:
-			os.dup2(src.fileno(), 0)
-			_keep_on_exec(0)
+		os.dup2(src.fileno(), 0)
+		_keep_on_exec(0)
+		try:
 			os.lseek(0, 0, 0)	# OpenBSD needs this, dunno why
+		except:
+			pass
+
 		if self.dst:
 			os.dup2(self.tmp_stream.fileno(), 1)
 			_keep_on_exec(1)
 	
+		self.child_run_with_streams()
+		os._exit(1)
+	
+	def child_run_with_streams(self):
+		"""This is run by the child process. stdin and stdout have already been set up.
+		Should call exec() or os._exit() to finish. Default method execs self.command."""
 		# (basestr is python2.3 only)
 		if isinstance(self.command, str):
 			if os.system(self.command) == 0:
 				os._exit(0)	# No error code or signal
 		else:
 			os.execvp(self.command[0], self.command)
-		os._exit(1)
 	
 	def parent_post_fork(self):
 		if self.dst and self.tmp_stream is self.dst:
