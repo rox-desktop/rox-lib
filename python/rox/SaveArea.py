@@ -75,7 +75,7 @@ class SaveArea(GtkVBox):
 	Calls rox_toplevel_(un)ref automatically.
 	"""
 
-	def __init__(self, document, uri, type):
+	def __init__(self, document, uri, type, discard = FALSE):
 		GtkVBox.__init__(self, FALSE, 0)
 
 		self.document = document
@@ -106,8 +106,13 @@ class SaveArea(GtkVBox):
 		entry.set_text(uri)
 		entry.show()
 
+		if discard:
+			self.discard = GtkButton('Discard')
+			self.pack_end(self.discard, FALSE, TRUE, 0)
+			self.pack_end(GtkHSeparator(), FALSE, TRUE, 4)
+
 		hbox = GtkHBox(TRUE, 0)
-		self.pack_start(hbox, FALSE, TRUE, 0)
+		self.pack_end(hbox, FALSE, TRUE, 0)
 
 		self.ok_button = GtkButton("Save")
 		self.ok_button.set_flags(CAN_DEFAULT)

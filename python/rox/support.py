@@ -32,12 +32,17 @@ def our_host_name():
 	global _host_name
 	if _host_name:
 		return _host_name
-	(host, alias, ips) = gethostbyaddr(gethostname())
-	for name in [host] + alias:
-		if find(name, '.') != -1:
-			_host_name = name
-			return name
-	return name
+	try:
+		(host, alias, ips) = gethostbyaddr(gethostname())
+		for name in [host] + alias:
+			if find(name, '.') != -1:
+				_host_name = name
+				return name
+		return name
+	except:
+		sys.stderr.write(
+			"*** ROX-Lib gethostbyaddr(gethostname()) failed!\n")
+		return "localhost"
 	
 def get_local_path(uri):
 	"Convert uri to a local path and return, if possible. Otherwise,"

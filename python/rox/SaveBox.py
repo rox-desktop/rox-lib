@@ -29,13 +29,11 @@ class SaveBox(GtkWindow):
 		self.pass_through('save_as_file')
 		self.pass_through('save_as_selection')
 
-		save_area = SaveArea(self, uri, type)
+		save_area = SaveArea(self, uri, type, discard)
 		self.save_area = save_area
 		if discard:
-			save_area.pack_start(GtkHSeparator(), FALSE, TRUE, 4)
-			button = GtkButton('Discard')
-			save_area.pack_start(button, FALSE, TRUE, 0)
-			button.connect('clicked', self.discard_clicked)
+			save_area.discard.connect('clicked',
+						self.discard_clicked)
 
 		save_area.show_all()
 		self.add(save_area)
