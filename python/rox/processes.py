@@ -1,9 +1,21 @@
 """This module makes it easier to use other programs to process data."""
 
-from rox import g
+from rox import g, saving
 
-import os, sys
+import os, sys, fcntl
 import signal
+
+def _keep_on_exec(fd): fcntl.fcntl(fd, fcntl.F_SETFD, 0)
+
+class ChildError(Exception):
+	"Raised when the child process reports an error."
+	def __init__(self, message):
+		Exception.__init__(self, message)
+
+class ChildKilled(ChildError):
+	"Raised when child died due to a call to the kill method."
+	def __init__(self):
+		ChildError.__init__(self, "Operation aborted at user's request")
 
 class Process:
 	"""This represents another process. You should subclass this
@@ -138,3 +150,235 @@ class Process:
 		closes its end of the stderr pipe). The child process has
 		already been reaped at this point; 'status' is the status
 		returned by os.waitpid."""
+	
+class PipeThroughCommand(Process):
+	def __init__(self, command, src, dst):
+		"""Execute 'command' with src as stdin and writing to stream
+		dst. If either stream is not a fileno() stream, temporary files
+		will be used as required.
+		Either stream may be None if input or output is not required.
+		Call the wait() method to wait for the command to finish.
+		'command' may be a string (passed to os.system) or a list (os.execvp).
+		"""
+
+		if src is not None and not hasattr(src, 'fileno'):
+			import shutil
+			new = Tmp()
+			src.seek(0)
+			shutil.copyfileobj(src, new)
+			src = new
+
+		Process.__init__(self)
+
+		self.command = command
+		self.dst = dst
+		self.src = src
+		self.tmp_stream = None
+
+		self.callback = None
+		self.killed = 0
+		self.errors = ""
+
+		self.start()
+
+	def pre_fork(self):
+		# Output to 'dst' directly if it's a fileno stream. Otherwise,
+		# send output to a temporary file.
+		assert self.tmp_stream is None
+
+		if self.dst:
+			if hasattr(self.dst, 'fileno'):
+				self.dst.flush()
+				self.tmp_stream = self.dst
+			else:
+				self.tmp_stream = Tmp()
+
+	def start_error(self):
+		self.tmp_stream = None
+
+	def child_run(self):
+		src = self.src
+
+		if src:
+			os.dup2(src.fileno(), 0)
+			_keep_on_exec(0)
+			os.lseek(0, 0, 0)	# OpenBSD needs this, dunno why
+		if self.dst:
+			os.dup2(self.tmp_stream.fileno(), 1)
+			_keep_on_exec(1)
+	
+		# (basestr is python2.3 only)
+		if isinstance(self.command, str):
+			if os.system(self.command) == 0:
+				os._exit(0)	# No error code or signal
+		else:
+			os.execvp(self.command[0], self.command)
+		os._exit(1)
+	
+	def parent_post_fork(self):
+		if self.dst and self.tmp_stream is self.dst:
+			self.tmp_stream = None
+	
+	def got_error_output(self, data):
+		self.errors += data
+	
+	def child_died(self, status):
+		errors = self.errors.strip()
+
+		err = None
+
+		if self.killed:
+			err = ChildKilled
+		elif errors:
+			err = ChildError("Errors from command '%s':\n%s" % (self.command, errors))
+		elif status != 0:
+			err = ChildError("Command '%s' returned an error code!" % self.command)
+
+		# If dst wasn't a fileno stream, copy from the temp file to it
+		if not err and self.tmp_stream:
+			self.tmp_stream.seek(0)
+			self.dst.write(self.tmp_stream.read())
+		self.tmp_stream = None
+
+		self.callback(err)
+	
+	def wait(self):
+		"""Run a recursive mainloop until the command terminates.
+		Raises an exception on error."""
+		done = []
+		def set_done(exception):
+			done.append(exception)
+			g.mainquit()
+		self.callback = set_done
+		while not done:
+			g.mainloop()
+		exception, = done
+		if exception:
+			raise exception
+	
+	def kill(self):
+		self.killed = 1
+		Process.kill(self)
+
+def Tmp(mode = 'w+b', suffix = '-tmp'):
+	"Create a seekable, randomly named temp file (deleted automatically after use)."
+	import tempfile
+	try:
+		return tempfile.NamedTemporaryFile(mode, suffix = suffix)
+	except:
+		# python2.2 doesn't have NamedTemporaryFile...
+		pass
+
+	import random
+	name = tempfile.mktemp(`random.randint(1, 1000000)` + suffix)
+
+	fd = os.open(name, os.O_RDWR|os.O_CREAT|os.O_EXCL, 0700)
+	tmp = tempfile.TemporaryFileWrapper(os.fdopen(fd, mode), name)
+	tmp.name = name
+	return tmp
+
+	
+def _test():
+	"Check that this module works."
+
+	def show():
+		error = sys.exc_info()[1]
+		print "(error reported was '%s')" % error
+	
+	def pipe_through_command(command, src, dst): PipeThroughCommand(command, src, dst).wait()
+
+	print "Test Tmp()..."
+	
+	file = Tmp()
+	file.write('Hello')
+	print >>file, ' ',
+	file.flush()
+	os.write(file.fileno(), 'World')
+
+	file.seek(0)
+	assert file.read() == 'Hello World'
+
+	print "Test pipe_through_command():"
+
+	print "Try an invalid command..."
+	try:
+		pipe_through_command('bad_command_1234', None, None)
+		assert 0
+	except ChildError:
+		show()
+	else:
+		assert 0
+
+	print "Try a valid command..."
+	pipe_through_command('exit 0', None, None)
+	
+	print "Writing to a non-fileno stream..."
+	from cStringIO import StringIO
+	a = StringIO()
+	pipe_through_command('echo Hello', None, a)
+	assert a.getvalue() == 'Hello\n'
+
+	print "Try with args..."
+	a = StringIO()
+	pipe_through_command(('echo', 'Hello'), None, a)
+	assert a.getvalue() == 'Hello\n'
+
+	print "Reading from a stream to a StringIO..."
+	file.seek(1)			# (ignored)
+	pipe_through_command('cat', file, a)
+	assert a.getvalue() == 'Hello\nHello World'
+
+	print "Writing to a fileno stream..."
+	file.seek(0)
+	file.truncate(0)
+	pipe_through_command('echo Foo', None, file)
+	file.seek(0)
+	assert file.read() == 'Foo\n'
+
+	print "Read and write fileno streams..."
+	src = Tmp()
+	src.write('123')
+	src.seek(0)
+	file.seek(0)
+	file.truncate(0)
+	pipe_through_command('cat', src, file)
+	file.seek(0)
+	assert file.read() == '123'
+
+	print "Detect non-zero exit value..."
+	try:
+		pipe_through_command('exit 1', None, None)
+	except ChildError:
+		show()
+	else:
+		assert 0
+	
+	print "Detect writes to stderr..."
+	try:
+		pipe_through_command('echo one >&2; sleep 2; echo two >&2', None, None)
+	except ChildError:
+		show()
+	else:
+		assert 0
+
+	print "Check tmp file is deleted..."
+	name = file.name
+	assert os.path.exists(name)
+	file = None
+	assert not os.path.exists(name)
+
+	print "Check we can kill a runaway proces..."
+	ptc = PipeThroughCommand('sleep 100; exit 1', None, None)
+	def stop():
+		ptc.kill()
+	g.timeout_add(2000, stop)
+	try:
+		ptc.wait()
+		assert 0
+	except ChildKilled:
+		pass
+	
+	print "All tests passed!"
+
+if __name__ == '__main__':
+	_test()

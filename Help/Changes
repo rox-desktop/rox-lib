@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+13-Oct-2003
+~~~~~~~~~~~
+Added PipeThroughCommand class (copied from Archive, with some minor
+changes).
+
 09-Oct-2003
 ~~~~~~~~~~~
 Allow event to be None for Menu.popup. This allows the menu to be activated
