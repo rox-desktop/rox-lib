@@ -92,6 +92,7 @@ def show_exception(type, value, tb, auto_details = False):
 	toplevel_unref()
 
 class ExceptionExplorer(g.Frame):
+	"""Displays details from a traceback object."""
 	FILE = 0
 	LINE = 1
 	FUNC = 2
