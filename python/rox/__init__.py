@@ -171,7 +171,7 @@ def our_host_name():
 	try:
 		(host, alias, ips) = gethostbyaddr(gethostname())
 		for name in [host] + alias:
-			if find(name, '.') != -1:
+			if name.find('.') != -1:
 				_host_name = name
 				return name
 		return name
