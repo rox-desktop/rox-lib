@@ -9,7 +9,7 @@ option widget.
 from rox import g, options, _
 import rox
 from xml.dom import Node, minidom
-import gobject
+import gobject, pango
 
 FALSE = g.FALSE
 TRUE = g.TRUE
@@ -318,11 +318,21 @@ class OptionsBox(g.Dialog):
 		return [widget]
 
 	def build_frame(self, node, label):
-		"""<frame label='Title'>...</frame> to put a border around a group
-		of options."""
+		"""<frame label='Title'>...</frame> to group options under a heading."""
 		frame = g.Frame(label)
+		frame.set_shadow_type(g.SHADOW_NONE)
+
+		# Make the label bold...
+		label_widget = frame.get_label_widget()
+		attr = pango.AttrWeight(pango.WEIGHT_BOLD)
+		attr.start_index = 0
+		attr.end_index = -1
+		list = pango.AttrList()
+		list.insert(attr)
+		label_widget.set_attributes(list)
+
 		vbox = g.VBox(FALSE, 4)
-		vbox.set_border_width(4)
+		vbox.set_border_width(12)
 		frame.add(vbox)
 
 		self.do_box(node, None, vbox)

@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+12-Dec-2002
+~~~~~~~~~~~
+Upgrade Options box to new style.
+
 11-Dec-2002
 ~~~~~~~~~~~
 Bugfix: If an option had an empty value, an exception was thrown on loading
