@@ -90,6 +90,7 @@ class SaveBox(GtkWindow):
 					target,
 					ACTION_COPY | ACTION_MOVE)
 		drag_box.connect('drag_begin', self.drag_begin)
+		drag_box.connect('drag_end', self.drag_end)
 		drag_box.connect('drag_data_get', self.drag_data_get)
 
 		drag_box.add(self.icon)
@@ -177,13 +178,8 @@ class SaveBox(GtkWindow):
 		if info == TARGET_RAW:
 			self.window.send_raw(selection_data)
 			self.data_sent = 1
-			write_xds_property(context, None)
-			self.destroy()
-			if self.discard:
-				self.window.close()
 			return
 		elif info != TARGET_XDS:
-			write_xds_property(context, None)
 			report_error("Bad target requested!")
 			return
 
@@ -214,12 +210,20 @@ class SaveBox(GtkWindow):
 		selection_data.set(selection_data.target, 8, to_send)
 	
 		if to_send != 'E':
+			self.using_xds = 1
+	
+	def drag_end(self, widget, context):
+		if self.using_xds:
+			uri = read_xds_property(context, TRUE)
+			if uri:
+				path = get_local_path(uri)
+				if path:
+					self.window.set_uri(path)
+				else:
+					self.window.set_uri(uri)
+		else:
 			write_xds_property(context, None)
-			path = get_local_path(uri)
-			if path:
-				self.window.set_uri(path)
-			else:
-				self.window.set_uri(uri)
+
 		if self.data_sent:
 			self.destroy()
 			if self.discard:
