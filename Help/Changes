@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+30-Jun-2004
+~~~~~~~~~~~
+Added 'su' module for performing operations as root.
+
 11-Jun-2004
 ~~~~~~~~~~~
 Allow "" as a valid value in a OptionsBox menu (reported by Guido Schimmels).
