@@ -71,8 +71,6 @@ class Menu:
 				cb = self._activate
 			else:
 				cb = None
-			if path:
-				key = None
 			out.append((label, key, cb, len(self.fns) - 1, type))
 			
 		factory.create_items(out)

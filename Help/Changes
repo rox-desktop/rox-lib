@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+14-Aug-2002
+~~~~~~~~~~~
+Bugfix: Changing the keys lost any builtin shortcuts (Gtk behaviour has
+	changed since 1.2).
+
 08-Aug-2002
 ~~~~~~~~~~~
 Trap exceptions when activating menu items and report nicely.
