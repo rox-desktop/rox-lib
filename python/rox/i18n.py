@@ -67,11 +67,7 @@ def _expand_lang(locale):
 	ret.reverse()
 	return ret
 
-# Locate a .mo file using the ROX strategy
-def find(messages_dir, languages = None):
-	"""Look in messages_dir for a .gmo file for the user's preferred language
-	(or override this with the 'languages' argument). Returns the filename, or
-	None if there was no translation."""
+def expand_languages(languages = None):
 	# Get some reasonable defaults for arguments that were not supplied
 	if languages is None:
 		languages = []
@@ -89,8 +85,15 @@ def find(messages_dir, languages = None):
 		for nelang in _expand_lang(lang):
 			if nelang not in nelangs:
 				nelangs.append(nelang)
+	return nelangs
+
+# Locate a .mo file using the ROX strategy
+def find(messages_dir, languages = None):
+	"""Look in messages_dir for a .gmo file for the user's preferred language
+	(or override this with the 'languages' argument). Returns the filename, or
+	None if there was no translation."""
 	# select a language
-	for lang in nelangs:
+	for lang in expand_languages(languages):
 		if lang == 'C':
 			break
 		mofile = os.path.join(messages_dir, '%s.gmo' % lang)
@@ -106,3 +109,5 @@ def translation(messages_dir, languages = None):
 		return lambda x: x
 	import gettext
 	return gettext.GNUTranslations(file(mofile)).ugettext
+
+langs = expand_languages()
