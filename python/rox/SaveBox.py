@@ -142,6 +142,7 @@ class SaveBox(GtkWindow):
 			button = GtkButton('Discard')
 			vbox.pack_start(button, FALSE, TRUE, 0)
 			button.connect('clicked', self.discard_clicked)
+			button.show_all()
 
 		self.ok.connect('clicked', self.ok, entry)
 		entry.connect('activate', self.ok, entry)
