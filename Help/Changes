@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+09-Nov-2001
+~~~~~~~~~~~
+Added some code to handle gmc adding a "\0" line to uri-lists (reported
+by Jarrod Benjami Johnson).
+
 02-Nov-2001
 ~~~~~~~~~~~
 Added set_type() method to SaveBox/SaveArea to set the icon's type

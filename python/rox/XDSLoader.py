@@ -10,6 +10,8 @@ def extract_uris(data):
 	lines = string.split(data, '\r\n')
 	out = []
 	for l in lines:
+		if l == chr(0):
+			continue	# (gmc adds a '\0' line)
 		if l and l[0] != '#':
 			out.append(l)
 	return out
@@ -51,7 +53,7 @@ class XDSLoader:
 			if path:
 				paths.append(path)
 		if len(paths) < len(uris):
-			report_error(
+			support.report_error(
 				"Can't load remote files yet - sorry")
 		for path in paths:
 			self.xds_load_from_file(path)
