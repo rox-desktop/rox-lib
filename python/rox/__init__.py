@@ -60,6 +60,15 @@ _roxlib_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 _ = i18n.translation(os.path.join(_roxlib_dir, 'Messages'))
 
 try:
+	zhost = 'zero-install.sourceforge.net'
+	zpath = '/uri/0install/' + zhost
+	if os.path.exists(zpath):
+		zpath = os.path.join(zpath, 'libs/pygtk2/latest')
+		if not os.path.exists(zpath):
+			os.system('0refresh ' + zhost)
+		if os.path.exists(zpath):
+			sys.path.insert(0, zpath +
+				'/lib/python2.2/site-packages')
 	try:
 		# Try to support 1.99.12, at lest to show an error
 		import pygtk; pygtk.require('2.0')

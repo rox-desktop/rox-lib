@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+01-Aug-2003
+~~~~~~~~~~~
+Try to get pygtk through ZeroInstall.
+
 25-Jul-2003
 ~~~~~~~~~~~
 Updated findrox to use ZeroInstall, if possible.
