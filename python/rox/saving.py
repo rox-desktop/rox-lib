@@ -356,7 +356,7 @@ class SaveBox(g.Dialog):
 		self.save_area = save_area
 
 		save_area.show_all()
-		self.vbox.add(save_area)
+		self.build_main_area()
 
 		def key_press(window, event):
 			if event.keyval == g.keysyms.Escape:
@@ -388,3 +388,8 @@ class SaveBox(g.Dialog):
 	def set_type(self, type, icon = None):
 		"""See SaveArea's method of the same name."""
 		self.save_area.set_type(type, icon)
+
+	def build_main_area(self):
+		"""Place self.save_area somewhere in self.vbox. Override this
+		for more complicated layouts."""
+		self.vbox.add(save_area)

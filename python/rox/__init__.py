@@ -186,7 +186,7 @@ def get_local_path(uri):
 		return None
 
 	if uri[0] == '/':
-		if uri[1] != '/':
+		if uri[1:2] != '/':
 			return uri	# A normal Unix pathname
 		i = uri.find('/', 2)
 		if i == -1:
