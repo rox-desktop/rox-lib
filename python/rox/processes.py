@@ -163,7 +163,7 @@ class PipeThroughCommand(Process):
 
 		if src is not None and not hasattr(src, 'fileno'):
 			import shutil
-			new = Tmp()
+			new = _Tmp()
 			src.seek(0)
 			shutil.copyfileobj(src, new)
 			src = new
@@ -179,7 +179,8 @@ class PipeThroughCommand(Process):
 		self.killed = 0
 		self.errors = ""
 
-		self.start()
+		self.done = False	# bool or exception
+		self.waiting = False
 
 	def pre_fork(self):
 		# Output to 'dst' directly if it's a fileno stream. Otherwise,
@@ -191,7 +192,7 @@ class PipeThroughCommand(Process):
 				self.dst.flush()
 				self.tmp_stream = self.dst
 			else:
-				self.tmp_stream = Tmp()
+				self.tmp_stream = _Tmp()
 
 	def start_error(self):
 		self.tmp_stream = None
@@ -222,45 +223,59 @@ class PipeThroughCommand(Process):
 	def got_error_output(self, data):
 		self.errors += data
 	
+	def check_errors(self, errors, status):
+		"""Raise an exception here if errors (the string the child process wrote to stderr) or
+		status (the status from waitpid) seems to warrent it. It will be returned by wait()."""
+		if errors:
+			raise ChildError("Errors from command '%s':\n%s" % (str(self.command), errors))
+		raise ChildError("Command '%s' returned an error code (%d)!" % (str(self.command), status))
+	
 	def child_died(self, status):
 		errors = self.errors.strip()
 
-		err = None
-
 		if self.killed:
-			err = ChildKilled
-		elif errors:
-			err = ChildError("Errors from command '%s':\n%s" % (self.command, errors))
-		elif status != 0:
-			err = ChildError("Command '%s' returned an error code!" % self.command)
+			self.done = ChildKilled()
+		elif errors or status:
+			try:
+				self.check_errors(errors, status)
+				self.done = True
+			except Exception, e:
+				self.done = e
+		else:
+			self.done = True
 
-		# If dst wasn't a fileno stream, copy from the temp file to it
-		if not err and self.tmp_stream:
-			self.tmp_stream.seek(0)
-			self.dst.write(self.tmp_stream.read())
+		assert self.done is True or isinstance(self.done, Exception)
+
+		if self.done is True:
+			# Success
+			# If dst wasn't a fileno stream, copy from the temp file to it
+			if self.tmp_stream:
+				self.tmp_stream.seek(0)
+				self.dst.write(self.tmp_stream.read())
+
 		self.tmp_stream = None
 
-		self.callback(err)
+		if self.waiting:
+			assert self.done
+			self.waiting = False
+			g.mainquit()
 	
 	def wait(self):
 		"""Run a recursive mainloop until the command terminates.
 		Raises an exception on error."""
-		done = []
-		def set_done(exception):
-			done.append(exception)
-			g.mainquit()
-		self.callback = set_done
-		while not done:
+		if self.child is None:
+			self.start()
+		self.waiting = True
+		while not self.done:
 			g.mainloop()
-		exception, = done
-		if exception:
-			raise exception
+		if self.done is not True:
+			raise self.done
 	
 	def kill(self):
 		self.killed = 1
 		Process.kill(self)
 
-def Tmp(mode = 'w+b', suffix = '-tmp'):
+def _Tmp(mode = 'w+b', suffix = '-tmp'):
 	"Create a seekable, randomly named temp file (deleted automatically after use)."
 	import tempfile
 	try:
@@ -287,9 +302,9 @@ def _test():
 	
 	def pipe_through_command(command, src, dst): PipeThroughCommand(command, src, dst).wait()
 
-	print "Test Tmp()..."
+	print "Test _Tmp()..."
 	
-	file = Tmp()
+	file = _Tmp()
 	file.write('Hello')
 	print >>file, ' ',
 	file.flush()
@@ -336,7 +351,7 @@ def _test():
 	assert file.read() == 'Foo\n'
 
 	print "Read and write fileno streams..."
-	src = Tmp()
+	src = _Tmp()
 	src.write('123')
 	src.seek(0)
 	file.seek(0)
