@@ -66,6 +66,10 @@ class SaveBox(GtkWindow):
 
 	discard()
 		Discard button clicked. Only needed if discard = TRUE.
+	
+	close()
+		If the discard button is present and the data is saved,
+		this gets called.
 	"""
 
 	def __init__(self, document, uri, type = 'text/plain', discard = FALSE):
@@ -122,7 +126,9 @@ class SaveBox(GtkWindow):
 					targets,
 					ACTION_COPY | ACTION_MOVE)
 		drag_box.connect('drag_begin', self.drag_begin)
+		drag_box.connect('drag_end', self.drag_end)
 		drag_box.connect('drag_data_get', self.drag_data_get)
+		self.drag_in_progress = 0
 
 		drag_box.add(self.icon)
 
@@ -189,6 +195,8 @@ class SaveBox(GtkWindow):
 					  "To Save:")
 	
 	def drag_begin(self, drag_box, context):
+		self.drag_in_progress = 1
+		self.destroy_on_drag_end = 0
 		self.using_xds = 0
 		self.data_sent = 0
 		p, m = self.icon.get()
@@ -210,9 +218,13 @@ class SaveBox(GtkWindow):
 			self.save_as_selection(selection_data)
 			self.data_sent = 1
 			write_xds_property(context, None)
-			self.destroy()
-			if self.discard:
-				self.document.close()
+			
+			if self.drag_in_progress:
+				self.destroy_on_drag_end = 1
+			else:
+				self.destroy()
+				if self.discard:
+					self.document.close()
 			return
 		elif info != TARGET_XDS:
 			write_xds_property(context, None)
@@ -263,3 +275,10 @@ class SaveBox(GtkWindow):
 	def set_uri(self, uri):
 		if hasattr(self.document, 'set_uri'):
 			self.document.set_uri(uri)
+	
+	def drag_end(self, widget, context):
+		self.drag_in_progress = 0
+		if self.destroy_on_drag_end:
+			self.destroy()
+			if self.discard:
+				self.document.close()
