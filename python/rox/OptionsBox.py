@@ -574,7 +574,7 @@ class OptionsBox(g.Dialog):
 		for item in node.getElementsByTagName('item'):
 			value = item.getAttribute('value')
 			assert value
-			label_item = item.getAttribute('label') or value
+			label_item = self._(item.getAttribute('label')) or value
 
 			menu.append(g.MenuItem(label_item))
 			values.append(value)

@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+04-May-2004
+~~~~~~~~~~~
+Translate menu items in options (Guido Schimmels).
+
 26-Apr-2004
 ~~~~~~~~~~~
 Added <slider> widget to options.
