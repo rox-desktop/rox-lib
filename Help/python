@@ -197,7 +197,7 @@ dragged in from other applications, but still allows files):
 
 When a file is dragged onto the window the method xds_load_uris() gets
 called with a list of URIs to load. If you don't override it, the default
-is to call xds_load_file(path) for each (local) file in the list.
+is to call xds_load_from_file(path) for each (local) file in the list.
 
 If some data (not a file) is dropped on the window then
 xds_load_from_selection(selection) is called.

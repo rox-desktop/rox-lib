@@ -144,7 +144,8 @@ class SaveArea(GtkVBox):
 				  ('application/octet-stream', 0, TARGET_RAW)]
 
 		if not targets:
-			raise Exception("Document %s can't save!" % document)
+			raise Exception("Document %s can't save!" %
+							self.document)
 
 		drag_box.drag_source_set(BUTTON1_MASK | BUTTON3_MASK,
 					targets,
@@ -179,7 +180,7 @@ class SaveArea(GtkVBox):
 					self.end_save()
 			except:
 				report_exception()
-				self.set_sensitive(TRUE)
+			self.set_sensitive(TRUE)
 		else:
 			report_error("Drag the icon to a directory viewer\n" +
 					  "(or enter a full pathname)",
@@ -209,6 +210,7 @@ class SaveArea(GtkVBox):
 			try:
 				self.set_sensitive(FALSE)
 				self.save_as_selection(selection_data)
+				self.set_sensitive(TRUE)
 			except:
 				report_exception()
 				write_xds_property(context, None)
@@ -242,6 +244,7 @@ class SaveArea(GtkVBox):
 				try:
 					self.set_sensitive(FALSE)
 					self.data_sent = self.save_as_file(path)
+					self.set_sensitive(TRUE)
 				except:
 					report_exception()
 					self.set_sensitive(TRUE)
