@@ -238,22 +238,17 @@ def our_host_name():
 	"""Try to return the canonical name for this computer. This is used
 	in the drag-and-drop protocol to work out whether a drop is coming from
 	a remote machine (and therefore has to be fetched differently)."""
-	from socket import gethostbyaddr, gethostname
+	from socket import getfqdn
 	global _host_name
 	if _host_name:
 		return _host_name
 	try:
-		(host, alias, ips) = gethostbyaddr(gethostname())
-		for name in [host] + alias:
-			if name.find('.') != -1:
-				_host_name = name
-				return name
-		return name
+		_host_name = getfqdn()
 	except:
-		sys.stderr.write(
-			"*** ROX-Lib gethostbyaddr(gethostname()) failed!\n")
-		return "localhost"
-	
+		_host_name = 'localhost'
+		alert("ROX-Lib socket.getfqdn() failed!")
+	return _host_name
+
 def get_local_path(uri):
 	"""Convert 'uri' to a local path and return, if possible. If 'uri'
 	is a resource on a remote machine, return None."""

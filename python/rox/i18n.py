@@ -6,14 +6,15 @@ to do the following:
 
 - Create a Messages subdirectory in your application.
 
-- Run pygettext to extract all the marked strings.
+- Run 'pygettext *.py' to extract all the marked strings.
 
 - Copy messages.pot as Messages/<lang>.po and edit (see ROX-Lib2's README).
 
 - Use msgfmt to convert the .po files to .gmo files.
 
 - In your application, use the rox.i18n.translation() function to set the _ function:
-	_ = rox.i18n.translation(os.path.join(rox.app_dir, 'Messages'))
+	__builtins__._ = rox.i18n.translation(os.path.join(rox.app_dir, 'Messages'))
+  (for libraries, just do '_ ='; don't mess up the builtins)
 
 Note that the marked strings must be fixed. If you're using formats, mark up the
 format, eg:
