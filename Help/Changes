@@ -3,6 +3,13 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+10-Jun-2004
+~~~~~~~~~~~
+Added 'proxy' module. This allows one Python process to invoke methods on
+another asynchronously.
+Added rox.UserAbort exception, to be raised when users cancel something
+manually.
+
 07-Jun-2004
 ~~~~~~~~~~~
 Fix syntax error I caused when I added a docstring (Stephen Watson).

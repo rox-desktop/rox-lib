@@ -53,20 +53,21 @@ def image_for_type(type):
 		return None
 
 def _report_save_error():
-	"Report a SaveAbort nicely, otherwise use report_exception()"
+	"Report a AbortSave nicely, otherwise use report_exception()"
 	value = sys.exc_info()[1]
 	if isinstance(value, AbortSave):
 		value.show()
 	else:
 		rox.report_exception()
 
-class AbortSave(Exception):
+class AbortSave(rox.UserAbort):
 	"""Raise this to cancel a save. If a message is given, it is displayed
 	in a normal alert box (not in the report_exception style). If the
 	message is None, no message is shown (you should have already shown
 	it!)"""
 	def __init__(self, message):
 		self.message = message
+		rox.UserAbort(self, message)
 	
 	def show(self):
 		if self.message:

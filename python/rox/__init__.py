@@ -112,8 +112,16 @@ def _warn_old_findrox():
 			"old and may cause problems." % app_dir
 _warn_old_findrox()
 
+# For backwards compatibility. Use True and False in new code.
 TRUE = True
 FALSE = False
+
+class UserAbort(Exception):
+	"""Raised when the user aborts an operation, eg by clicking on Cancel
+	or pressing Escape."""
+	def __init__(self, message = None):
+		Exception.__init__(self,
+			message or _("Operation aborted at user's request"))
 
 def alert(message):
 	"Display message in an error box. Return when the user closes the box."
