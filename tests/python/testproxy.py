@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.2
 from __future__ import generators
 import unittest
 import sys
@@ -81,7 +81,8 @@ class TestProxy(unittest.TestCase):
 	# spawnvpe, waitpid, setuid and getuid are tested in testsu.py
 
 	def testRmTree(self):
-		tmp_dir = tempfile.mkdtemp('-roxlib-test')
+		tmp_dir = tempfile.mktemp('-roxlib-test')
+		os.mkdir(tmp_dir)
 		def run():
 			assert os.path.isdir(tmp_dir)
 			response = self.master.root.rmtree(tmp_dir)
@@ -93,8 +94,8 @@ class TestProxy(unittest.TestCase):
 		g.mainloop()
 
 	def testUnlink(self):
-		fd, tmp = tempfile.mkstemp('-roxlib-test')
-		os.close(fd)
+		tmp = tempfile.mktemp('-roxlib-test')
+		file(tmp, 'w').close()
 		def run():
 			assert os.path.isfile(tmp)
 			response = self.master.root.unlink(tmp)
@@ -106,12 +107,13 @@ class TestProxy(unittest.TestCase):
 		g.mainloop()
 	
 	def testFileRead(self):
-		tmp_file = tempfile.NamedTemporaryFile(suffix = '-roxlib-test')
-		tmp_file.write('Hello\n')
-		tmp_file.flush()
+		tmp_file = tempfile.mktemp(suffix = '-roxlib-test')
+		s = file(tmp_file, 'w')
+		s.write('Hello\n')
+		s.close()
 		root = self.master.root
 		def run():
-			response = root.open(tmp_file.name)
+			response = root.open(tmp_file)
 			yield response
 			stream = response.result
 
@@ -126,9 +128,11 @@ class TestProxy(unittest.TestCase):
 			g.mainquit()
 		tasks.Task(run())
 		g.mainloop()
+		os.unlink(tmp_file)
 
 	def testFileWrite(self):
-		tmp_dir = tempfile.mkdtemp('-roxlib-test')
+		tmp_dir = tempfile.mktemp('-roxlib-test')
+		os.mkdir(tmp_dir)
 		root = self.master.root
 		tmp_file = join(tmp_dir, 'new')
 		def run():
@@ -162,7 +166,8 @@ class TestProxy(unittest.TestCase):
 		shutil.rmtree(tmp_dir)
 
 	def testRename(self):
-		tmp_dir = tempfile.mkdtemp('-roxlib-test')
+		tmp_dir = tempfile.mktemp('-roxlib-test')
+		os.mkdir(tmp_dir)
 		root = self.master.root
 		f = file(join(tmp_dir, 'old'), 'w')
 		f.write('Hello\n')
@@ -182,20 +187,22 @@ class TestProxy(unittest.TestCase):
 		shutil.rmtree(tmp_dir)
 
 	def testChmod(self):
-		tmp_file = tempfile.NamedTemporaryFile(suffix = '-roxlib-test')
+		tmp_file = tempfile.mktemp(suffix = '-roxlib-test')
+		s = file(tmp_file, 'w')
+		s.close()
 		root = self.master.root
-		os.chmod(tmp_file.name, 0700)
+		os.chmod(tmp_file, 0700)
 
 		def run():
-			assert os.stat(tmp_file.name).st_mode & 0777 == 0700
-			response = root.chmod(tmp_file.name, 0655)
+			assert os.stat(tmp_file).st_mode & 0777 == 0700
+			response = root.chmod(tmp_file, 0655)
 			yield response
 			response.result
-			assert os.stat(tmp_file.name).st_mode & 0777 == 0655
+			assert os.stat(tmp_file).st_mode & 0777 == 0655
 			g.mainquit()
 		tasks.Task(run())
 		g.mainloop()
-		tmp_file = None
+		os.unlink(tmp_file)
 
 sys.argv.append('-v')
 unittest.main()

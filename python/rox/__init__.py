@@ -336,16 +336,20 @@ def get_local_path(uri):
 	return None
 
 app_options = None
-def setup_app_options(program, leaf = 'Options.xml'):
+def setup_app_options(program, leaf = 'Options.xml', site = None):
 	"""Most applications only have one set of options. This function can be
 	used to set up the default group. 'program' is the name of the
-	directory to use in <Choices> and 'leaf' is the name of the file used
-	to store the group. You can refer to the group using rox.app_options.
+	directory to use and 'leaf' is the name of the file used to store the
+	group. You can refer to the group using rox.app_options.
+
+	If site is given, the basedir module is used for saving options (the
+	new system). Otherwise, the deprecated choices module is used.
+
 	See rox.options.OptionGroup."""
 	global app_options
 	assert not app_options
 	from options import OptionGroup
-	app_options = OptionGroup(program, leaf)
+	app_options = OptionGroup(program, leaf, site)
 
 _options_box = None
 def edit_options(options_file = None):

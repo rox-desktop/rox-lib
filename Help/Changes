@@ -2,6 +2,12 @@
 			Shared code for ROX applications
 			by Thomas Leonard
 			http://rox.sourceforge.net
+
+27-Sep-2004
+~~~~~~~~~~~
+The choices module is now deprecated. You can use choices.migrate() to move
+settings over to the basedir system (Thomas Leonard).
+
 26-Sep-2004
 ~~~~~~~~~~~
 Several incompatible changes to the experimental proxy API to make it simpler

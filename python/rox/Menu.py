@@ -34,16 +34,19 @@ using this feature.
 
 from __future__ import generators
 
+import os
 import rox
 from rox import g
-import choices
+import choices, basedir
 
 _save_name = None
-def set_save_name(prog, leaf = 'menus'):
+def set_save_name(prog, leaf = 'menus', site = None):
 	"""Set the directory/leafname (see choices) used to save the menu keys.
-	Call this before creating any menus."""
+	Call this before creating any menus.
+	If 'site' is given, the basedir module is used for saving bindings (the
+	new system). Otherwise, the deprecated choices module is used."""
 	global _save_name
-	_save_name = (prog, leaf)
+	_save_name = (site, prog, leaf)
 
 class MenuItem:
 	"""Base class for menu items. You should normally use one of the subclasses..."""
@@ -134,8 +137,11 @@ class Menu:
 		self.accel_group = ag
 		factory = g.ItemFactory(g.Menu, '<%s>' % name, ag)
 
-		program, save_leaf = _save_name
-		accel_path = choices.load(program, save_leaf)
+		site, program, save_leaf = _save_name
+		if site:
+			accel_path = basedir.load_first_config(site, program, save_leaf)
+		else:
+			accel_path = choices.load(program, save_leaf)
 
 		out = []
 		self.fns = []
@@ -174,8 +180,12 @@ class Menu:
 		self.menu = factory.get_widget('<%s>' % name)
 
 		def keys_changed(*unused):
-			program, name = _save_name
-			path = choices.save(program, name)
+			site, program, name = _save_name
+			if site:
+				d = basedir.save_config_path(site, program)
+				path = os.path.join(d, name)
+			else:
+				path = choices.save(program, name)
 			if path:
 				try:
 					g.accel_map_save(path)

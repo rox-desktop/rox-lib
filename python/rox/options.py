@@ -23,9 +23,10 @@ yourself.
 """
 
 from __future__ import generators
+import os
 
-import choices
 import rox
+from rox import choices, basedir
 
 from xml.dom import Node, minidom
 
@@ -87,8 +88,11 @@ class Option:
 		return "<Option %s=%s>" % (self.name, self.value)
 
 class OptionGroup:
-	def __init__(self, program, leaf):
-		"program/leaf is a Choices pair for the saved options."
+	def __init__(self, program, leaf, site = None):
+		"""program/leaf is a Choices pair for the saved options. If site
+		is given, the basedir module is used for saving choices (the new system).
+		Otherwise, the deprecated choices module is used."""
+		self.site = site
 		self.program = program
 		self.leaf = leaf
 		self.pending = {}	# Loaded, but not registered
@@ -96,7 +100,10 @@ class OptionGroup:
 		self.callbacks = []
 		self.too_late_for_registrations = 0
 		
-		path = choices.load(program, leaf)
+		if site:
+			path = basedir.load_first_config(site, program, leaf)
+		else:
+			path = choices.load(program, leaf)
 		if not path:
 			return
 
@@ -133,7 +140,11 @@ class OptionGroup:
 		"""Save all option values. Usually called by OptionsBox()."""
 		assert self.too_late_for_registrations
 
-		path = choices.save(self.program, self.leaf)
+		if self.site:
+			d = basedir.save_config_path(self.site, self.program)
+			path = os.path.join(d, self.leaf)
+		else:
+			path = choices.save(self.program, self.leaf)
 		if not path:
 			return	# Saving is disabled
 
