@@ -6,12 +6,13 @@ from os.path import dirname, abspath
 app_dir = dirname(abspath(argv[0]))
 path.append(app_dir + '/python')
 
+import rox
 from rox import g
 
 box = g.MessageDialog(None, g.MESSAGE_QUESTION, 0, g.BUTTONS_OK,
-"ROX-Lib2 contains code that is useful to newer ROX applications. \
+rox._("ROX-Lib2 contains code that is useful to newer ROX applications. \
 You should place this directory somewhere where other programs can \
-find it, such as ~/lib or /usr/local/lib.")
+find it, such as ~/lib or /usr/local/lib."))
 box.add_button(g.STOCK_HELP, g.RESPONSE_HELP)
 box.set_title('ROX-Lib')
 box.set_position(g.WIN_POS_CENTER)
