@@ -54,5 +54,7 @@ class TestMenu(unittest.TestCase):
 		assert self.my_t2.my_widget != self.my_t1.my_widget
 		assert self.my_t1.my_menu == self.my_t2.my_menu == self.menu
 
-sys.argv.append('-v')
-unittest.main()
+suite = unittest.makeSuite(TestMenu)
+if __name__ == '__main__':
+	sys.argv.append('-v')
+	unittest.main()

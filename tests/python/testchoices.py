@@ -108,5 +108,7 @@ class TestChoices(unittest.TestCase):
 		assert os.path.isdir('/tmp/choices/Edit')
 		assert os.path.isdir('/tmp/config/rox.sourceforge.net/Edit')
 
-sys.argv.append('-v')
-unittest.main()
+suite = unittest.makeSuite(TestChoices)
+if __name__ == '__main__':
+	sys.argv.append('-v')
+	unittest.main()

@@ -68,5 +68,7 @@ class TestOptions(unittest.TestCase):
 		assert not o1.has_changed
 	
 
-sys.argv.append('-v')
-unittest.main()
+suite = unittest.makeSuite(TestOptions)
+if __name__ == '__main__':
+	sys.argv.append('-v')
+	unittest.main()

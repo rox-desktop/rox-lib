@@ -204,5 +204,7 @@ class TestProxy(unittest.TestCase):
 		g.mainloop()
 		os.unlink(tmp_file)
 
-sys.argv.append('-v')
-unittest.main()
+suite = unittest.makeSuite(TestProxy)
+if __name__ == '__main__':
+	sys.argv.append('-v')
+	unittest.main()

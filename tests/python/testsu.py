@@ -50,5 +50,7 @@ class TestSU(unittest.TestCase):
 		tasks.Task(run())
 		g.mainloop()
 
-sys.argv.append('-v')
-unittest.main()
+suite = unittest.makeSuite(TestSU)
+if __name__ == '__main__':
+	sys.argv.append('-v')
+	unittest.main()

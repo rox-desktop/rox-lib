@@ -73,6 +73,7 @@ class TestBasedir(unittest.TestCase):
 		self.assertEquals(['/tmp/config/foo/bar'],
 				  list(basedir.load_config_paths('foo', 'bar')))
 
-
-sys.argv.append('-v')
-unittest.main()
+suite = unittest.makeSuite(TestBasedir)
+if __name__ == '__main__':
+	sys.argv.append('-v')
+	unittest.main()

@@ -4,6 +4,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+01-Apr-2005
+~~~~~~~~~~~
+Added 'testall' script to run all the unit tests together (Thomas Leonard).
+
 23-Mar-2005 (Release 1.9.18)
 ~~~~~~~~~~~
 German translation (Guido Schimmels).
