@@ -81,6 +81,8 @@ except:
 	try:
 		# Try again without Zero Install
 		sys.path = _old_sys_path
+		if 'gtk' in sys.modules:
+			del sys.modules['gtk']
 		try:
 			# Try to support 1.99.12, at least to show an error
 			import pygtk; pygtk.require('2.0')
