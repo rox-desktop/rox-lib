@@ -32,7 +32,6 @@ python is old enough not to include them already.
 import sys, os
 
 _path = os.path.realpath(sys.argv[0])
-print _path
 app_dir = os.path.dirname(_path)
 if _path.endswith('/AppRun') or _path.endswith('/AppletRun'):
 	sys.argv[0] = os.path.dirname(_path)
