@@ -18,3 +18,5 @@ Need a stable release soon, so only vital features should go here.
 For 2.2.0
 
 Use GtkUIManager instead of GtkItemFactory when GTK+ 2.4 or later present
+
+Some more list widgets for the Options code?
