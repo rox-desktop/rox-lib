@@ -18,6 +18,7 @@ The following modules are provided:
 	SaveBox		- Drag and drop saving
 	Toolbar		- A ROX-Filer style toolbar
 	XDSLoader	- Allow files to be dropped on your widgets
+	options		- Load, save and edit settings
 
 
 choices
@@ -198,3 +199,26 @@ xds_load_from_selection(selection) is called.
 
 In either case, the default methods get the data and call
 xds_load_data(data).
+
+options
+~~~~~~~
+Initialise the options system right at the start of your program:
+
+	from rox import options
+        options.init('MyEdit')
+
+Register each option before using it. Give the name ('section_option') and
+a default value:
+
+	options.register('section_option', 'Default')
+
+Get the current value using:
+
+	options.get('section_option')
+
+Bring up the options box with:
+
+	options.edit()
+
+You'll need to create an Options.xml file with the layout for the box.
+See the on-line tutorial for more information.
