@@ -215,7 +215,7 @@ class SaveArea(g.VBox):
 		self.destroy_on_drag_end = 0
 		self.using_xds = 0
 		self.data_sent = 0
-		drag_box.gtk_drag_source_set_icon_pixbuf(self.icon.get_pixbuf())
+		drag_box.drag_source_set_icon_pixbuf(self.icon.get_pixbuf())
 
 		uri = self.entry.get_text()
 		if uri:

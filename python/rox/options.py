@@ -134,7 +134,7 @@ class OptionGroup:
 		doc.appendChild(root)
 
 		for option in self:
-			option.to_xml(root)
+			option._to_xml(root)
 
 		file = open(path, 'w')
 		doc.writexml(file)
