@@ -43,7 +43,7 @@ def version(major, minor, micro):
 			import rox
 			if major == 1 and minor == 9 and micro < 10:
 				return	# Can't check version
-			if not hasattr('rox', 'roxlib_version'):
+			if not hasattr(rox, 'roxlib_version'):
 				break
 			if (major, minor, micro) >= rox.roxlib_version:
 				return	# OK
