@@ -68,7 +68,7 @@ try:
 			os.system('0refresh ' + zhost)
 		if os.path.exists(zpath):
 			sys.path.insert(0, zpath +
-				'/lib/python2.2/site-packages')
+				'/lib/python%d.%d/site-packages' % sys.version_info[:2])
 	try:
 		# Try to support 1.99.12, at lest to show an error
 		import pygtk; pygtk.require('2.0')
