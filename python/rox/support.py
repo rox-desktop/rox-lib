@@ -1,4 +1,5 @@
 import choices, sys
+import os.path
 from gtk import *
 from socket import gethostbyaddr, gethostname
 from string import find, lower, join
@@ -23,6 +24,8 @@ bad_xpm = [
 " ...XXXX... ",
 " ..XXXXXX.. ",
 "            "]
+
+app_dir = os.path.dirname(sys.argv[0])
 
 _host_name = None
 def our_host_name():

@@ -13,6 +13,7 @@ You can then include the other files, eg:
 The following modules are provided:
 
 	choices		- Load and save user choices
+	filer		- Open directories with ROX-Filer, etc
 	MultipleChoice	- A message box with buttons along the bottom
 	SaveBox		- Drag and drop saving
 	Toolbar		- A ROX-Filer style toolbar
@@ -38,6 +39,18 @@ is disabled at the user's request).
 
 This creates any missing directories - pass 'create = 0' if you don't want
 that (eg, to show the user where you will save without actually saving).
+
+
+filer
+~~~~~
+You can get ROX-Filer to open a directory using:
+	
+	from rox import filer
+	filer.open_dir('/path/to/dir')
+
+If you want to indicate a particular file (make it flash), use:
+
+	filer.show_file('/path/to/dir/file')
 
 
 MultipleChoice
