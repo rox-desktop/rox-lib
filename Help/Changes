@@ -10,6 +10,8 @@ Added save_set_permissions to Saveable interface, allowing the default
 save_to_file to preserve file permissions.
 Changes to XDSLoaded: xds_load_from_stream(name, type, stream) replaces
 the old xds_load_data(data).
+Loading files from remote filers works now.
+Added much improved exception reporting system.
 
 19-Jul-2002 (Release 1.9.1)
 ~~~~~~~~~~~

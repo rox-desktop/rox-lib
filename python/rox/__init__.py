@@ -104,12 +104,10 @@ def confirm(message, stock_icon, action = None):
 def report_exception():
 	"""Display the current python exception in an error box, returning
 	when the user closes the box. This is useful in the 'except' clause
-	of a 'try' block."""
-	import traceback
+	of a 'try' block. Uses rox.debug.show_exception()."""
 	type, value, tb = sys.exc_info()
-	traceback.print_exception(type, value, tb)
-	ex = traceback.format_exception_only(type, value)
-	alert(''.join(ex))
+	import debug
+	debug.show_exception(type, value, tb)
 
 class ButtonMixed(g.Button):
 	"""A button with a standard stock icon, but any label. This is useful
