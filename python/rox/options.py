@@ -8,6 +8,7 @@ You can also use the handy rox.setup_app_options() in most applications.
 2. Create the options:
 	colour = Option('colour', 'red', options)
 	size = Option('size', 3, options)
+	icons = ListOption('icons', ('circle', 'square', 'triangle'), options)
 
 3. Register any callbacks (notification of options changing):
 	def my_callback():
@@ -87,6 +88,54 @@ class Option:
 	def __str__(self):
 		return "<Option %s=%s>" % (self.name, self.value)
 
+class ListOption(Option):
+	"""A ListOption stores a list of values. Every option is part of exactly one OptionGroup.
+
+	The read-only attribute list_value can be used to get the current setting
+	for the ListOption. value will be str(list_value) and int_value wille be -1.
+
+	The has_changed attribute is used during notify() calls to indicate whether this
+	ListOption's value has changed since the last notify (or option creation).
+	You may set has_changed = 1 right after creating an option if you want to force
+	notification the first time even if the default is used.
+	"""
+	def __init__(self, name, value, group = None):
+		self.list_value=None
+		rox.options.Option.__init__(self, name, value, group)
+
+		self.default_value=value
+
+	def _set(self, value):
+		try:
+			tmp=len(value)
+		except:
+			rox.options.Option._set(self, value)
+			return
+		if hasattr(value, 'upper'):
+			# Assume it's a string
+			rox.options.Option._set(self, value)
+			return
+
+		if self.list_value!=value:
+			self.list_value=list(value)
+			self.value=str(value)
+			self.int_value=-1
+			self.has_changed=1
+
+	def _to_xml(self, parent):
+		doc = parent.ownerDocument
+		node = doc.createElement('ListOption')
+		node.setAttribute('name', self.name)
+		if self.list_value:
+			for v in self.list_value:
+				snode=doc.createElement('Value')
+				snode.appendChild(doc.createTextNode(v))
+				node.appendChild(snode)
+		parent.appendChild(node)
+				
+	def __str__(self):
+		return "<ListOption %s=%s>" % (self.name, self.list_value)
+
 class OptionGroup:
 	def __init__(self, program, leaf, site = None):
 		"""program/leaf is a Choices pair for the saved options. If site
@@ -115,11 +164,17 @@ class OptionGroup:
 			for o in root.childNodes:
 				if o.nodeType != Node.ELEMENT_NODE:
 					continue
-				if o.localName != 'Option':
+				if o.localName == 'Option':
+					name = o.getAttribute('name')
+					self.pending[name] = data(o)
+				elif o.localName=='ListOption':
+					name = o.getAttribute('name')
+					v=[]
+					for s in o.getElementsByTagName('Value'):
+						v.append(data(s))
+						self.pending[name]=v
+				else:
 					print "Warning: Non Option element", o
-					continue
-				name = o.getAttribute('name')
-				self.pending[name] = data(o)
 		except:
 			rox.report_exception()
 	

@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+03-Oct-2004
+~~~~~~~~~~~
+Added options.ListOption to support multi-valued option widgets, such as
+lists (Stephen Watson).
+
 02-Oct-2004 (Release 1.9.16)
 ~~~~~~~~~~~
 Cope better with user cancelling su operation. New interface to replace
