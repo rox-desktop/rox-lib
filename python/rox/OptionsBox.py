@@ -333,17 +333,23 @@ class OptionsBox(g.Dialog):
 			data = None
 		if data:
 			self.tips.set_tip(widget, self._(data))
+	
+	def get_size_group(self, name):
+		"""Return the GtkSizeGroup for this name, creating one
+		if it doesn't currently exist."""
+		try:
+			return self.size_groups[name]
+		except KeyError:
+			group = g.SizeGroup(g.SIZE_GROUP_HORIZONTAL)
+			self.size_groups[name] = group
+		return group
 
-	def make_sized_label(self, label):
+	def make_sized_label(self, label, suffix = ""):
 		"""Create a GtkLabel and add it to the current size-group, if any"""
 		widget = g.Label(label)
 		if self.current_size_group:
 			widget.set_alignment(1.0, 0.5)
-			try:
-				group = self.size_groups[self.current_size_group]
-			except KeyError:
-				group = g.SizeGroup(g.SIZE_GROUP_HORIZONTAL)
-				self.size_groups[self.current_size_group] = group
+			group = self.get_size_group(self.current_size_group + suffix)
 			group.add_widget(widget)
 		return widget
 	
@@ -635,6 +641,49 @@ class OptionsBox(g.Dialog):
 		toggle.connect('toggled', lambda w: self.check_widget(option))
 
 		return [toggle]
+	
+	def build_slider(self, node, label, option):
+		minv = int(node.getAttribute('min'))
+		maxv = int(node.getAttribute('max'))
+		fixed = int(node.getAttribute('fixed') or "0")
+		showvalue = int(node.getAttribute('showvalue') or "0")
+		end = node.getAttribute('end')
+
+		hbox = g.HBox(False, 4)
+		if label:
+			widget = self.make_sized_label(label)
+			hbox.pack_start(widget, False, True, 0)
+		
+		if end:
+			hbox.pack_end(self.make_sized_label(_(end),
+							suffix = '-unit'),
+					False, True, 0)
+		
+		adj = g.Adjustment(minv, minv, maxv, 1, 10, 0)
+		slide = g.HScale(adj)
+			
+		if fixed:
+			slide.set_size_request(adj.upper, 24)
+		else:
+			slide.set_size_request(120, -1)
+		if showvalue:
+			slide.draw_value(True)
+			slide.set_value_pos(g.POS_LEFT)
+			slide.set_digits(0)
+		else:
+			slide.set_draw_value(False)
+
+		self.may_add_tip(slide, node)
+		hbox.pack_start(slide, not fixed, True, 0)
+
+		self.handlers[option] = (
+			lambda: str(adj.get_value()),
+			lambda: adj.set_value(option.int_value))
+
+		slide.connect('value-changed',
+			lambda w: self.check_widget(option))
+
+		return [hbox]
 	
 class FontButton(g.Button):
 	"""A button that opens a GtkFontSelectionDialog"""

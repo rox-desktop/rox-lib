@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+26-Apr-2004
+~~~~~~~~~~~
+Added <slider> widget to options.
+
 25-Apr-2004
 ~~~~~~~~~~~
 Added 'size-group' attribute to Options.xml elements. This allows grouping
