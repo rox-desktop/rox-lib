@@ -6,7 +6,7 @@
 ~~~~~~~~~~~
 Added functions to read MIME database (Stephen Watson).
 
-27-Jan-2003
+27-Jan-2003 (Release 1.9.6)
 ~~~~~~~~~~~
 Make the default window class the name of the application directory, not
 'AppRun' (suggested by Albert Wagner).
@@ -26,7 +26,7 @@ Ensure that True and False are defined.
 Work around bug in some versions of pygtk that stopped the options window
 from working.
 
-12-Dec-2002 (Release 13-Dec-2002)
+12-Dec-2002 (Release 1.9.5)
 ~~~~~~~~~~~
 Upgrade Options box to new style.
 

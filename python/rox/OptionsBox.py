@@ -200,7 +200,8 @@ class OptionsBox(g.Dialog):
 		self.notebook = notebook
 
 		# Flip pages
-		def change_page(tv):
+		# (sel = sel; pygtk bug?)
+		def change_page(tv, sel = sel, notebook = notebook):
 			selected = sel.get_selected()
 			if not selected:
 				return

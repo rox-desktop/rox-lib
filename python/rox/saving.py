@@ -555,7 +555,7 @@ class SaveFilter(Saveable):
 			tmp = tempfile.TemporaryFile()
 			stdout_fileno = tmp.fileno()
 
-		# Get the FD for the input, creating a tmp file if needed
+		# Get the FD for the input
 		if self.stdin:
 			stdin_fileno = self.stdin.fileno()
 			self.stdin.seek(0)
