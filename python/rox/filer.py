@@ -28,9 +28,15 @@ def spawn_rox(args):
 	"""Run rox (either from PATH or through Zero Install) with the
 	given arguments."""
 	import os.path
+	for dir in os.environ.get('PATH', '').split(':'):
+		path = os.path.join(dir, 'rox')
+		if os.path.isfile(path):
+			_spawn(('rox',) + args)
+			return
 	if os.path.exists('/uri/0install/rox.sourceforge.net'):
 		_spawn(('/bin/0run', 'rox.sourceforge.net/rox 2002-01-01') + args)
 	else:
+		print "Didn't find rox in PATH, and Zero Install not present. Trying 'rox' anyway..."
 		_spawn(('rox',) + args)
 
 def open_dir(dir):
