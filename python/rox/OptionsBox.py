@@ -436,66 +436,52 @@ class OptionsBox(g.Dialog):
 
 		return [hbox]
 
-	def build_combo_group(self, node, label, option):
-		"""Build a list combo entry widget, only one of which may be
-		selected.
-		<combo-group name='...' label='...'>
-		  <combo value='...' label='...'/>
-		  <combo value='...' label='...'/>
-		</combo-group>"""
+	def build_menu(self, node, label, option):
+		"""Build an OptionMenu widget, only one item of which may be selected.
+		<menu name='...' label='...'>
+		  <item value='...' label='...'/>
+		  <item value='...' label='...'/>
+		</menu>"""
 
-		# List to be displayed in widget
-		labels = []
-		# Dictionary to equate labels to values
-		combos = {}
+		values = []
 
-		combo = g.Combo()
+		option_menu = g.OptionMenu()
+		menu = g.Menu()
+		option_menu.set_menu(menu)
 
 		if label:
 			box = g.HBox(False, 4)
 			label_wid = g.Label(label)
 			label_wid.set_alignment(1.0, 0.5)
 			box.pack_start(label_wid, False, True, 0)
-			box.pack_start(combo, True, True, 0)
+			box.pack_start(option_menu, True, True, 0)
 		else:
 			box = None
 
-		#self.may_add_tip(combo, node)
+		#self.may_add_tip(option_menu, node)
 
-		# Build combo list
-		for cmb_option in node.getElementsByTagName('combo'):
-			value = cmb_option.getAttribute('value')
-			label_item = cmb_option.getAttribute('label') or value
+		for item in node.getElementsByTagName('item'):
+			value = item.getAttribute('value')
+			assert value
+			label_item = item.getAttribute('label') or value
 
-			labels.append(label_item)
-			combos[value] = label_item
+			menu.append(g.MenuItem(label_item))
+			values.append(value)
 
-		# Now, add the list to the combo box
-		combo.set_popdown_strings(labels)
-
-		combo.entry.connect('changed',
-				lambda e: self.check_widget(option))
+		option_menu.connect('changed', lambda e: self.check_widget(option))
 
 		def get():
-			cmb_label = combo.entry.get_text()
-			"""Look for where the label that is selected equals a
-			value in the dictionary, then return the key"""
-			for key, item in combos.items():
-				if item == cmb_label:
-					return key
+			return values[option_menu.get_history()]
 
 		def set():
-			"""Paranoia check"""
-			#print combos[option.value]
 			try:
-				saved_value_label = combos[option.value]
-				combo.entry.set_text(saved_value_label)
-			except:
+				option_menu.set_history(values.index(option.value))
+			except ValueError:
 				print "Value '%s' not in combo list" % option.value
 
 		self.handlers[option] = (get, set)
 
-		return [box or combo]
+		return [box or option_menu]
 
 
 	def build_radio_group(self, node, label, option):

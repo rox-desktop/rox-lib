@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+24-Dec-2003
+~~~~~~~~~~~
+Added <menu> OptionMenu widget for Options box (Chris Shaffer).
+
 27-Nov-2003
 ~~~~~~~~~~~
 Fixed bug in findrox when not using Zero Install (Lionel Bringuier).
