@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+11-Dec-2004
+~~~~~~~~~~~
+Suppress warning when we use GtkItemFactory under pygtk 2.4 (Stephen Watson).
+
 25-Nov-2004
 ~~~~~~~~~~~
 Added tasks.InputBlocker, which triggers when an input source becomes

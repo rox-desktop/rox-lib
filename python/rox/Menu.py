@@ -39,6 +39,10 @@ import rox
 from rox import g
 import choices, basedir
 
+import warnings
+warnings.filterwarnings('ignore', 'use gtk.UIManager', DeprecationWarning,
+			'rox')
+
 _save_name = None
 def set_save_name(prog, leaf = 'menus', site = None):
 	"""Set the directory/leafname (see choices) used to save the menu keys.
