@@ -38,8 +38,11 @@ class Menu:
 	def save(self):
 		path = choices.save(self.program, self.name)
 		if path:
-			# XXX
-			self.factory.dump_rc(path)
+			try:
+				self.factory.dump_rc(path)
+			except AttributeError:
+				print "Saving menu short-cuts is not " + \
+					"yet supported."
 	
 	def attach(self, window, object):
 		"""Keypresses on this window will be treated as menu shortcuts

@@ -298,6 +298,64 @@ class OptionsBox(GtkWindow):
 		option_menu.set_usize(max_w + 50, max_h + 4)
 		return (self.set_menu, self.get_menu, option_menu, values)
 
+	def set_font(self, font, value):
+		font.set_value(value)
+	
+	def get_font(self, font):
+		return font.get_value()
+	
+	def make_font(self, widget, box):
+		button = FontButton(widget.label)
+
+		self.may_add_tip(button, widget)
+
+		hbox = GtkHBox(FALSE, 4)
+		hbox.pack_start(GtkLabel(widget.label), FALSE, TRUE, 0)
+		hbox.pack_start(button, FALSE, TRUE, 0)
+		box.pack_start(hbox, FALSE, TRUE, 0)
+
+		return (self.set_font, self.get_font, button)
+
+class FontButton(GtkButton):
+	def __init__(self, title):
+		GtkButton.__init__(self)
+		self.title = title
+		self.label = GtkLabel('<font>')
+		self.label.set_padding(32, 1)
+		self.add(self.label)
+		self.dialog = None
+		self.connect('clicked', self.clicked)
+	
+	def set_value(self, value):
+		self.label.set_text(value)
+		if self.dialog:
+			self.dialog.destroy()
+	
+	def get_value(self):
+		return self.label.get()
+
+	def closed(self, dialog):
+		self.dialog = None
+	
+	def cancel(self, button):
+		self.dialog.destroy()
+	
+	def ok(self, button):
+		self.set_value(self.dialog.get_font_name())
+	
+	def clicked(self, button):
+		if self.dialog:
+			self.dialog.destroy()
+
+		self.dialog = GtkFontSelectionDialog(self.title)
+		self.dialog.set_position(WIN_POS_MOUSE)
+		self.dialog.connect('destroy', self.closed)
+		self.dialog.cancel_button.connect('clicked', self.cancel)
+		self.dialog.ok_button.connect('clicked', self.ok)
+
+		self.dialog.set_font_name(self.get_value())
+		self.dialog.show()
+
 class ColourButton(GtkButton):
 	def __init__(self, title):
 		GtkButton.__init__(self)

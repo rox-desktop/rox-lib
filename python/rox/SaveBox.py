@@ -261,6 +261,7 @@ class SaveBox(GtkWindow):
 	
 	def discard_clicked(self, event):
 		self.document.discard()
+		self.destroy()
 	
 	def set_uri(self, uri):
 		if hasattr(self.document, 'set_uri'):
