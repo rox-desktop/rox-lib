@@ -36,7 +36,6 @@ def install_mime_info(application, package_file = None):
 		except:
 			continue
 		if old_data == new_data:
-			print "Already installed:", test
 			return	# Already installed
 	
 	# Not already installed; add a new copy
