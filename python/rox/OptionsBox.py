@@ -338,6 +338,7 @@ class OptionsBox(g.Dialog):
 		"""Create a GtkLabel and add it to the current size-group, if any"""
 		widget = g.Label(label)
 		if self.current_size_group:
+			widget.set_alignment(1.0, 0.5)
 			try:
 				group = self.size_groups[self.current_size_group]
 			except KeyError:
@@ -398,7 +399,8 @@ class OptionsBox(g.Dialog):
 	def do_box(self, node, label, widget):
 		"Helper function for building hbox, vbox and frame widgets."
 		if label:
-			widget.pack_start(g.Label(label), False, True, 4)
+			widget.pack_start(self.make_sized_label(label),
+						False, True, 4)
 
 		for child in node.childNodes:
 			if child.nodeType == Node.ELEMENT_NODE:
@@ -436,7 +438,7 @@ class OptionsBox(g.Dialog):
 		entry = g.Entry()
 
 		if label:
-			label_wid = g.Label(label)
+			label_wid = self.make_sized_label(label)
 			label_wid.set_alignment(1.0, 0.5)
 			box.pack_start(label_wid, False, True, 0)
 			box.pack_start(entry, True, True, 0)
@@ -484,7 +486,7 @@ class OptionsBox(g.Dialog):
 		self.may_add_tip(button, node)
 
 		hbox = g.HBox(False, 4)
-		hbox.pack_start(g.Label(label), False, True, 0)
+		hbox.pack_start(self.make_sized_label(label), False, True, 0)
 		hbox.pack_start(button, False, True, 0)
 
 		self.handlers[option] = (button.get, button.set)

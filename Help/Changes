@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+25-Apr-2004
+~~~~~~~~~~~
+Added 'size-group' attribute to Options.xml elements. This allows grouping
+elements so that their labels all appear the same width.
+
 20-Apr-2004
 ~~~~~~~~~~~
 Bugfix: Colour buttons in the Options boxes didn't work with some themes
