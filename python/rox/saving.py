@@ -478,3 +478,13 @@ class SaveBox(g.Dialog):
 		"""Place self.save_area somewhere in self.vbox. Override this
 		for more complicated layouts."""
 		self.vbox.add(self.save_area)
+
+class StringSaver(SaveBox, Saveable):
+	"""A very simple SaveBox which saves the string passed to its constructor."""
+	def __init__(self, string, name):
+		"""'string' is the string to save. 'name' is the default filename"""
+		SaveBox.__init__(self, self, name, 'text/plain')
+		self.string = string
+	
+	def save_to_stream(self, stream):
+		stream.write(self.string)

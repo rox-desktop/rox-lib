@@ -7,7 +7,10 @@ import inspect
 import sys, os
 sys.path.insert(0, os.path.abspath(os.getcwd()))
 
-os.mkdir('../Help/python')
+try:
+	os.mkdir('../Help/python')
+except OSError:
+	pass
 
 # Ignore names starting with _
 old_get = inspect.getmembers

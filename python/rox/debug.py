@@ -6,6 +6,10 @@ import gobject
 import linecache
 
 from rox import g, ButtonMixed, TRUE, FALSE, toplevel_ref, toplevel_unref, _
+from rox import info, alert
+from saving import StringSaver
+
+savebox = None
 
 def show_exception(type, value, tb):
 	"""Display this exception in an error box. The user has the options
@@ -14,17 +18,13 @@ def show_exception(type, value, tb):
 
 	QUIT = 1
 	DETAILS = 2
+	SAVE = 3
 	
 	brief = ''.join(traceback.format_exception_only(type, value))
 
 	toplevel_ref()
 	box = g.MessageDialog(None, 0, g.MESSAGE_ERROR, g.BUTTONS_NONE, brief)
 	
-	button = ButtonMixed(g.STOCK_QUIT, _('Forced Quit'))
-	button.set_flags(g.CAN_DEFAULT)
-	button.show()
-	box.add_action_widget(button, QUIT)
-
 	button = ButtonMixed(g.STOCK_ZOOM_IN, _('_Details'))
 	button.set_flags(g.CAN_DEFAULT)
 	button.show()
@@ -35,15 +35,50 @@ def show_exception(type, value, tb):
 
 	box.set_position(g.WIN_POS_CENTER)
 	box.set_title(_('Error'))
+	reply = []
+	def response(box, resp):
+		reply.append(resp)
+		g.mainquit()
+	box.connect('response', response)
+	box.show()
+
+	bug_report = 'Traceback (most recent call last):\n' + \
+		     ''.join(traceback.format_stack(tb.tb_frame.f_back) +
+			     traceback.format_tb(tb) +
+			     traceback.format_exception_only(type, value))
+
 	while 1:
-		resp = box.run()
+		g.mainloop()
+		resp = reply.pop()
 		if resp == g.RESPONSE_OK or resp == g.RESPONSE_DELETE_EVENT:
 			break
+		if resp == SAVE:
+			global savebox
+			if savebox:
+				savebox.destroy()
+			def destroy(box):
+				savebox = None
+			savebox = StringSaver(bug_report, 'BugReport')
+			savebox.connect('destroy', destroy)
+			savebox.show()
+			continue
 		if resp == QUIT:
 			sys.exit(1)
 		assert resp == DETAILS
 		box.set_response_sensitive(DETAILS, FALSE)
 		box.set_has_separator(FALSE)
+
+		button = ButtonMixed(g.STOCK_SAVE, _('_Bug Report'))
+		button.set_flags(g.CAN_DEFAULT)
+		button.show()
+		box.add_action_widget(button, SAVE)
+		box.action_area.set_child_secondary(button, TRUE)
+
+		button = ButtonMixed(g.STOCK_QUIT, _('Forced Quit'))
+		button.set_flags(g.CAN_DEFAULT)
+		button.show()
+		box.add_action_widget(button, QUIT)
+		box.action_area.set_child_secondary(button, TRUE)
 
 		ee = ExceptionExplorer(tb)
 		box.vbox.pack_start(ee)
@@ -57,11 +92,16 @@ class ExceptionExplorer(g.Frame):
 	FUNC = 2
 	CODE = 3
 	def __init__(self, tb):
-		g.Frame.__init__(self, _('Stack trace'))
+		g.Frame.__init__(self, _('Stack trace (innermost last)'))
+
+		vbox = g.VBox(FALSE, 0)
+		self.add(vbox)
 
 		inner = g.Frame()
 		inner.set_shadow_type(g.SHADOW_IN)
-		self.add(inner)
+		vbox.add(inner)
+
+		self.savebox = None
 
 		self.tb = tb
 		
@@ -85,7 +125,6 @@ class ExceptionExplorer(g.Frame):
 		tree.append_column(column)
 
 		inner.set_border_width(5)
-		inner.show_all()
 
 		frames = []
 		while tb is not None:
@@ -98,6 +137,9 @@ class ExceptionExplorer(g.Frame):
 			frames.append((f, f.f_lineno))
 			f = f.f_back
 
+		frames.reverse()
+
+		new = None
 		for f, lineno in frames:
 			co = f.f_code
 			filename = co.co_filename
@@ -111,3 +153,64 @@ class ExceptionExplorer(g.Frame):
 					    ExceptionExplorer.LINE, lineno,
 					    ExceptionExplorer.FUNC, name,
 					    ExceptionExplorer.CODE, line)
+
+		def selected_frame():
+			selected = sel.get_selected()
+			assert selected
+			model, iter = selected
+			frame, = model.get_path(iter)
+			return frames[frame][0]
+
+		vars = g.ListStore(str, str)
+		sel = tree.get_selection()
+		sel.set_mode(g.SELECTION_BROWSE)
+		def select_frame(tree):
+			vars.clear()
+			for n, v in selected_frame().f_locals.iteritems():
+				new = vars.append()
+				vars.set(new, 0, str(n), 1, `v`)
+		sel.connect('changed', select_frame)
+
+		# Area to show the local variables
+		tree = g.TreeView(vars)
+
+		vbox.pack_start(g.Label(_('Local variables in selected frame:')),
+				FALSE, TRUE, 0)
+
+		cell = g.CellRendererText()
+		column = g.TreeViewColumn('Name', cell, text = 0)
+		cell.set_property('xalign', 1)
+		tree.append_column(column)
+		cell = g.CellRendererText()
+		column = g.TreeViewColumn('Value', cell, text = 1)
+		tree.append_column(column)
+
+		inner = g.Frame()
+		inner.set_shadow_type(g.SHADOW_IN)
+		inner.add(tree)
+		inner.set_border_width(5)
+		vbox.pack_start(inner, TRUE, TRUE, 0)
+
+		if new:
+			sel.select_iter(new)
+
+		hbox = g.HBox(FALSE, 4)
+		hbox.set_border_width(5)
+		vbox.pack_start(hbox, FALSE, TRUE, 0)
+		hbox.pack_start(g.Label('>>>'), FALSE, TRUE, 0)
+
+		expr = g.Entry()
+		hbox.pack_start(expr, TRUE, TRUE, 0)
+		def activate(entry):
+			expr = entry.get_text()
+			frame = selected_frame()
+			try:
+				info(`eval(expr, frame.f_locals, frame.f_globals)`)
+			except:
+				type, value = sys.exc_info()[:2]
+				brief = ''.join(traceback.format_exception_only(type, value))
+				alert(brief)
+			entry.grab_focus()
+		expr.connect('activate', activate)
+
+		vbox.show_all()

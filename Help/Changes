@@ -3,6 +3,12 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+31-Jul-2002
+~~~~~~~~~~~
+Show local variables in report_exception, and allow expressions to be
+evaluated in the context of any frame.
+Added StringSaver class.
+
 25-Jul-2002
 ~~~~~~~~~~~
 Added applet module for creating ROX panel applets.

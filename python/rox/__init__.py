@@ -10,17 +10,16 @@ The AppRun script of a simple application might look like this:
 
 	import findrox
 	import rox
-	from rox import g
 
-	window = g.Window()
-	rox.toplevel_ref()
-	window.connect('destroy', rox.toplevel_unref())
+	window = rox.Window()
+	window.set_title('My window')
 	window.show()
 
 	rox.mainloop()
 
-This program creates and displays a GtkWindow. When it is destroyed, the
-toplevel_unref function will cause rox.mainloop() to return.
+This program creates and displays a window. The rox.Window widget keeps
+track of how many toplevel windows are open. rox.mainloop() will return
+when the last one is closed.
 
 Other useful values from this module are:
 
@@ -108,6 +107,14 @@ def report_exception():
 	type, value, tb = sys.exc_info()
 	import debug
 	debug.show_exception(type, value, tb)
+
+class Window(g.Window):
+	"""This works in exactly the same way as a GtkWindow, except that
+	it calls the toplevel_(un)ref functions for you automatically."""
+	def __init__(*args, **kwargs):
+		apply(g.Window.__init__, args, kwargs)
+		toplevel_ref()
+		args[0].connect('destroy', toplevel_unref)
 
 class ButtonMixed(g.Button):
 	"""A button with a standard stock icon, but any label. This is useful
