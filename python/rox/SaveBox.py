@@ -29,25 +29,52 @@ def read_xds_property(context, delete):
 	if retval:
 		return retval[2]
 	return None
+	
+def default_selection(document, selection):
+	selection.set(selection.target, 8, document.save_get_data())
 
-# 'window' should have the following methods/attribs:
-#
-# uri - the initial pathname to use
-# save_as(path) - write data to file, TRUE on success
-# set_uri(uri) - data is safely saved to this location
-# send_raw(selection_data) - write data to selection
-#		(if missing, data can only be saved to the filesystem)
-# discard() - discard button clicked
-#		(only needed if discard = TRUE)
+def default_file(document, path):
+	data = document.save_get_data()
+	try:
+		file = open(path, 'wb')
+		try:
+			file.write(data)
+		finally:
+			file.close()
+	except:
+		report_exception()
+		return 0
+	return 1
 
 class SaveBox(GtkWindow):
-	def __init__(self, window, media, subtype, discard = FALSE):
+	"""The 'document' should have the following methods:
+
+	set_uri(uri)
+		Data is safely saved to this location, mark unmodified.
+		May be omitted.
+
+	save_get_data()
+		Return a string containing the data to save.
+
+	save_as_file(path)
+		Write data to file, return TRUE on success.
+		If missing, uses get_save_data() and writes that.
+
+	save_as_selection(selection_data)
+		Write data to the selection.
+		If missing, uses get_save_data() and sends that.
+
+	discard()
+		Discard button clicked. Only needed if discard = TRUE.
+	"""
+
+	def __init__(self, document, uri, type = 'text/plain', discard = FALSE):
 		GtkWindow.__init__(self, WINDOW_DIALOG)
 		self.discard = discard
 		self.set_title('Save As:')
 		self.set_position(WIN_POS_MOUSE)
 		self.set_border_width(4)
-		self.window = window
+		self.document = document
 
 		vbox = GtkVBox(FALSE, 0)
 		self.add(vbox)
@@ -61,19 +88,38 @@ class SaveBox(GtkWindow):
 		drag_box.add_events(BUTTON_PRESS_MASK)
 		align.add(drag_box)
 
-		pixmap, mask = icon_for_type(self, media, subtype)
+		pixmap, mask = icon_for_type(self, type)
 		self.icon = GtkPixmap(pixmap, mask)
 
-		if (hasattr(window, 'send_raw')):
-			target = [('XdndDirectSave0', 0, TARGET_XDS),
-				  ('%s/%s' % (media, subtype), 0, TARGET_RAW),
-				  ('application/octet-stream', 0, TARGET_RAW)
-				 ]
+		if hasattr(document, 'save_as_file'):
+			self.save_as_file = document.save_as_file
+		elif hasattr(document, 'save_get_data'):
+			self.save_as_file = \
+				lambda p, d = document: default_file(d, p)
 		else:
-			target = [('XdndDirectSave0', 0, TARGET_XDS)]
+			self.save_as_file = None
+		
+		if hasattr(document, 'save_as_selection'):
+			self.save_as_selection = document.save_as_selection
+		elif hasattr(document, 'save_get_data'):
+			self.save_as_selection = \
+				lambda s, d = document:	default_selection(d, s)
+		else:
+			self.save_as_selection = None
+		
+		if self.save_as_file:
+			targets = [('XdndDirectSave0', 0, TARGET_XDS)]
+		else:
+			targets = []
+		if self.save_as_selection:
+			targets = targets + [(type, 0, TARGET_RAW),
+				  ('application/octet-stream', 0, TARGET_RAW)]
+
+		if not targets:
+			raise Exception("Document %s can't save!" % document)
 
 		drag_box.drag_source_set(BUTTON1_MASK | BUTTON3_MASK,
-					target,
+					targets,
 					ACTION_COPY | ACTION_MOVE)
 		drag_box.connect('drag_begin', self.drag_begin)
 		drag_box.connect('drag_data_get', self.drag_data_get)
@@ -109,8 +155,8 @@ class SaveBox(GtkWindow):
 		entry.grab_focus()
 		entry.connect('activate', self.ok, entry)
 
-		entry.set_text(window.uri)
-		i = rfind(window.uri, '/')
+		entry.set_text(uri)
+		i = rfind(uri, '/')
 		i = i + 1
 
 		entry.realize()
@@ -132,11 +178,11 @@ class SaveBox(GtkWindow):
 		path = get_local_path(uri)
 
 		if path:
-			if self.window.save_as(path):
-				self.window.set_uri(path)
+			if self.save_as_file(path):
+				self.set_uri(path)
 				self.destroy()
 				if self.discard:
-					self.window.close()
+					self.document.close()
 		else:
 			report_error("Drag the icon to a directory viewer\n" +
 					  "(or enter a full pathname)",
@@ -161,12 +207,12 @@ class SaveBox(GtkWindow):
 	
 	def drag_data_get(self, widget, context, selection_data, info, time):
 		if info == TARGET_RAW:
-			self.window.send_raw(selection_data)
+			self.save_as_selection(selection_data)
 			self.data_sent = 1
 			write_xds_property(context, None)
 			self.destroy()
 			if self.discard:
-				self.window.close()
+				self.document.close()
 			return
 		elif info != TARGET_XDS:
 			write_xds_property(context, None)
@@ -185,7 +231,7 @@ class SaveBox(GtkWindow):
 		if uri:
 			path = get_local_path(uri)
 			if path:
-				self.data_sent = self.window.save_as(path)
+				self.data_sent = self.save_as_file(path)
 				if self.data_sent:
 					to_send = 'S'
 				# (else Error)
@@ -203,13 +249,17 @@ class SaveBox(GtkWindow):
 			write_xds_property(context, None)
 			path = get_local_path(uri)
 			if path:
-				self.window.set_uri(path)
+				self.set_uri(path)
 			else:
-				self.window.set_uri(uri)
+				self.set_uri(uri)
 		if self.data_sent:
 			self.destroy()
 			if self.discard:
-				self.window.close()
+				self.document.close()
 	
 	def discard_clicked(self, event):
-		self.window.discard()
+		self.document.discard()
+	
+	def set_uri(self, uri):
+		if hasattr(self.document, 'set_uri'):
+			self.document.set_uri(uri)

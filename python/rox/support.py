@@ -2,7 +2,7 @@ import choices, sys
 import os.path
 from gtk import *
 from socket import gethostbyaddr, gethostname
-from string import find, lower, join
+from string import split, find, lower, join
 from traceback import format_exception_only
 
 from MultipleChoice import MultipleChoice
@@ -74,8 +74,9 @@ def load_pixmap(window, path):
 		p, m = create_pixmap_from_xpm_d(window, None, bad_xpm)
 	return p, m
 
-def icon_for_type(window, media, subtype):
+def icon_for_type(window, type):
 	'''Search <Choices> for a suitable icon. Returns (pixmap, mask) '''
+	media, subtype = split(type, '/', 1)
 	path = choices.load('MIME-icons', media + '_' + subtype + '.xpm')
 	if not path:
 		path = choices.load('MIME-icons', media + '.xpm')

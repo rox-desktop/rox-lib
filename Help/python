@@ -91,34 +91,35 @@ for when the box is cancelled:
 SaveBox
 ~~~~~~~
 When you want to let the user save some data somewhere, use a SaveBox.
-You need to pass the constructor an object which can save and the MIME type
-(media and subtype) for the data:
+You need to pass the constructor an object which can save, the default
+filename, and the MIME type for the data, eg:
 
-	box = SaveBox(my_doc, 'text', 'plain')
+	box = SaveBox(my_doc, my_doc.uri, 'text/plain')
 	box.show()
 
-'my_doc.uri' is used for the default pathname.
+'my_doc' should have the following methods:
 
-If the users tries to save the data as a file on the local machine then SaveBox
-will do:
+	set_uri(uri)
+		Data is safely saved to this location, mark unmodified.
+		May be omitted.
 
-	my_doc.save_as(path)
+	save_get_data()
+		Return a string containing the data to save.
 
-save_as() should return TRUE on success and FALSE on failure. Do not change
-the document's pathname - 'path' may be a scrap file.
+	save_as_file(path)
+		Write data to file, return TRUE on success.
+		If missing, uses get_save_data() and writes that.
 
-You may also provide:
-	
-	my_doc.send_raw(selection_data)
+	save_as_selection(selection_data)
+		Write data to the selection.
+		If missing, uses get_save_data() and sends that.
 
-This is called when the file is dragged to another application (or a remote
-filer). Set the selection data to the file contents.
+	discard()
+		Discard button clicked. Only needed if discard = TRUE.
 
-If the data is safely saved to the filesystem (locally or remotely) then
-
-	my_doc.set_uri(new_uri)
-
-is called. If the data is saved to another application then this isn't used.
+If save_get_data is NOT provided, then one or both of save_as_file and
+save_as_selection must be present. If only one is provided then the other
+function is disabled.
 
 If the user tries to close a document window containing modified data then you
 may wish to create the savebox with 'discard = 1'. This adds a Discard button
@@ -134,29 +135,14 @@ Example:
 	from gtk import *
 
 	class Doc:
-		uri = 'TextFile'
 		data = 'Some Text'
 
-		def save_as(self, path):
-			try:
-				file = open(path, 'w')
-				file.write(self.data)
-				file.close()
-			except:
-				report_exception()
-				return FALSE
-			return TRUE
-		
-		def set_uri(self, uri):
-			print "New URI:", uri
-			self.uri = uri
-		
-		def send_raw(self, selection):
-			selection.set(selection.target, 8, self.data)
+		def save_get_data(self):
+			return self.data
 
 	doc = Doc()
 
-	box = SaveBox(doc, 'text', 'plain')
+	box = SaveBox(doc, 'TextFile', 'text/plain')
 	box.show()
 	box.connect('destroy', mainquit)
 
