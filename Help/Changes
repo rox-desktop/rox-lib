@@ -7,6 +7,9 @@
 ~~~~~~~~~~~
 Make the default window class the name of the application directory, not
 'AppRun' (suggested by Albert Wagner).
+Bugfix: With pygtk-1.99.14, only the first error message from a process
+	would be detected; this meant that ROX-Lib wouldn't detect when the
+	process quit (reported by joehill).
 
 22-Jan-2003
 ~~~~~~~~~~~
