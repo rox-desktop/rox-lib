@@ -73,6 +73,27 @@ class Action(MenuItem):
 	def activate(self, caller):
 		getattr(caller, self.fn)(*self.values)
 
+class ToggleItem(MenuItem):
+	"""A menu item that has a check icon and toggles state each time it is activated."""
+	def __init__(self, label, property_name):
+		"""property_name is a boolean property on the caller object. You can use
+		the built-in Python function property() if you want to perform calculations when
+		getting or setting the value."""
+		MenuItem.__init__(self, label, property_name, '<ToggleItem>')
+		self.widget = None
+		self.updating = False
+	
+	def update(self, menu, widget):
+		"""Called when then menu is opened."""
+		self.updating = True
+		state = getattr(menu.caller, self.fn)
+		widget.set_active(state)
+		self.updating = False
+	
+	def activate(self, caller):
+		if not self.updating:
+			setattr(caller, self.fn, not getattr(caller, self.fn))
+
 class SubMenu(MenuItem):
 	"""A branch menu item leading to a submenu."""
 	def __init__(self, label, submenu):
@@ -117,6 +138,7 @@ class Menu:
 		if items and not isinstance(items[0], MenuItem):
 			items = [MenuItem(*t) for t in items]
 		
+		items_with_update = []
 		for path, item in _walk(items):
 			if item.fn:
 				self.fns.append(item)
@@ -127,9 +149,17 @@ class Menu:
 				out.append((path, item.key, cb, len(self.fns) - 1, item.type, item.stock))
 			else:
 				out.append((path, item.key, cb, len(self.fns) - 1, item.type))
+			if hasattr(item, 'update'):
+				items_with_update.append((path, item))
 
 		factory.create_items(out)
 		self.factory = factory
+
+		self.update_callbacks = []
+		for path, item in items_with_update:
+			widget = factory.get_widget(path)
+			fn = item.update
+			self.update_callbacks.append(lambda: fn(self, widget))
 
 		if accel_path:
 			g.accel_map_load(accel_path)
@@ -169,6 +199,7 @@ class Menu:
 		"""Display the menu. Call 'caller.<callback_name>' when an item is chosen.
 		For applets, position_fn should be my_applet.position_menu)."""
 		self.caller = caller
+		map(apply, self.update_callbacks) # Update toggles, etc
 		if event:
 			self.menu.popup(None, None, position_fn or self._position, event.button, event.time)
 		else:

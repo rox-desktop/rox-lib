@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+17-Apr-2004
+~~~~~~~~~~~
+Added ToggleItem (based on a patch from Ken Hayber).
+
 15-Apr-2004
 ~~~~~~~~~~~
 Better <label> widgets (wrapping and icon). Taken from LookAndFeel.
