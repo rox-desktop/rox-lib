@@ -3,6 +3,14 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
-12-Jul-2002
+14-Jul-2002
+~~~~~~~~~~~
+Saveable.save_to_file() should raise an exception when saving fails, rather
+than returning 0. The return value is now ignored (note that raising an
+exception will still work with 1.9.0).
+top_level_unref() ignores any arguments, so it is easier to use as a signal
+handler.
+
+12-Jul-2002 (Release 1.9.0)
 ~~~~~~~~~~~
 First release for Gtk+-2.0.

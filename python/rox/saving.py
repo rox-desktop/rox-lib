@@ -67,7 +67,7 @@ class Saveable:
 				'silly programmer!')
 
 	def save_to_file(self, path):
-		"""Write data to file, and return TRUE on success.
+		"""Write data to file. Raise an exception on error.
 		The default creates a temporary file, uses save_to_stream() to
 		write to it, then renames it over the original. If the temporary file
 		can't be created, it writes directly over the original."""
@@ -88,14 +88,13 @@ class Saveable:
 			if tmp:
 				os.rename(tmp, path)
 		except:
-			report_exception()
+			exception = sys.exc_info()
 			if tmp and os.path.exists(tmp):
 				if os.path.getsize(tmp) == 0 or \
 				   rox.confirm("Delete temporary file '%s'?" % tmp,
 				   		g.STOCK_DELETE):
 					os.unlink(tmp)
-			return 0
-		return 1
+			raise exception[0], exception[1], exception[2]
 
 	def save_to_selection(self, selection_data):
 		"""Write data to the selection. The default method uses save_to_stream()."""
@@ -218,9 +217,9 @@ class SaveArea(g.VBox):
 				return
 			try:
 				self.set_sensitive(FALSE)
-				if self.document.save_to_file(path):
-					self.set_uri(path)
-					self.save_done()
+				self.document.save_to_file(path)
+				self.set_uri(path)
+				self.save_done()
 			except:
 				report_exception()
 			self.set_sensitive(TRUE)
@@ -287,12 +286,12 @@ class SaveArea(g.VBox):
 				else:
 					try:
 						self.set_sensitive(FALSE)
-						self.data_sent = self.document.save_to_file(path)
-						self.set_sensitive(TRUE)
+						self.document.save_to_file(path)
+						self.data_sent = TRUE
 					except:
 						report_exception()
-						self.set_sensitive(TRUE)
 						self.data_sent = FALSE
+					self.set_sensitive(TRUE)
 					if self.data_sent:
 						to_send = 'S'
 				# (else Error)

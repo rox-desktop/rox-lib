@@ -14,7 +14,7 @@ The AppRun script of a simple application might look like this:
 
 	window = g.Window()
 	rox.toplevel_ref()
-	window.connect('destroy', lambda w: rox.toplevel_unref())
+	window.connect('destroy', rox.toplevel_unref())
 	window.show()
 
 	rox.mainloop()
@@ -148,10 +148,11 @@ def toplevel_ref():
 	global _toplevel_windows
 	_toplevel_windows += 1
 
-def toplevel_unref():
+def toplevel_unref(*unused):
 	"""Decrement the toplevel ref count. If this is called while in
 	rox.mainloop() and the count has reached zero, then rox.mainloop()
-	will exit."""
+	will exit. Ignores any arguments passed in, so you can use it
+	easily as a callback function."""
 	global _toplevel_windows
 	assert _toplevel_windows > 0
 	_toplevel_windows -= 1
