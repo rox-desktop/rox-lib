@@ -127,14 +127,36 @@ class SaveArea(GtkVBox):
 		align = GtkAlignment()
 		align.set(.5, .5, 0, 0)
 
-		drag_box = GtkEventBox()
-		drag_box.set_border_width(4)
-		drag_box.add_events(BUTTON_PRESS_MASK)
-		align.add(drag_box)
+		self.drag_box = GtkEventBox()
+		self.drag_box.set_border_width(4)
+		self.drag_box.add_events(BUTTON_PRESS_MASK)
+		align.add(self.drag_box)
 
 		pixmap, mask = icon_for_type(self, type)
 		self.icon = GtkPixmap(pixmap, mask)
 
+		self.set_drag_source(type)
+		self.drag_box.connect('drag_begin', self.drag_begin)
+		self.drag_box.connect('drag_end', self.drag_end)
+		self.drag_box.connect('drag_data_get', self.drag_data_get)
+		self.drag_in_progress = 0
+
+		self.drag_box.add(self.icon)
+
+		return align
+
+	def set_type(self, type, icon = None):
+		"""Change the icon and drag target to 'type'.
+		If 'icon' is given (as (pixmap, mask)) then that icon is used,
+		otherwise an appropriate icon for the type is used."""
+		if icon:
+			pixmap, mask = icon
+		else:
+			pixmap, mask = icon_for_type(self, type)
+		self.icon.set(pixmap, mask)
+		self.set_drag_source(type)
+	
+	def set_drag_source(self, type):
 		if self.save_as_file:
 			targets = [('XdndDirectSave0', 0, TARGET_XDS)]
 		else:
@@ -146,18 +168,9 @@ class SaveArea(GtkVBox):
 		if not targets:
 			raise Exception("Document %s can't save!" %
 							self.document)
-
-		drag_box.drag_source_set(BUTTON1_MASK | BUTTON3_MASK,
-					targets,
-					ACTION_COPY | ACTION_MOVE)
-		drag_box.connect('drag_begin', self.drag_begin)
-		drag_box.connect('drag_end', self.drag_end)
-		drag_box.connect('drag_data_get', self.drag_data_get)
-		self.drag_in_progress = 0
-
-		drag_box.add(self.icon)
-
-		return align
+		self.drag_box.drag_source_set(BUTTON1_MASK | BUTTON3_MASK,
+					      targets,
+					      ACTION_COPY | ACTION_MOVE)
 	
 	def end_save(self):
 		"""Called when the savebox should be closed (or similar action

@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+02-Nov-2001
+~~~~~~~~~~~
+Added set_type() method to SaveBox/SaveArea to set the icon's type
+(and, optionally, its icon).
+
 12-Aug-2001 (Release 0.1.3)
 ~~~~~~~~~~~
 Split SaveBox into SaveBox and SaveArea.

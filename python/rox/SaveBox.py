@@ -30,6 +30,7 @@ class SaveBox(GtkWindow):
 		self.pass_through('save_as_selection')
 
 		save_area = SaveArea(self, uri, type)
+		self.save_area = save_area
 		if discard:
 			save_area.pack_start(GtkHSeparator(), FALSE, TRUE, 4)
 			button = GtkButton('Discard')
@@ -56,6 +57,9 @@ class SaveBox(GtkWindow):
 			self.document.set_uri(uri)
 		if self.discard:
 			self.document.discard()
+	
+	def set_type(self, type, icon = None):
+		self.save_area.set_type(type, icon)
 	
 	def pass_through(self, method):
 		if hasattr(self.document, method):
