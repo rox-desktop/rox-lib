@@ -29,8 +29,9 @@ class XDSLoader:
 			for type in types + ['application/octet-stream']:
 				targets.append((type, 0, TARGET_RAW))
 		
+		# (Konqueror requires ACTION_MOVE)
 		self.drag_dest_set(DEST_DEFAULT_ALL, targets,
-					ACTION_COPY | ACTION_PRIVATE)
+				ACTION_COPY | ACTION_MOVE | ACTION_PRIVATE)
 		
 		self.connect('drag_data_received', self.xds_data_received)
 

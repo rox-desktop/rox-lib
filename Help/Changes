@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+10-Nov-2001
+~~~~~~~~~~~
+Allow drops with ACTION_MOVE so XDSLoader works with Konqueror (Jarrod
+Benjami Johnson).
+
 09-Nov-2001
 ~~~~~~~~~~~
 Added some code to handle gmc adding a "\0" line to uri-lists (reported
