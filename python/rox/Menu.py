@@ -108,7 +108,7 @@ class Menu:
 		factory = g.ItemFactory(g.Menu, '<%s>' % name, ag)
 
 		program, save_leaf = _save_name
-		path = choices.load(program, save_leaf)
+		accel_path = choices.load(program, save_leaf)
 
 		out = []
 		self.fns = []
@@ -131,8 +131,8 @@ class Menu:
 		factory.create_items(out)
 		self.factory = factory
 
-		if path:
-			g.accel_map_load(path)
+		if accel_path:
+			g.accel_map_load(accel_path)
 		
 		self.caller = None	# Caller of currently open menu
 		self.menu = factory.get_widget('<%s>' % name)
