@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+19-May-2001
+~~~~~~~~~~~
+Initial menu support.
+
 18-May-2001
 ~~~~~~~~~~~
 Added the options module. This allows you to easily load, save and edit

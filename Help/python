@@ -19,6 +19,7 @@ The following modules are provided:
 	Toolbar		- A ROX-Filer style toolbar
 	XDSLoader	- Allow files to be dropped on your widgets
 	options		- Load, save and edit settings
+	Menu		- Menus with key-bindings
 
 
 choices
@@ -222,3 +223,39 @@ Bring up the options box with:
 
 You'll need to create an Options.xml file with the layout for the box.
 See the on-line tutorial for more information.
+
+Menu
+~~~~
+This widget makes it easier to create a menu with key bindings that can
+be shared between several windows.
+
+Create each menu only once (not once-per-window):
+	
+	from rox.Menu import Menu
+	menu = Menu('MyProg', 'main', [
+			('/Save', 'save', ''),
+			('/Options...', 'show_options', ''),
+			('/Close', 'close', ''),
+			])
+
+'MyProg' and 'main' are used for loading the short-cuts from Choices.
+Each item in the list is a menu item:
+
+	path/label	Can nest too, eg '/File/Save'
+	callback	Name of the callback (a string)
+	type 		(as for GtkItemFactory's create_items)
+
+For each window that can show this menu, do this to accept short-cuts:
+
+	menu.attach(window, object)
+
+The menu will call object.save(), object.show_options(), etc in response to
+menu items being chosen.
+
+To open the menu in response to a mouse click:
+
+	menu.popup(object, event)
+
+Saving shortcuts (not currently implemented) is done with:
+
+	menu.save()

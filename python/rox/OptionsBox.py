@@ -324,19 +324,7 @@ class ColourButton(GtkButton):
 		return '#%04x%04x%04x' % (c.red, c.green, c.blue)
 
 	def set_colour_rgb(self, red, green, blue):
-		try:
-			c = GdkColor(red, green, blue)
-		except:
-			# Slight bug in gnome-python... just
-			# needs a bit of lateral thinking ;-)
-			if red > 0x7fff:
-				red -= 0x10000
-			if green > 0x7fff:
-				green -= 0x10000
-			if blue > 0x7fff:
-				blue -= 0x10000
-			c = GdkColor(red, green, blue)
-		
+		c = self.da.get_colormap().alloc(red, green, blue)
 		style = self.da.get_style().copy()
 		style.bg[STATE_NORMAL] = c
 		self.da.set_style(style)

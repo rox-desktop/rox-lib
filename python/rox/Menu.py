@@ -41,6 +41,15 @@ class Menu:
 			# XXX
 			self.factory.dump_rc(path)
 	
+	def attach(self, window, object):
+		"""Keypresses on this window will be treated as menu shortcuts
+		for this object."""
+		def kev(w, k, self = self, obj = object):
+			self.set_focus(obj)
+			return 0
+		window.connect('key-press-event', kev)
+		window.add_accel_group(self.accel_group)
+	
 	def unset_caller(self):
 		self.caller = None
 		return 0
