@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+30-Jan-2004
+~~~~~~~~~~~
+Also translate <label> elements in the Options box (reported by Arnaud Calvo).
+
 28-Jan-2004
 ~~~~~~~~~~~
 Also translate section names in the Options box (reported by Arnaud Calvo).

@@ -300,7 +300,7 @@ class OptionsBox(g.Dialog):
 
 	def build_label(self, node, label):
 		"""<label>Text</label>"""
-		return [g.Label(data(node))]
+		return [g.Label(self._(data(node)))]
 	
 	def build_spacer(self, node, label):
 		"""<spacer/>"""
