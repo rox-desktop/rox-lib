@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+07-Feb-2004
+~~~~~~~~~~~
+Don't stop DnD working in the savebox just because no icon can be found
+(reported by Martin Lucina).
+
 02-Feb-2004
 ~~~~~~~~~~~
 Added French translation (Vincent Lefèvre).

@@ -306,9 +306,14 @@ class SaveArea(g.VBox):
 		self.using_xds = 0
 		self.data_sent = 0
 
-		pixbuf = self.icon.get_pixbuf()
-		if pixbuf:
-			drag_box.drag_source_set_icon_pixbuf(pixbuf)
+		try:
+			pixbuf = self.icon.get_pixbuf()
+			if pixbuf:
+				drag_box.drag_source_set_icon_pixbuf(pixbuf)
+		except:
+			# This can happen if we set the broken image...
+			import traceback
+			traceback.print_exc()
 
 		uri = self.entry.get_text()
 		if uri:
