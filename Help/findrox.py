@@ -11,7 +11,16 @@ import string
 def version(major, minor, micro):
 	"""Find ROX-Lib2, with a version >= (major, minor, micro), and
 	add it to sys.path. If version is missing or too old, either
-	prompt the user, or (if possible) upgrade it automatically."""
+	prompt the user, or (if possible) upgrade it automatically.
+	If 'rox' is already in PYTHONPATH, just use that (assume the injector
+	is being used)."""
+	try:
+		import rox
+	except ImportError:
+		pass
+	else:
+		#print "Using ROX-Lib in PYTHONPATH"
+		return
 
 	if not os.getenv('ROXLIB_DISABLE_ZEROINSTALL') and os.path.exists('/uri/0install/rox.sourceforge.net'):
 		# We're using ZeroInstall. Good :-)

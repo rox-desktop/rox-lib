@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+29-Dec-2004
+~~~~~~~~~~~
+If a 'rox' module is in PYTHONPATH, use that without any searching (Thomas
+Leonard).
+
 23-Dec-2004
 ~~~~~~~~~~~
 Added Chinese translation (Babyfai Cheung).
