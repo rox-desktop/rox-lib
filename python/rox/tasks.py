@@ -95,6 +95,11 @@ class Blocker:
 		Blocker. If you override this method, be sure to still
 		call this method with Blocker.add_task(self)!"""
 		self._rox_lib_tasks[task] = True
+	
+	def remove_task(self, task):
+		"""Called by the schedular when a Task that was waiting for
+		this blocker is resumed."""
+		del self._rox_lib_tasks[task]
 
 class IdleBlocker(Blocker):
 	"""An IdleBlocker blocks until a task starts waiting on it, then
@@ -118,6 +123,26 @@ class TimeoutBlocker(Blocker):
 	def _timeout(self):
 		rox.toplevel_unref()
 		self.trigger()
+
+class InputBlocker(Blocker):
+	"""Triggers when os.read(stream) would not block."""
+	_tag = None
+	_stream = None
+	def __init__(self, stream):
+		Blocker.__init__(self)
+		self._stream = stream
+	
+	def add_task(self, task):
+		Blocker.add_task(self, task)
+		if self._tag is None:
+			self._tag = g.input_add(self._stream, g.gdk.INPUT_READ,
+				lambda src, cond: self.trigger())
+	
+	def remove_task(self, task):
+		Blocker.remove_task(self, task)
+		if not self._rox_lib_tasks:
+			g.input_remove(self._tag)
+			self._tag = None
 
 _idle_blocker = IdleBlocker()
 
@@ -159,7 +184,7 @@ class Task:
 	def _resume(self):
 		# Remove from our blockers' queues
 		for blocker in self._rox_blockers:
-			del blocker._rox_lib_tasks[self]
+			blocker.remove_task(self)
 		# Resume the task
 		try:
 			new_blockers = self.next()

@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+25-Nov-2004
+~~~~~~~~~~~
+Added tasks.InputBlocker, which triggers when an input source becomes
+readable (Thomas Leonard).
+
 21-Nov-2004
 ~~~~~~~~~~~
 Bugfix: Use only text nodes when getting the tool tip from the Options.xml
