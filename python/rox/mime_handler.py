@@ -197,21 +197,21 @@ class InstallList(rox.Dialog):
 def _install_type_handler(types, dir, desc, application=None, overwrite=True,
                           info=None):
     """Internal function.  Does the work of setting MIME-types or MIME-thumb"""
-	if len(types)<1:
-		return
+    if len(types)<1:
+	    return
 	
-	if not application:
-		application=rox.app_dir
-	if application[0]!='/':
-		application=os.path.abspath(application)
+    if not application:
+	    application=rox.app_dir
+    if application[0]!='/':
+	    application=os.path.abspath(application)
 		
-	win=InstallList(application, desc, dir, types, info)
+    win=InstallList(application, desc, dir, types, info)
 
-	if win.run()!=rox.g.RESPONSE_ACCEPT:
-		win.destroy()
-		return
+    if win.run()!=rox.g.RESPONSE_ACCEPT:
+	    win.destroy()
+	    return
 
-	try:
+    try:
             types=win.get_active()
 
             for tname in types:
@@ -230,7 +230,7 @@ def _install_type_handler(types, dir, desc, application=None, overwrite=True,
 		sname=choices.save(dir,
 			       '%s_%s' % (mime_type.media, mime_type.subtype))
 		os.remove(sname)
-        finally:
+    finally:
             win.destroy()
 
 run_action_msg=_("""Run actions can be changed by selecting a file of the appropriate type in the Filer and selecting the menu option 'Set Run Action...'""")
