@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+
+04-Jul-2003
+~~~~~~~~~~~
+Added italian translation in AppInfo.xml (Yuri Bongiorno)
+
 26-Jun-2003
 ~~~~~~~~~~~
 When loading data from another application, pass the suggested leafname to

@@ -1,11 +1,19 @@
 <?xml version="1.0"?>
 <AppInfo>
-  <Summary>Shared code for other ROX applications</Summary>
-  <About>
+  <Summary xml:lang="en">Shared code for other ROX applications</Summary>
+  <Summary xml:lang="it">Codice condiviso per altre applicazioni ROX</Summary>
+  <About xml:lang="en">
     <Purpose>Shared library for ROX</Purpose>
     <Author>Thomas Leonard</Author>
     <Version>1.9.7 (21-May-2003)</Version>
     <License>GNU General Public License</License>
     <Homepage>http://rox.sourceforge.net</Homepage>
+  </About>
+  <About xml:lang="it">
+    <Purpose label="Scopo">librerie condivise per ROX</Purpose>
+    <Version label="Versione"/>
+    <Author label="Autore"/>
+    <License label="Licenza"/>
+    <Homepage label="Sito web"/>
   </About>
 </AppInfo>
