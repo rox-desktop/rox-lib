@@ -39,6 +39,20 @@ There is also some on-line documentation here:
 	http://rox.sourceforge.net/rox_lib.php3
 
 
+Translators
+~~~~~~~~~~~
+If you want to translate ROX-Lib2 into your native language, follow
+these steps (replace 'fr' with your language):
+
+$ cd ROX-Lib2/Messages
+$ ./update-po
+$ cp ../python/rox/messages.pot fr.po
+[ edit fr.po ]
+$ ./dist
+
+Updating an existing translation is the same, except you skip the 'cp' step.
+
+
 Conditions
 ~~~~~~~~~~
 Copyright (C) 2002  Thomas Leonard

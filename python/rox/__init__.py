@@ -29,8 +29,10 @@ TRUE and FALSE  (copied from g.TRUE and g.FALSE as a convenience), and
 sys.argv)."""
 
 import sys, os
+import i18n
 
-_ = lambda x: x
+_roxlib_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+_ = i18n.translation(os.path.join(_roxlib_dir, 'Messages'))
 
 try:
 	import gtk2 as g

@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+19-Jul-2002
+~~~~~~~~~~~
+Added support for translations.
+
 18-Jul-2002
 ~~~~~~~~~~~
 License change to the LGPL (allows commercial programs to use this library).
