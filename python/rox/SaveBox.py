@@ -66,6 +66,8 @@ class SaveBox(GtkWindow):
 
 	discard()
 		Discard button clicked. Only needed if discard = TRUE.
+	
+	Calls rox_toplevel_(un)ref automatically.
 	"""
 
 	def __init__(self, document, uri, type = 'text/plain', discard = FALSE):
@@ -166,6 +168,11 @@ class SaveBox(GtkWindow):
 		entry.select_region(i, -1)
 
 		self.connect('key-press-event', self.key_press)
+		rox_toplevel_ref()
+		self.connect('destroy', self.destroyed)
+	
+	def destroyed(self, widget):
+		rox_toplevel_unref()
 
 	def key_press(self, window, event):
 		if event.keyval == Escape:

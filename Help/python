@@ -135,7 +135,7 @@ Example:
 
 	import findrox
 	from rox.SaveBox import SaveBox
-	from rox.support import report_exception
+	from rox import support
 	from gtk import *
 
 	class Doc:
@@ -148,9 +148,9 @@ Example:
 
 	box = SaveBox(doc, 'TextFile', 'text/plain')
 	box.show()
-	box.connect('destroy', mainquit)
-
-	mainloop()
+	
+	support.rox_toplevel_unref()
+	support.rox_mainloop()
 
 Toolbar
 ~~~~~~~

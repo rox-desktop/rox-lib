@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+10-Aug-2001
+~~~~~~~~~~~
+SaveBox calls rox_toplevel_[un]ref() functions automatically.
+
 09-Aug-2001
 ~~~~~~~~~~~
 Fixed some code that only worked with python 2.0 (reported by James Kermode).
