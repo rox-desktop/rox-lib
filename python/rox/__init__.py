@@ -27,9 +27,6 @@ from sys.argv).
 
 The builtin names True and False are defined to 1 and 0, if your version of
 python is old enough not to include them already.
-
-Any trailing /App{let}Run is stripped from sys.argv[0] so that windows get
-a sensible default class.
 """
 
 import sys, os
@@ -76,8 +73,11 @@ except:
 			   'http://rox.sourceforge.net/rox_lib.php3\n'))
 	raise
 
-TRUE = g.TRUE
-FALSE = g.FALSE
+# Put argv back the way it was, now that Gtk has initialised
+sys.argv[0] = _path
+
+TRUE = True
+FALSE = False
 
 def alert(message):
 	"Display message in an error box. Return when the user closes the box."
