@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+19-Jul-2003
+~~~~~~~~~~~
+Make default menu positioning function keep the pointer inside the menu.
+Allow stock icons in menus.
+
 18-Jul-2003
 ~~~~~~~~~~~
 Added position_fn argument to rox.Menu.popup.

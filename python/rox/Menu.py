@@ -24,7 +24,7 @@ menu = Menu('main', [
 	('/Edit/',		'',		'<Separator>'),
 	('/Edit/Process...',	'process',	''),
 	('/Options',		'show_options', ''),
-	('/Help',		'help',		'',		'F1'),
+	('/Help',		'help',		'<StockItem>',	'F1', g.STOCK_HELP),
 	])
 """
 
@@ -61,17 +61,23 @@ class Menu:
 		out = []
 		self.fns = []
 		for item  in items:
+			stock = None
+			key = None
 			if len(item) == 3:
 				(label, fn, type) = item
-				key = None
-			else:
+			elif len(item) == 4:
 				(label, fn, type, key) = item
+			else:
+				(label, fn, type, key, stock) = item
 			if fn:
 				self.fns.append(fn)
 				cb = self._activate
 			else:
 				cb = None
-			out.append((label, key, cb, len(self.fns) - 1, type))
+			if stock:
+				out.append((label, key, cb, len(self.fns) - 1, type, stock))
+			else:
+				out.append((label, key, cb, len(self.fns) - 1, type))
 			
 		factory.create_items(out)
 		self.factory = factory
@@ -101,11 +107,16 @@ class Menu:
 		window.connect('key-press-event', kev)
 		window.add_accel_group(self.accel_group)
 	
+	def _position(self, menu):
+		x, y, mods = g.gdk.get_default_root_window().get_pointer()
+		width, height = menu.size_request()
+		return (x - width * 3 / 4, y - 16, True)
+	
 	def popup(self, caller, event, position_fn = None):
 		"""Display the menu. Call 'caller.<callback_name>' when an item is chosen.
 		For applets, position_fn should be my_applet.position_menu)."""
 		self.caller = caller
-		self.menu.popup(None, None, position_fn, event.button, event.time)
+		self.menu.popup(None, None, position_fn or self._position, event.button, event.time)
 	
 	def _activate(self, action, widget):
 		if self.caller:
