@@ -30,7 +30,7 @@ dir = 'rox-lib-%d.%d.%d' % (a, b, c)
 os.mkdir(dir)
 os.chdir(dir)
 os.system('cvs -d:pserver:anonymous@cvs.rox.sourceforge.net:/cvsroot/rox export -r Release-%d-%d-%d ROX-Lib2' % (a, b, c))
-os.system('cd ROX-Lib2/python; ./make_docs.py')
+os.system('cd ROX-Lib2/python; ./make_docs.py; rm rox/.cvsignore rox/*.pyc')
 os.chdir(os.environ['HOME'])
 os.system('tar czf %s.tgz %s' % (dir, dir))
 print "%s.tgz is ready!" % dir

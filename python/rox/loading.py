@@ -55,14 +55,13 @@ class XDSLoader:
 		widget.connect('drag-drop', self.xds_drag_drop)
 	
 	def xds_drag_drop(self, widget, context, data, info, time):
-		"""Called when something is dropped on us. Decide which of the "
+		"""Called when something is dropped on us. Decide which of the
 		offered targets to request and ask for it. xds_data_received will
 		be called when it finally arrives."""
-		print "xds_data_get"
 		target = widget.drag_dest_find_target(context, self.targets)
 		if target is None:
 			# Error?
-			context.drag_finish(FALSE, FALSE, time)
+			context.drop_finish(FALSE, time)
 		else:
 			widget.drag_get_data(context, target, time)
 		return TRUE
@@ -70,7 +69,12 @@ class XDSLoader:
 	def xds_data_received(self, widget, context, x, y, selection, info, time):
 		"Called when we get some data. Internal."
 		if info == TARGET_RAW:
-			self.xds_load_from_selection(selection)
+			try:
+				self.xds_load_from_selection(selection)
+			except:
+				context.drop_finish(FALSE, time)
+				raise
+			context.drop_finish(TRUE, time)
 			return 1
 		if info != TARGET_URILIST:
 			return 0
@@ -78,6 +82,7 @@ class XDSLoader:
 		uris = extract_uris(selection.data)
 		if not uris:
 			alert("Nothing to load!")
+			context.drop_finish(FALSE, time)
 			return 1
 
 		try:
@@ -87,8 +92,12 @@ class XDSLoader:
 				if len(uris) != 1 or not provides(context, 'application/octet-stream'):
 					raise
 				widget.drag_get_data(context, 'application/octet-stream', time)
+				return 1	# Don't do drag_finish
 		except:
+			context.drop_finish(FALSE, time)
 			rox.report_exception()
+		else:
+			context.drop_finish(TRUE, time)
 
 		return 1
 	
@@ -108,7 +117,7 @@ class XDSLoader:
 	
 	def xds_load_from_file(self, path):
 		"""Try to load this local file. Override this if you have a better way
-		to load files. The default method loads the file and calls xds_load_from_stream()."""
+		to load files. The default method opens the file and calls xds_load_from_stream()."""
 		try:
 			self.xds_load_from_stream(path, None, open(path, 'rb'))
 		except:

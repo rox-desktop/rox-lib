@@ -13,7 +13,7 @@ from rox import applet, g
 
 plug = applet.Applet(sys.argv[1])
 
-label = g.Label('Hello\nWorld!')
+label = g.Label('Hello\\nWorld!')
 plug.add(label)
 plug.show_all()
 

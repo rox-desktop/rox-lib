@@ -3,7 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
-05-Aug-2002
+07-Aug-2002
+~~~~~~~~~~~
+Bugfix: Remember to call drop_finish() after a drag-and-drop operation.
+
+05-Aug-2002 (Release 1.9.2)
 ~~~~~~~~~~~
 Renamed XDSLoader module to 'loading' (like 'saving').
 Added 'mime' module for installing extra MIME information.
