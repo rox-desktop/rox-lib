@@ -38,50 +38,47 @@ class Slave:
 	"""This object runs as another user. Most methods behave in a similar
 	way to the standard python methods of the same name."""
 
-	def spawnvpe(self, request, mode, file, args, env = None):
+	def spawnvpe(self, mode, file, args, env = None):
 		if env is None:
-			request.send(os.spawnvp(mode, file, args))
+			return os.spawnvp(mode, file, args)
 		else:
-			request.send(os.spawnvpe(mode, file, args, env))
+			return os.spawnvpe(mode, file, args, env)
 
-	def waitpid(self, request, pid, flags):
-		request.send(os.waitpid(pid, flags))
+	def waitpid(self, pid, flags):
+		return os.waitpid(pid, flags)
 	
-	def getuid(self, request):
-		request.send(os.getuid())
+	def getuid(self):
+		return os.getuid()
 
-	def setuid(self, request, uid):
-		request.send(os.setuid(uid))
+	def setuid(self, uid):
+		return os.setuid(uid)
 	
-	def rmtree(self, request, path):
-		shutil.rmtree(path)
-		request.send(None)
+	def rmtree(self, path):
+		return shutil.rmtree(path)
 	
-	def unlink(self, request, path):
-		os.unlink(path)
-		request.send(None)
+	def unlink(self, path):
+		return os.unlink(path)
 	
-	def open(self, request, path, mode = 'r'):
+	def open(self, path, mode = 'r'):
 		stream = file(path, mode)
 		streams[id(stream)] = stream
-		request.send(id(stream))
+		return id(stream)
 	
-	def close(self, request, stream):
+	def close(self, stream):
 		streams[stream].close()
 		del streams[stream]
-		request.send(None)
 	
-	def read(self, request, stream, length = 0):
-		request.send(streams[stream].read(length))
+	def read(self, stream, length = 0):
+		return streams[stream].read(length)
 
-	def write(self, request, stream, data):
-		request.send(streams[stream].write(data))
+	def write(self, stream, data):
+		return streams[stream].write(data)
 	
-	def rename(self, request, old, new):
-		request.send(os.rename(old, new))
+	def rename(self, old, new):
+		return os.rename(old, new)
 
-	def chmod(self, request, path, mode):
-		request.send(os.chmod(path, mode))
+	def chmod(self, path, mode):
+		return os.chmod(path, mode)
 
 if __name__ == '__main__':
 	from select import select

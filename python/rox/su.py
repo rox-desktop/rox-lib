@@ -5,7 +5,7 @@ which ones are available on the current platform."""
 
 import os, sys, pwd
 import rox
-from rox import g, _, proxy
+from rox import g, _, master_proxy
 import traceback
 from select import select
 import fcntl
@@ -18,13 +18,13 @@ _my_dir = os.path.abspath(os.path.dirname(__file__))
 _child_script = os.path.join(_my_dir, 'suchild.sh')
 
 def create_su_proxy(message, uid = 0, confirm = True):
-	"""Creates a new proxy object and starts the child process.
-	If necessary, the user is prompted for a password. If no
+	"""Creates a new master_proxy.MasterObject and starts the child
+	process. If necessary, the user is prompted for a password. If no
 	password is required, the user is simply asked to confirm,
 	unless 'confirm' is False.
 	Raises UserAbort if the user clicks Cancel."""
 	method = default_method(message, uid, confirm)
-	return method.get_master()
+	return method.get_master().root
 
 class Method:
 	need_interaction = True
@@ -82,7 +82,7 @@ class XtermMethod(Method):
 		to_child.readable.close()
 
 		assert self._master is None
-		self._master = proxy.MasterProxy(to_child.writeable,
+		self._master = master_proxy.MasterProxy(to_child.writeable,
 						 from_child.readable)
 		return self._master
 

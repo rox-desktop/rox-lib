@@ -2,6 +2,21 @@
 			Shared code for ROX applications
 			by Thomas Leonard
 			http://rox.sourceforge.net
+26-Sep-2004
+~~~~~~~~~~~
+Several incompatible changes to the experimental proxy API to make it simpler
+(Thomas Leonard):
+
+- Create_su_proxy now returns the MasterObject directly, not the MasterProxy.
+- You can call finish on the MasterObject (so the MasterProxy isn't needed).
+- Slave methods no longer take a 'request' argument. Instead, the return
+  value of the function is returned.
+- Methods can only return one value. dequeue and dequeue_last have been
+  replaced with a 'result' property.
+- Methods on MasterObject now return a RequestBlocker, not a Queue. This
+  means you just yield the object itself, not object.blocker.
+
+Tasks API is no longer experimental, but proxy API is.
 
 22-Sep-2004
 ~~~~~~~~~~~

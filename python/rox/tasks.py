@@ -1,8 +1,5 @@
 """The tasks module provides a simple light-weight alternative to threads.
 
-THIS MODULE IS EXPERIMENTAL. Feedback on the API is appreciated. Things may
-change in the next few versions, so watch out!
-
 When you have a long-running job you will want to run it in the background,
 while the user does other things. There are four ways to do this:
 

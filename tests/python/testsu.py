@@ -13,43 +13,39 @@ assert os.getuid() != 0, "Can't run tests as root"
 
 class TestSU(unittest.TestCase):
 	def testSu(self):	
-		master = su.create_su_proxy('Need to become root to test this module.',
+		root = su.create_su_proxy('Need to become root to test this module.',
 					confirm = False)
-		root = master.root
 		def run():
-			queue = root.spawnvpe(os.P_NOWAIT, 'false', ['false'])
-			yield queue.blocker
-			pid = queue.dequeue_last()
+			response = root.spawnvpe(os.P_NOWAIT, 'false', ['false'])
+			yield response
+			pid = response.result
 			assert pid
-			queue = root.waitpid(pid, 0)
-			yield queue.blocker
-			(pid, status) = queue.dequeue_last()
+			response = root.waitpid(pid, 0)
+			yield response
+			(pid, status) = response.result
 			assert status == 0x100
 
-			queue = root.spawnvpe(os.P_WAIT, 'true', ['true'])
-			yield queue.blocker
-			status = queue.dequeue_last()
-			assert status == 0
+			response = root.spawnvpe(os.P_WAIT, 'true', ['true'])
+			yield response
+			assert response.result == 0
 
-			queue = root.getuid()
-			yield queue.blocker
-			uid = queue.dequeue_last()
-			assert uid == 0
+			response = root.getuid()
+			yield response
+			assert response.result == 0
 
-			queue = root.setuid(os.getuid())
-			yield queue.blocker
-			queue.dequeue_last()
+			response = root.setuid(os.getuid())
+			yield response
+			assert response.result is None
 
-			queue = root.getuid()
-			yield queue.blocker
-			uid = queue.dequeue_last()
-			assert uid == os.getuid()
+			response = root.getuid()
+			yield response
+			assert response.result == os.getuid()
 
 			g.mainquit()
 
 		tasks.Task(run())
 		g.mainloop()
-		master.finish()
+		root.finish()
 
 sys.argv.append('-v')
 unittest.main()
