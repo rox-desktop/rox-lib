@@ -25,6 +25,12 @@ FREE_NS = 'http://www.freedesktop.org/standards/shared-mime-info'
 
 types = {}		# Maps MIME names to type objects
 
+# Icon sizes when requesting MIME type icon
+ICON_SIZE_HUGE=96
+ICON_SIZE_LARGE=52
+ICON_SIZE_SMALL=18
+ICON_SIZE_UNSCALED=None
+
 def _get_node_data(node):
 	"""Get text of XML node"""
 	return ''.join([n.nodeValue for n in node.childNodes]).strip()
@@ -76,6 +82,23 @@ class MIMEtype:
 
 	def __repr__(self):
 		return '[%s: %s]' % (self, self._comment or '(comment not loaded)')
+
+	def get_icon(self, size=None):
+		"""Return a GdkPixbuf with the icon for this type.  If size
+		is None then the image is returned at its natural size,
+		otherwise the image is scaled to that width with the height
+		at the correct aspect ratio.  The constants
+		ICON_SIZE_{HUGE,LARGE,SMALL} match the sizes used by the
+		filer."""
+		# I suppose it would make more sense to move the code
+		# from saving to here...
+		import saving
+		base=saving.image_for_type(self.media + '/' + self.subtype)
+		if not base or not size:
+			return base
+
+		h=int(base.get_width()*float(size)/base.get_height())
+		return base.scale_simple(size, h, rox.g.gdk.INTERP_BILINEAR)
 
 # Some well-known types
 text = lookup('text', 'plain')
