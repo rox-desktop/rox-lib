@@ -92,7 +92,7 @@ class OptionsBox(g.Dialog):
 			if section.localName != 'section':
 				print "Unknown section", section
 				continue
-			self.build_section(section, parent)
+			self.build_section(section, None)
 			n += 1
 		if n > 1:
 			self.tree_view.expand_all()
@@ -105,9 +105,9 @@ class OptionsBox(g.Dialog):
 			rox.toplevel_unref()
 			if self.changed():
 				self.options.save()
-		self.connect('destroy', self.destroyed)
+		self.connect('destroy', destroyed)
 
-		def got_response(self, widget, response):
+		def got_response(widget, response):
 			if response == g.RESPONSE_OK:
 				self.destroy()
 			elif response == REVERT:
@@ -116,7 +116,7 @@ class OptionsBox(g.Dialog):
 				self.update_widgets()
 				self.options.notify()
 				self.update_revert()
-		self.connect('response', self.got_response)
+		self.connect('response', got_response)
 	
 	def open(self):
 		"""Show the window, updating all the widgets at the same
@@ -169,7 +169,7 @@ class OptionsBox(g.Dialog):
 		self.sections_swin = sw		# Used to hide it...
 
 		# tree view
-		model = g.TreeStore(gobject.TYPE_STRING, g.Widget.__gtype__)
+		model = g.TreeStore(gobject.TYPE_STRING, gobject.TYPE_INT)
 		tv = g.TreeView(model)
 		sel = tv.get_selection()
 		sel.set_mode(g.SELECTION_BROWSE)
@@ -184,7 +184,6 @@ class OptionsBox(g.Dialog):
 		tv.append_column(column)
 
 		sw.add(tv)
-		#tv.connect('cursor_changed', tree_cursor_changed)
 
 		# main options area
 		frame = g.Frame()
@@ -196,6 +195,17 @@ class OptionsBox(g.Dialog):
 		notebook.set_show_border(FALSE)
 		frame.add(notebook)
 		self.notebook = notebook
+
+		# Flip pages
+		def change_page(tv):
+			selected = sel.get_selected()
+			if not selected:
+				return
+			model, iter = selected
+			page = model.get_value(iter, 1)
+
+			notebook.set_current_page(page)
+		sel.connect('changed', change_page)
 
 		self.vbox.show_all()
 	
@@ -223,7 +233,8 @@ class OptionsBox(g.Dialog):
 		self.notebook.append_page(page, g.Label('unused'))
 
 		iter = self.sections.append(parent)
-		self.sections.set(iter, 0, section.getAttribute('title'))
+		self.sections.set(iter, 0, section.getAttribute('title'),
+					1, self.notebook.page_num(page))
 		for node in section.childNodes:
 			if node.nodeType != Node.ELEMENT_NODE:
 				continue
@@ -307,7 +318,7 @@ class OptionsBox(g.Dialog):
 		"""<frame label='Title'>...</frame> to put a border around a group
 		of options."""
 		frame = g.Frame(label)
-		vbox = g.VBox(FALSE, 0)
+		vbox = g.VBox(FALSE, 4)
 		vbox.set_border_width(4)
 		frame.add(vbox)
 
