@@ -1,7 +1,8 @@
 """ROX applications should provide good drag-and-drop support. Use this module
 to allow drops onto widgets in your application."""
 
-from rox import g, alert, get_local_path
+import rox
+from rox import g, alert, get_local_path, _
 
 gdk = g.gdk
 
@@ -18,6 +19,14 @@ def extract_uris(data):
 		if l and l[0] != '#':
 			out.append(l)
 	return out
+
+def provides(context, type): return type in map(str, context.targets)
+
+class RemoteFiles(Exception):
+	"Internal use"
+	def __init__(self):
+		Exception.__init__(self, _('Cannot load files from a remote machine '
+			   '(multiple files, or target application/octet-stream not provided)'))
 
 class XDSLoader:
 	"""A mix-in class for widgets that can have files/data dropped on
@@ -48,14 +57,25 @@ class XDSLoader:
 		"Called when we get some data. Internal."
 		if info == TARGET_RAW:
 			self.xds_load_from_selection(selection)
-		elif info == TARGET_URILIST:
-			uris = extract_uris(selection.data)
-			if uris:
+			return 1
+		if info != TARGET_URILIST:
+			return 0
+
+		uris = extract_uris(selection.data)
+		if not uris:
+			alert("Nothing to load!")
+			return 1
+
+		try:
+			try:
 				self.xds_load_uris(uris)
-			else:
-				alert("Nothing to load!")
-		else:
-			print "Unknown DnD type", info
+			except RemoteFiles:
+				if len(uris) != 1 or not provides(context, 'application/octet-stream'):
+					raise
+				widget.drag_get_data(context, 'application/octet-stream', time)
+		except:
+			rox.report_exception()
+
 		return 1
 	
 	def xds_load_uris(self, uris):
@@ -68,7 +88,7 @@ class XDSLoader:
 			if path:
 				paths.append(path)
 		if len(paths) < len(uris):
-			alert("Can't load remote files yet - sorry")
+			raise RemoteFiles
 		for path in paths:
 			self.xds_load_from_file(path)
 	
@@ -84,7 +104,8 @@ class XDSLoader:
 		"""Try to load this selection (data from another application). The default
 		puts the data in a cStringIO and calls xds_load_from_stream()."""
 		from cStringIO import StringIO
-		self.xds_load_from_stream(None, selection.type, StringIO(selection.data))
+		type = str(selection.type)
+		self.xds_load_from_stream(None, type, StringIO(selection.data))
 	
 	def xds_load_from_stream(self, name, type, stream):
 		"""Called when we get any data sent via drag-and-drop in any way (local
