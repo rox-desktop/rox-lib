@@ -3,6 +3,12 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+26-May-2003
+~~~~~~~~~~~
+Added fileutils module, which provides an interactive makedirs() function
+(Richard Boulton).
+Changed savebox module to use it.
+
 16-May-2003 (Release 1.9.7)
 ~~~~~~~~~~~
 New icon (Geoff Youngs).

@@ -87,9 +87,19 @@ class Saveable:
 		The default creates a temporary file, uses save_to_stream() to
 		write to it, then renames it over the original. If the temporary file
 		can't be created, it writes directly over the original."""
+
+		# Ensure the directory exists...
+		dir = os.path.dirname(path)
+		if not os.path.isdir(dir):
+			from rox import fileutils
+			try:
+				fileutils.makedirs(dir)
+			except OSError:
+				raise AbortSave(None)	# (message already shown)
+		
 		import random
 		tmp = 'tmp-' + `random.randrange(1000000)`
-		tmp = os.path.join(os.path.dirname(path), tmp)
+		tmp = os.path.join(dir, tmp)
 
 		def open(path):
 			return os.fdopen(os.open(path, os.O_CREAT | os.O_WRONLY, 0600), 'wb')
