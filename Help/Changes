@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+18-Jul-2002
+~~~~~~~~~~~
+License change to the LGPL (allows commercial programs to use this library).
+
 14-Jul-2002
 ~~~~~~~~~~~
 Saveable.save_to_file() should raise an exception when saving fails, rather
