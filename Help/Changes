@@ -2,6 +2,14 @@
 			Shared code for ROX applications
 			by Thomas Leonard
 			http://rox.sourceforge.net
+06-Sep-2004
+~~~~~~~~~~~
+Simplified su code and interface.
+
+29-Aug-2004
+~~~~~~~~~~~
+Removed code to turn off the separator in the debug dialog. GTK 2.4 doesn't
+need it, and generates a warning if you use it (Thomas Leonard).
 
 27-Aug-2004 (Release 1.9.15)
 ~~~~~~~~~~~
