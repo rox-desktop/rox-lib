@@ -242,8 +242,9 @@ class OptionsBox(g.Dialog):
 		self.notebook.append_page(page, g.Label('unused'))
 
 		iter = self.sections.append(parent)
-		self.sections.set(iter, 0, section.getAttribute('title'),
-					1, self.notebook.page_num(page))
+		self.sections.set(iter,
+				0, self._(section.getAttribute('title')),
+				1, self.notebook.page_num(page))
 		for node in section.childNodes:
 			if node.nodeType != Node.ELEMENT_NODE:
 				continue

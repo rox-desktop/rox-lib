@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+28-Jan-2004
+~~~~~~~~~~~
+Also translate section names in the Options box (reported by Arnaud Calvo).
+
 22-Jan-2004 (Release 1.9.12)
 ~~~~~~~~~~~
 Added 'tasks' module to provide a light-weight alternative to threads.
@@ -31,7 +35,6 @@ made a few changes to the XML syntax.
 ~~~~~~~~~~~
 Added <menu> OptionMenu widget for Options box (Chris Shaffer).
 
->>>>>>> 1.79
 27-Nov-2003
 ~~~~~~~~~~~
 Fixed bug in findrox when not using Zero Install (Lionel Bringuier).
