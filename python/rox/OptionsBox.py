@@ -112,6 +112,8 @@ class OptionsBox(GtkWindow):
 
 	def build_sections(self, options):
 		box = self.sections_box
+		if len(options.childNodes) < 2:
+			box.set_show_tabs(FALSE)
 		for section in options.childNodes:
 			self.section_name = section.name
 
