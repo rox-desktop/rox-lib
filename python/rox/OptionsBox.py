@@ -328,7 +328,7 @@ class OptionsBox(g.Dialog):
 	def may_add_tip(self, widget, node):
 		"""If 'node' contains any text, use that as the tip for 'widget'."""
 		if node.childNodes:
-			data = ''.join([n.nodeValue for n in node.childNodes]).strip()
+			data = ''.join([n.nodeValue for n in node.childNodes if n.nodeType == Node.TEXT_NODE]).strip()
 		else:
 			data = None
 		if data:

@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+21-Nov-2004
+~~~~~~~~~~~
+Bugfix: Use only text nodes when getting the tool tip from the Options.xml
+        file (Stephen Watson).
+
 22-Oct-2004
 ~~~~~~~~~~~
 Bugfix: Theme subdirectories are separated by ',' not ';' (reported by
