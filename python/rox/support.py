@@ -121,10 +121,10 @@ in_rox_mainloop = 0
 top_level_windows = 1
 
 def rox_mainloop():
+	global in_rox_mainloop
 	if in_rox_mainloop:
 		raise Exception('Already in rox_mainloop!')
 	if top_level_windows > 0:
-		global in_rox_mainloop
 		in_rox_mainloop = 1
 		try:
 			mainloop()
