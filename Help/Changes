@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+25-Aug-2002
+~~~~~~~~~~~
+Switch to use new pygtk versioning system (requires pygtk 1.99.13).
+
 19-Aug-2002
 ~~~~~~~~~~~
 Added 'processes' module, based on code in Archive, which makes controlling
