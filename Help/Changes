@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+25-Jul-2002
+~~~~~~~~~~~
+Added applet module for creating ROX panel applets.
+
 24-Jul-2002
 ~~~~~~~~~~~
 Bugfix: saving code didn't cope with missing images (reported by Musus Umbra).
