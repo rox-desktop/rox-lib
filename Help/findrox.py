@@ -29,7 +29,8 @@ else:
 	except:
 		pass
 	try:
-		import gtk2 as g
+		import pygtk; pygtk.require('2.0')
+		import gtk as g
 	except:
 		import gtk
 		win = gtk.GtkDialog()

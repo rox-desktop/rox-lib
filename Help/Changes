@@ -3,7 +3,7 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
-25-Aug-2002
+25-Aug-2002 (Release 1.9.3)
 ~~~~~~~~~~~
 Switch to use new pygtk versioning system (requires pygtk 1.99.13).
 
