@@ -1,5 +1,3 @@
-from __future__ import generators
-
 """The Menu widget provides an easy way to create menus that allow the user to
 define keyboard shortcuts, and saves the shortcuts automatically. You only define
 each Menu once, and attach it to windows as required.
@@ -28,7 +26,13 @@ menu = Menu('main', [
 	('/Options',		'show_options', ''),
 	('/Help',		'help',		'<StockItem>',	'F1', g.STOCK_HELP),
 	])
+
+There is also a new syntax, supported from 1.9.13, where you pass instances of MenuItem
+instead of tuples to the Menu constructor. Be sure to require version 1.9.13 if
+using this feature.
 """
+
+from __future__ import generators
 
 import rox
 from rox import g
@@ -44,7 +48,10 @@ def set_save_name(prog, leaf = 'menus'):
 class MenuItem:
 	"""Base class for menu items. You should normally use one of the subclasses..."""
 	def __init__(self, label, callback_name, type = '', key = None, stock = None):
-		self.label = label
+		if label and label[0] == '/':
+			self.label = label[1:]
+		else:
+			self.label = label
 		self.fn = callback_name
 		self.type = type
 		self.key = key
@@ -55,11 +62,16 @@ class MenuItem:
 
 class Action(MenuItem):
 	"""A leaf menu item, possibly with a stock icon, which calls a method when clicked."""
-	def __init__(self, label, callback_name, key = None, stock = None):
+	def __init__(self, label, callback_name, key = None, stock = None, values = ()):
+		"""object.callback(*values) is called when the item is activated."""
 		if stock:
 			MenuItem.__init__(self, label, callback_name, '<StockItem>', key, stock)
 		else:
 			MenuItem.__init__(self, label, callback_name, '', key)
+		self.values = values
+
+	def activate(self, caller):
+		getattr(caller, self.fn)(*self.values)
 
 class SubMenu(MenuItem):
 	"""A branch menu item leading to a submenu."""
@@ -74,10 +86,10 @@ class Separator(MenuItem):
 
 def _walk(items):
 	for x in items:
-		yield x.label, x
+		yield "/" + x.label, x
 		if isinstance(x, SubMenu):
 			for l, y in _walk(x.submenu):
-				yield x.label + '/' + l, y
+				yield x.label + l, y
 
 class Menu:
 	def __init__(self, name, items):
