@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 1.9.13\n"
-"POT-Creation-Date: 2004-03-18 16:40+0200\n"
+"POT-Creation-Date: Sat Jul 31 10:26:37 2004\n"
 "PO-Revision-Date: 2004-03-18 16:40+0200\n"
 "Last-Translator: Yuri Bongiorno http://yuri.webhop.org\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -12,11 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: OptionsBox.py:107
+#: OptionsBox.py:103
 msgid "_Revert"
 msgstr "_Ripristina"
 
-#: OptionsBox.py:109
+#: OptionsBox.py:105
 msgid "Restore all options to how they were when the window was opened"
 msgstr "Rimette tutte le opzioni come erano prima dell'apertura della finestra"
 
@@ -30,19 +30,23 @@ msgstr ""
 "(1.99.13 o successivo):\n"
 "http://rox.sourceforge.net/rox_lib.php3\n"
 
-#: __init__.py:112 debug.py:37
+#: __init__.py:124
+msgid "Operation aborted at user's request"
+msgstr "Operazione interrotta per richiesta dell'utente"
+
+#: __init__.py:131 debug.py:37
 msgid "Error"
 msgstr "Errore"
 
-#: __init__.py:138
+#: __init__.py:157
 msgid "Information"
 msgstr "Informazione"
 
-#: __init__.py:160
+#: __init__.py:179
 msgid "Confirm:"
 msgstr "Conferma:"
 
-#: __init__.py:360
+#: __init__.py:379
 msgid ""
 "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "
@@ -56,19 +60,19 @@ msgstr ""
 msgid "_Details"
 msgstr "_Dettagli"
 
-#: debug.py:76
+#: debug.py:77
 msgid "_Bug Report"
 msgstr "Segnala _bug"
 
-#: debug.py:82
+#: debug.py:83
 msgid "Forced Quit"
 msgstr "Esci subito"
 
-#: debug.py:101
+#: debug.py:102
 msgid "Stack trace (innermost last)"
 msgstr "Stack trace (il più interno è l'ultimo)"
 
-#: debug.py:186
+#: debug.py:187
 msgid "Local variables in selected frame:"
 msgstr "Variabili locali nel frame selezionato:"
 
@@ -101,18 +105,19 @@ msgstr ""
 "Impossibile caricare i file dalla macchina remota (file multipli o target "
 "application/octet-stream non forniti)"
 
-#: mime.py:253
+#: mime.py:262
+#, fuzzy
 msgid ""
-"The 'update-mime-database' command returned an error code!\n"
+"The '%s' command returned an error code!\n"
 "Make sure you have the freedesktop.org shared MIME package:\n"
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 msgstr ""
-"Il comando «update-mime-database» ha restituito un codice di errore.\n"
+"Il comando «%s» ha restituito un codice di errore.\n"
 "Assicurarsi di avere installato il pacchetto shared MIME di freedesktop."
 "org:\n"
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 
-#: mime_handler.py:182
+#: mime_handler.py:236
 msgid ""
 "Run actions can be changed by selecting a file of the appropriate type in "
 "the Filer and selecting the menu option 'Set Run Action...'"
@@ -120,15 +125,15 @@ msgstr ""
 "L'azione predefinita può essere cambiata selezionando un file di tipo "
 "appropriato nel filer e poi il menù «Imposta azione...»"
 
-#: mime_handler.py:190
+#: mime_handler.py:244
 msgid "run action"
 msgstr "esegui azione"
 
-#: mime_handler.py:200
+#: mime_handler.py:254
 msgid "thumbnail handler"
 msgstr "gestore di miniature"
 
-#: mime_handler.py:201
+#: mime_handler.py:255
 msgid ""
 "Thumbnail handlers provide support for creating thumbnail images of types of "
 "file.  The filer can generate thumbnails for most types of image (JPEG, PNG, "
@@ -139,11 +144,11 @@ msgstr ""
 "(jpeg, png, ecc...), ma occorrono opportune applicazioni per gli altri tipi "
 "di file."
 
-#: mime_handler.py:217
+#: mime_handler.py:271
 msgid "type handler"
 msgstr "gestore tipi"
 
-#: mime_handler.py:218
+#: mime_handler.py:272
 msgid ""
 "The application can handle files of these types.  Click on OK to add it to "
 "the SendTo menu for the type of file, and also the customized File menu."
@@ -151,11 +156,11 @@ msgstr ""
 "L'applicazione può gestire i file di questo tipo. Cliccare su «Ok» per "
 "aggiungerla nei menù «File» e «Invia a...»."
 
-#: saving.py:138
+#: saving.py:139
 msgid "Delete temporary file '%s'?"
 msgstr "Eliminare il file temporaneo «%s»?"
 
-#: saving.py:309
+#: saving.py:315
 msgid ""
 "Drag the icon to a directory viewer\n"
 "(or enter a full pathname)"
@@ -163,34 +168,38 @@ msgstr ""
 "Trascinare l'icona su un visualizzatore di directory\n"
 "(o inserire un percorso completo)"
 
-#: saving.py:335
+#: saving.py:341
 msgid "Unnamed"
 msgstr "SenzaNome"
 
-#: saving.py:427
+#: saving.py:433
 msgid "Permissions changed from %o to %o."
 msgstr "Permessi cambiati da %o a %o."
 
-#: saving.py:430
+#: saving.py:436
 msgid "Size was %d bytes; now %d bytes."
 msgstr "La dimensione era %d byte, ora è di %d byte."
 
-#: saving.py:433
+#: saving.py:439
 msgid "Modification time changed."
 msgstr "La data dell'ultima modifica è cambiata."
 
-#: saving.py:439
+#: saving.py:445
 msgid "File '%s' already exists -- overwrite it?"
 msgstr "Il file «%s» esiste già: sovrascrivere?"
 
-#: saving.py:440
+#: saving.py:446
 msgid "_Overwrite"
 msgstr "S_ovrascrivi"
 
-#: saving.py:479
+#: saving.py:486
 msgid "_Discard"
 msgstr "Abban_dona"
 
-#: saving.py:489
+#: saving.py:496
 msgid "Save As:"
 msgstr "Salva come:"
+
+#: su.py:138
+msgid "Enter %s's password:"
+msgstr "Inserire la password di «%s»:"
