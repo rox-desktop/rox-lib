@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+02-Feb-2004
+~~~~~~~~~~~
+Added French translation (Vincent Lefèvre).
+
 30-Jan-2004
 ~~~~~~~~~~~
 Also translate <label> elements in the Options box (reported by Arnaud Calvo).
