@@ -76,7 +76,11 @@ class Saveable:
 	"""This class describes the interface that an object must provide
 	to work with the SaveBox/SaveArea widgets. Inherit from it if you
 	want to save. All methods can be overridden, but normally only
-	save_to_stream() needs to be."""
+	save_to_stream() needs to be. You can also set save_last_stat to
+	the result of os.stat(filename) when loading a file to make ROX-Lib
+	restore permissions and warn about other programs editing the file."""
+
+	save_last_stat = None
 
 	def set_uri(self, uri):
 		"""When the data is safely saved somewhere this is called
@@ -145,15 +149,20 @@ class Saveable:
 		self.save_to_stream(stream)
 		selection_data.set(selection_data.target, 8, stream.getvalue())
 
-	save_mode = None
+	save_mode = None	# For backwards compat
 	def save_set_permissions(self, path):
 		"""The default save_to_file() creates files with the mode 0600
 		(user read/write only). After saving has finished, it calls this
 		method to set the final permissions. The save_set_permissions():
 		- sets it to 0666 masked with the umask (if save_mode is None), or
-		- sets it to save_mode (not masked) otherwise."""
-		if self.save_mode is not None:
-			os.chmod(path, self.save_mode)
+		- sets it to save_last_stat.st_mode (not masked) otherwise."""
+		if self.save_last_stat is not None:
+			save_mode = self.save_last_stat.st_mode
+		else:
+			save_mode = self.save_mode
+		
+		if save_mode is not None:
+			os.chmod(path, save_mode)
 		else:
 			mask = os.umask(0077)	# Get the current umask
 			os.umask(mask)		# Set it back how it was
@@ -401,18 +410,41 @@ class SaveArea(g.VBox):
 			self.save_done()
 	
 	def confirm_new_path(self, path):
-		"""Use wants to save to this path. If it's different to the original path,
-		check that it doesn't exist and ask for confirmation if it does. Returns true
-		to go ahead with the save."""
-		if path == self.initial_uri:
-			return 1
+		"""User wants to save to this path. If it's different to the original path,
+		check that it doesn't exist and ask for confirmation if it does.
+		If document.save_last_stat is set, compare with os.stat for an existing file
+		and warn about changes.
+		Returns true to go ahead with the save."""
 		if not os.path.exists(path):
-			return 1
+			return True
+		if path == self.initial_uri:
+			if self.document.save_last_stat is None:
+				return True		# OK. Nothing to compare with.
+			last = self.document.save_last_stat
+			stat = os.stat(path)
+			msg = []
+			if stat.st_mode != last.st_mode:
+				msg.append(_("Permissions changed from %o to %o.") % \
+						(last.st_mode, stat.st_mode))
+			if stat.st_size != last.st_size:
+				msg.append(_("Size was %d bytes; now %d bytes.") % \
+						(last.st_size, stat.st_size))
+			if stat.st_mtime != last.st_mtime:
+				msg.append(_("Modification time changed."))
+			if not msg:
+				return True		# No change detected
+			return rox.confirm("File '%s' edited by another program since last load/save. "
+					   "Really save (discarding other changes)?\n\n%s" %
+					   (path, '\n'.join(msg)), g.STOCK_DELETE)
 		return rox.confirm(_("File '%s' already exists -- overwrite it?") % path,
 				   g.STOCK_DELETE, _('_Overwrite'))
 	
 	def set_uri(self, uri):
-		"Data is safely saved somewhere. Update the document's URI. Internal."
+		"""Data is safely saved somewhere. Update the document's URI and save_last_stat (for local saves).
+		Internal."""
+		path = get_local_path(uri)
+		if path is not None:
+			self.document.save_last_stat = os.stat(path)	# Record for next time
 		self.document.set_uri(uri)
 	
 	def drag_end(self, widget, context):
@@ -463,7 +495,7 @@ class SaveBox(g.Dialog):
 		self.set_save_in_progress(0)
 		class BoxedArea(SaveArea):
 			def set_uri(area, uri):
-				document.set_uri(uri)
+				SaveArea.set_uri(area, uri)
 				if discard:
 					document.discard()
 			def save_done(area):
