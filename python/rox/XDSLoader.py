@@ -34,21 +34,26 @@ class XDSLoader:
 	
 	def xds_proxy_for(self, widget):
 		# (Konqueror requires ACTION_MOVE)
-		widget.drag_dest_set(g.DEST_DEFAULT_ALL, self.targets,
+		widget.drag_dest_set(g.DEST_DEFAULT_MOTION | g.DEST_DEFAULT_HIGHLIGHT,
+				self.targets,
 				gdk.ACTION_COPY | gdk.ACTION_MOVE | gdk.ACTION_PRIVATE)
 		
 		widget.connect('drag_data_received', self.xds_data_received)
 
 
 	def xds_data_received(self, widget, context, x, y, selection, info, time):
+		print "xds_data_received!"
 		if info == TARGET_RAW:
 			self.xds_load_from_selection(selection)
-		else:
+		elif info == TARGET_URILIST:
 			uris = extract_uris(selection.data)
 			if uris:
 				self.xds_load_uris(uris)
 			else:
 				alert("Nothing to load!")
+		else:
+			print "Unknown DnD type", info
+		return 1
 	
 	def xds_load_uris(self, uris):
 		paths = []

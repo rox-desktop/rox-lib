@@ -63,7 +63,8 @@ class SaveBox(g.Dialog):
 		i = i + 1
 		# Have to do this here, or the selection gets messed up
 		save_area.entry.grab_focus()
-		save_area.entry.select_region(i, -1)
+		g.Editable.select_region(save_area.entry, i, -1) # PyGtk bug
+		#save_area.entry.select_region(i, -1)
 
 		self.connect('response', self.got_response)
 	

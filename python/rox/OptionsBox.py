@@ -1,9 +1,12 @@
 from rox import g, options
-from xml.dom import Node
+import rox
+from xml.dom import Node, minidom
 import gobject
 
 FALSE = g.FALSE
 TRUE = g.TRUE
+
+REVERT = 1
 
 def data(node):
 	return ''.join([text.nodeValue for text in node.childNodes
@@ -14,41 +17,83 @@ class OptionsBox(g.Dialog):
 		assert isinstance(options_group, options.OptionGroup)
 
 		g.Dialog.__init__(self)
+		self.tips = g.Tooltips()
+		self.set_has_separator(FALSE)
+
 		self.options = options_group
 		self.set_title(options_group.program + ' options')
 		self.set_position(g.WIN_POS_CENTER)
 
+		button = rox.ButtonMixed(g.STOCK_UNDO, '_Revert')
+		self.add_action_widget(button, REVERT)
+		self.tips.set_tip(button, 'Restore all options to how they were '
+					  'when the window was opened', "XXX")
+
 		self.add_button(g.STOCK_OK, g.RESPONSE_OK)
 		self.connect('response', self.got_response)
 
-		from xml.dom.minidom import parse
-
-		doc = parse(options_xml)
+		doc = minidom.parse(options_xml)
 		assert doc.documentElement.localName == 'options'
 		
-		self.handlers = {}	# Option name -> (set, get fns)
-		self.tips = g.Tooltips()
+		self.handlers = {}	# Option -> (get, set)
+		self.revert = {}	# Option -> old value
 		
 		self.build_window_frame()
 		self.build_sections(doc.documentElement)
+
+		self.updating = 0
+
+		self.connect('destroy', self.destroyed)
+	
+	def destroyed(self, widget):
+		rox.toplevel_unref()
+		if self.changed():
+			self.options.save()
 	
 	def got_response(self, widget, response):
 		if response == g.RESPONSE_OK:
 			self.destroy()
+		elif response == REVERT:
+			for o in self.options:
+				o.set(self.revert[o])
+			self.update_widgets()
+			self.options.notify()
+			self.update_revert()
 	
 	def open(self):
+		rox.toplevel_ref()
+		for option in self.options:
+			self.revert[option] = option.value
 		self.update_widgets()
+		self.update_revert()
 		self.show()
 	
+	def update_revert(self):
+		"Shade/unshade the Revert button."
+		self.set_response_sensitive(REVERT, self.changed())
+	
+	def changed(self):
+		"Check whether any options have different values."
+		for option in self.options:
+			if option.value != self.revert[option]:
+				return TRUE
+		return FALSE
+	
 	def update_widgets(self):
-		for option in self.options.options.keys():
-			try:
-				handler = self.handlers[option]
-			except KeyError:
-				print "No widget for option '%s'!" % option
-				continue
-			value = self.options.options[option][0]
-			apply(handler[0], list(handler[2:]) + [value])
+		"Make widgets show current values."
+		assert not self.updating
+		self.updating = 1
+		
+		try:
+			for option in self.options:
+				try:
+					handler = self.handlers[option][1]
+				except KeyError:
+					print "No widget for option '%s'!" % option
+				else:
+					handler()
+		finally:
+			self.updating = 0
 	
 	def build_window_frame(self):
 		hbox = g.HBox(FALSE, 4)
@@ -59,6 +104,7 @@ class OptionsBox(g.Dialog):
 		sw.set_shadow_type(g.SHADOW_IN)
 		sw.set_policy(g.POLICY_NEVER, g.POLICY_AUTOMATIC)
 		hbox.pack_start(sw, FALSE, TRUE, 0)
+		self.sections_swin = sw		# Used to hide it...
 
 		# tree view
 		model = g.TreeStore(gobject.TYPE_STRING, g.Widget.__gtype__)
@@ -91,29 +137,24 @@ class OptionsBox(g.Dialog):
 
 		self.vbox.show_all()
 	
-	def save(self, button):
-		self.apply()
-		self.options.save()
-		self.destroy()
-		
-	def ok(self, button):
-		self.apply()
-		self.destroy()
+	def check_widget(self, option):
+		"A widget call this when the user changes its value."
+		if self.updating:
+			return
 
-	def apply(self, button = None):
-		for option in self.options.options.keys():
-			try:
-				handler = self.handlers[option]
-			except KeyError:
-				print "Can't save %s - no handler!" % option
-				continue
-			new = apply(handler[1], handler[2:])
-			self.options.change(option, new)
+		assert isinstance(option, options.Option)
 
-	def cancel(self, button):
-		self.destroy()
+		new = self.handlers[option][0]()
 
+		if new == option.value:
+			return
+
+		option.set(new)
+		self.options.notify()
+		self.update_revert()
+	
 	def build_sections(self, options, parent = None):
+		n = 0
 		for section in options.childNodes:
 			if section.nodeType != Node.ELEMENT_NODE:
 				continue
@@ -121,7 +162,11 @@ class OptionsBox(g.Dialog):
 				print "Unknown section", section
 				continue
 			self.build_section(section, parent)
-		self.tree_view.expand_all()
+			n += 1
+		if n > 1:
+			self.tree_view.expand_all()
+		else:
+			self.sections_swin.hide()
 	
 	def build_section(self, section, parent):
 		page = g.VBox(FALSE, 4)
@@ -149,66 +194,112 @@ class OptionsBox(g.Dialog):
 			try:
 				option = self.options.options[name]
 			except KeyError:
-				print "Unknown option", name
+				print "Unknown option '%s'" % name
 
 		try:
 			fn = getattr(self, 'build_' + node.localName)
 		except AttributeError:
-			print "Unknown option type", node.localName
+			print "Unknown widget type '%s'" % node.localName
 		else:
 			if option:
-				widgets = fn(option, node, label)
+				widgets = fn(node, label, option)
 			else:
 				widgets = fn(node, label)
 			for w in widgets:
 				box.pack_start(w, FALSE, TRUE, 0)
 		
+	def may_add_tip(self, widget, node):
+		if node.childNodes:
+			data = node.childNodes[0].nodeValue.strip()
+		else:
+			data = None
+		if data:
+			self.tips.set_tip(widget, data, "XXX")
+	
+	# Each type of widget has a method called 'build_NAME' where name is
+	# the XML element name. This method is called as method(node, label,
+	# option) if it corresponds to an Option, or method(node, label)
+	# otherwise.  It should return a list of widgets to add to the window
+	# and, if it's for an Option, set self.handlers[option] = (get, set).
+
 	def build_label(self, node, label):
 		return [g.Label(data(node))]
 	
 	def build_spacer(self, node, label):
 		eb = g.EventBox()
-		eb.set_usize(8, 8)
+		eb.set_size_request(8, 8)
 		return [eb]
 
-	def build_hbox(self):
-		if widget.nodeName == 'hbox':
-			hbox = g.HBox(FALSE, 4)
-			if label:
-				hbox.pack_start(g.Label(label), FALSE, TRUE, 4)
-			box.pack_start(hbox, FALSE, TRUE, 0)
-			
-			for sub in widget.childNodes:
-				self.build_widget(sub, hbox)
-			return
+	def build_hbox(self, node, label):
+		self.do_box(node, label, g.HBox(FALSE, 4))
+	def build_vbox(self, node, label):
+		self.do_box(node, label, g.VBox(FALSE, 0))
+		
+	def do_box(self, node, label, widget):
+		if label:
+			widget.pack_start(g.Label(label), FALSE, TRUE, 4)
 
-		name = self.section_name + '_' + widget.name
+		for child in widget.childNodes:
+			if child.nodeType == Node.ELEMENT_NODE:
+				self.build_widget(child, widget)
 
-		if not self.options.options.has_key(name):
-			print "No option for %s!" % name
-			return
-
-		try:
-			cb = getattr(self, 'make_' + widget.nodeName)
-		except:
-			raise Exception('Unsupport option type: %s' %
-							widget.nodeName)
-
-		self.handlers[name] = cb(widget, box)
-	
-	def may_add_tip(self, widget, node):
-		data = string.strip(node.data)
-		if data:
-			self.tips.set_tip(widget, data)
-
-	def make_entry(self, widget, box):
-		hbox = g.HBox(FALSE, 4)
-		hbox.pack_start(g.Label(widget.label), FALSE, TRUE, 0)
+		return [widget]
+		
+	def build_entry(self, node, label, option):
+		box = g.HBox(FALSE, 4)
 		entry = g.Entry()
-		hbox.pack_start(entry, TRUE, TRUE, 0)
-		self.may_add_tip(entry, widget)
-		box.pack_start(hbox, FALSE, TRUE, 0)
-		return (entry.set_text, entry.get_text)
+
+		if label:
+			label_wid = g.Label(label)
+			label_wid.set_alignment(1.0, 0.5)
+			box.pack_start(label_wid, FALSE, TRUE, 0)
+			box.pack_start(entry, TRUE, TRUE, 0)
+		else:
+			box = None
+
+		self.may_add_tip(entry, node)
+
+		entry.connect('changed', lambda e: self.check_widget(option))
+
+		def get():
+			return entry.get_chars(0, -1)
+		def set():
+			entry.set_text(option.value)
+		self.handlers[option] = (get, set)
+
+		return [box or entry]
+
+	def set_font(self, font, value):
+		font.set_value(value)
+	
+	def get_font(self, font):
+		return font.get_value()
+	
+	def build_font(self, node, label, option):
+		button = FontButton(self, option, label)
+
+		self.may_add_tip(button, node)
+
+		hbox = g.HBox(FALSE, 4)
+		hbox.pack_start(g.Label(label), FALSE, TRUE, 0)
+		hbox.pack_start(button, FALSE, TRUE, 0)
+
+		self.handlers[option] = (button.get, button.set)
+
+		return [hbox]
+
+	def build_colour(self, node, label, option):
+		button = ColourButton(self, option, label)
+
+		self.may_add_tip(button, node)
+
+		hbox = g.HBox(FALSE, 4)
+		hbox.pack_start(g.Label(label), FALSE, TRUE, 0)
+		hbox.pack_start(button, FALSE, TRUE, 0)
+
+		self.handlers[option] = (button.get, button.set)
+
+		return [hbox]
 
 	def set_toggle(self, toggle, value):
 		toggle.set_active(not not value)
@@ -280,16 +371,6 @@ class OptionsBox(g.Dialog):
 
 		return (self.set_radio, self.get_radio, radios)
 
-	def make_colour(self, widget, box):
-		hbox = g.HBox(FALSE, 4)
-		hbox.pack_start(g.Label(widget.label), FALSE, TRUE, 0)
-		button = ColourButton(widget.label)
-		self.may_add_tip(button, widget)
-		hbox.pack_start(button, FALSE, TRUE, 0)
-		box.pack_start(hbox, FALSE, TRUE, 0)
-
-		return (button.set_colour, button.get_colour)
-
 	def set_menu(self, menu, values, value):
 		try:
 			menu.set_history(values.index(value))
@@ -327,127 +408,89 @@ class OptionsBox(g.Dialog):
 		option_menu.set_usize(max_w + 50, max_h + 4)
 		return (self.set_menu, self.get_menu, option_menu, values)
 
-	def set_font(self, font, value):
-		font.set_value(value)
-	
-	def get_font(self, font):
-		return font.get_value()
-	
-	def make_font(self, widget, box):
-		button = FontButton(widget.label)
-
-		self.may_add_tip(button, widget)
-
-		hbox = g.HBox(FALSE, 4)
-		hbox.pack_start(g.Label(widget.label), FALSE, TRUE, 0)
-		hbox.pack_start(button, FALSE, TRUE, 0)
-		box.pack_start(hbox, FALSE, TRUE, 0)
-
-		return (self.set_font, self.get_font, button)
-
 class FontButton(g.Button):
-	def __init__(self, title):
+	def __init__(self, option_box, option, title):
 		g.Button.__init__(self)
+		self.option_box = option_box
+		self.option = option
 		self.title = title
 		self.label = g.Label('<font>')
-		self.label.set_padding(32, 1)
 		self.add(self.label)
 		self.dialog = None
 		self.connect('clicked', self.clicked)
 	
-	def set_value(self, value):
-		self.label.set_text(value)
+	def set(self):
+		self.label.set_text(self.option.value)
 		if self.dialog:
 			self.dialog.destroy()
 	
-	def get_value(self):
+	def get(self):
 		return self.label.get()
 
-	def closed(self, dialog):
-		self.dialog = None
-	
-	def cancel(self, button):
-		self.dialog.destroy()
-	
-	def ok(self, button):
-		self.set_value(self.dialog.get_font_name())
-	
 	def clicked(self, button):
 		if self.dialog:
 			self.dialog.destroy()
 
-		self.dialog = g.FontSelectionDialog(self.title)
-		self.dialog.set_position(WIN_POS_MOUSE)
-		self.dialog.connect('destroy', self.closed)
-		self.dialog.cancel_button.connect('clicked', self.cancel)
-		self.dialog.ok_button.connect('clicked', self.ok)
+		def closed(dialog):
+			self.dialog = None
 
-		self.dialog.set_font_name(self.get_value())
+		def response(dialog, resp):
+			if resp != g.RESPONSE_OK:
+				dialog.destroy()
+				return
+			self.label.set_text(dialog.get_font_name())
+			dialog.destroy()
+			self.option_box.check_widget(self.option)
+
+		self.dialog = g.FontSelectionDialog(self.title)
+		self.dialog.set_position(g.WIN_POS_MOUSE)
+		self.dialog.connect('destroy', closed)
+		self.dialog.connect('response', response)
+
+		self.dialog.set_font_name(self.get())
 		self.dialog.show()
 
 class ColourButton(g.Button):
-	def __init__(self, title):
+	def __init__(self, option_box, option, title):
 		g.Button.__init__(self)
+		self.option_box = option_box
+		self.option = option
 		self.title = title
-		self.da = g.DrawingArea()
-		self.da.size(64, 12)
-		self.add(self.da)
-		self.da.show()
+		self.set_size_request(64, 12)
 		self.dialog = None
 		self.connect('clicked', self.clicked)
 	
-	def set_colour(self, colour):
-		try:
-			r = string.atoi(colour[1:5], 16)
-			g = string.atoi(colour[5:9], 16)
-			b = string.atoi(colour[9:13], 16)
-		except:
-			print "Invalid colour spec:", colour
-			r, g, b = (0, 0, 0)
-		self.set_colour_rgb(r, g, b)
+	def set(self, c = None):
+		if c is None:
+			c = g.gdk.color_parse(self.option.value)
+		self.modify_bg(g.STATE_NORMAL, c)
+		self.modify_bg(g.STATE_PRELIGHT, c)
+		self.modify_bg(g.STATE_ACTIVE, c)
 	
-	def get_colour(self):
-		c = self.da.get_style().bg[STATE_NORMAL]
+	def get(self):
+		c = self.get_style().bg[g.STATE_NORMAL]
 		return '#%04x%04x%04x' % (c.red, c.green, c.blue)
 
-	def set_colour_rgb(self, red, green, blue):
-		c = self.da.get_colormap().alloc(red, green, blue)
-		style = self.da.get_style().copy()
-		style.bg[STATE_NORMAL] = c
-		self.da.set_style(style)
-
-		if self.da.flags() & REALIZED:
-			self.da.hide()
-			self.da.show()
-	
-	def closed(self, dialog):
-		self.dialog = None
-	
-	def cancel(self, button):
-		self.dialog.destroy()
-	
-	def ok(self, button):
-		(r, g, b) = self.dialog.colorsel.get_color()
-		self.set_colour_rgb(r * 0xffff, g * 0xffff, b * 0xffff)
-	
-		self.dialog.destroy()
-	
 	def clicked(self, button):
 		if self.dialog:
 			self.dialog.destroy()
 
-		self.dialog = g.ColorSelectionDialog()
-		self.dialog.set_position(WIN_POS_MOUSE)
-		self.dialog.set_title(self.title)
-		self.dialog.connect('destroy', self.closed)
-		self.dialog.help_button.hide()
-		self.dialog.cancel_button.connect('clicked', self.cancel)
-		self.dialog.ok_button.connect('clicked', self.ok)
+		def closed(dialog):
+			self.dialog = None
 
-		colour = self.da.get_style().bg[STATE_NORMAL]
-		rgb = (float(colour.red) / 0xffff,
-		       float(colour.green) / 0xffff,
-		       float(colour.blue) / 0xffff)
-		self.dialog.colorsel.set_color(rgb)
+		def response(dialog, resp):
+			if resp != g.RESPONSE_OK:
+				dialog.destroy()
+				return
+			self.set(dialog.colorsel.get_current_color())
+			dialog.destroy()
+			self.option_box.check_widget(self.option)
 
+		self.dialog = g.ColorSelectionDialog(self.title)
+		self.dialog.set_position(g.WIN_POS_MOUSE)
+		self.dialog.connect('destroy', closed)
+		self.dialog.connect('response', response)
+
+		c = self.get_style().bg[g.STATE_NORMAL]
+		self.dialog.colorsel.set_current_color(c)
 		self.dialog.show()

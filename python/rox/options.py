@@ -1,3 +1,5 @@
+from __future__ import generators
+
 import choices
 import rox
 
@@ -36,8 +38,9 @@ class Option:
 	def __init__(self, name, value):
 		self.name = name
 		self.has_changed = 0	# ... since last notify/default
-		self.default_value = value
+		self.default_value = str(value)
 		self.registered = 0
+		self.value = None
 	
 	def register(self):
 		"Called by OptionGroup"
@@ -48,12 +51,18 @@ class Option:
 		"Called by OptionGroup or OptionsBox"
 		assert self.registered
 		if self.value != value:
-			self.value = value
+			self.value = str(value)
 			self.has_changed = 1
 	
-	def write(self, stream):
-		"Called by OptionGroup"
-		print >>stream, "%s=%s" % (option, `option.value`)
+	def to_xml(self, parent):
+		doc = parent.ownerDocument
+		node = doc.createElement('Option')
+		node.setAttribute('name', self.name)
+		node.appendChild(doc.createTextNode(self.value))
+		parent.appendChild(node)
+	
+	def __str__(self):
+		return "<Option %s=%s>" % (self.name, self.value)
 
 class OptionGroup:
 	def __init__(self, program, leaf):
@@ -70,10 +79,9 @@ class OptionGroup:
 			return
 
 		try:
-			from xml.dom import Node
-			from xml.dom.minidom import parse
+			from xml.dom import Node, minidom
 
-			doc = parse(path)
+			doc = minidom.parse(path)
 			
 			root = doc.documentElement
 			assert root.localName == 'Options'
@@ -95,10 +103,12 @@ class OptionGroup:
 		assert option.name not in self.options
 		assert not self.too_late_for_registrations
 
-		self.options[option.name] = option
+		name = option.name
+
+		self.options[name] = option
 		option.register()
 		
-		if option.name in self.pending:
+		if name in self.pending:
 			option.set(self.pending[name])
 			del self.pending[name]
 	
@@ -107,10 +117,18 @@ class OptionGroup:
 
 		path = choices.save(self.program, self.leaf)
 		if not path:
-			return
+			return	# Saving is disabled
+
+		from xml.dom.minidom import Document
+		doc = Document()
+		root = doc.createElement('Options')
+		doc.appendChild(root)
+
+		for option in self:
+			option.to_xml(root)
+
 		file = open(path, 'w')
-		for option in self.options:
-			option.write(file)
+		doc.writexml(file)
 		file.close()
 	
 	def add_notify(self, callback):
@@ -120,7 +138,7 @@ class OptionGroup:
 		self.callbacks.append(callback)
 	
 	def remove_notify(self, callback):
-		self.callback.remove(callback)
+		self.callbacks.remove(callback)
 	
 	def notify(self):
 		"Call this after registering any options or changing their "
@@ -131,6 +149,12 @@ class OptionGroup:
 				print "Warning: Some options loaded but unused:"
 				for (key, value) in self.pending.iteritems():
 					print "%s=%s" % (key, value)
+			for o in self:
+				if o.value is None:
+					o.set(o.default_value)
 		map(apply, self.callbacks)
-		for o in self.options.values():
-			o.has_changed = 0
+		for option in self:
+			option.has_changed = 0
+	
+	def __iter__(self):
+		return self.options.itervalues()

@@ -62,10 +62,16 @@ class ButtonMixed(g.Button):
 		align.show_all()
 
 _toplevel_windows = 0
+_in_mainloops = 0
 def mainloop():
-	global _toplevel_windows
-	while _toplevel_windows:
-		g.mainloop()
+	global _toplevel_windows, _in_mainloops
+
+	_in_mainloops += 1
+	try:
+		while _toplevel_windows:
+			g.mainloop()
+	finally:
+		_in_mainloops -= 1
 
 def toplevel_ref():
 	global _toplevel_windows
@@ -75,7 +81,7 @@ def toplevel_unref():
 	global _toplevel_windows
 	assert _toplevel_windows > 0
 	_toplevel_windows -= 1
-	if _toplevel_windows == 0:
+	if _toplevel_windows == 0 and _in_mainloops:
 		g.mainquit()
 
 _host_name = None
@@ -150,4 +156,12 @@ def edit_options(options_file = None):
 		assert _options_box == widget
 		_options_box = None
 	_options_box.connect('destroy', closed)
-	_options_box.show()
+	_options_box.open()
+
+try:
+	import xml
+except:
+	alert("You do not have the Python 'xml' module installed, which " \
+	      "ROX-Lib2 requires. You need to install python-xmlbase " \
+	      "(this is a small package; the full PyXML package is not " \
+	      "required).")
