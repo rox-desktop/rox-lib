@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+18-Jul-2003
+~~~~~~~~~~~
+Added position_fn argument to rox.Menu.popup.
+
 17-Jul-2003
 ~~~~~~~~~~~
 Cope with % escaped URIs.

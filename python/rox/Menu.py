@@ -101,10 +101,11 @@ class Menu:
 		window.connect('key-press-event', kev)
 		window.add_accel_group(self.accel_group)
 	
-	def popup(self, caller, event):
-		"""Display the menu. Call 'caller.<callback_name>' when an item is chosen."""
+	def popup(self, caller, event, position_fn = None):
+		"""Display the menu. Call 'caller.<callback_name>' when an item is chosen.
+		For applets, position_fn should be my_applet.position_menu)."""
 		self.caller = caller
-		self.menu.popup(None, None, None, event.button, event.time)
+		self.menu.popup(None, None, position_fn, event.button, event.time)
 	
 	def _activate(self, action, widget):
 		if self.caller:
