@@ -31,6 +31,10 @@ ICON_SIZE_LARGE=52
 ICON_SIZE_SMALL=18
 ICON_SIZE_UNSCALED=None
 
+exts = None		# Maps extensions to types
+globs = None		# List of (glob, type) pairs
+literals = None		# Maps liternal names to types
+
 def _get_node_data(node):
 	"""Get text of XML node"""
 	return ''.join([n.nodeValue for n in node.childNodes]).strip()
@@ -128,8 +132,8 @@ def _cache_database():
 			if line.startswith('#'): continue
 			line = line[:-1]
 
-			type, pattern = line.split(':', 1)
-			mtype = lookup(type)
+			type_name, pattern = line.split(':', 1)
+			mtype = lookup(type_name)
 
 			if pattern.startswith('*.'):
 				rest = pattern[2:]

@@ -5,8 +5,7 @@ annoys users if programs fight over the defaults."""
 import os
 
 import rox
-import rox.choices
-from rox import _, mime
+from rox import _, mime, choices
 
 _TNAME = 0
 _COMMENT = 1
@@ -99,20 +98,20 @@ class InstallList(rox.Dialog):
 	"""Handle the CellRedererToggle stuff"""    
 	if type(path) == str:
 		# Does this vary by pygtk version?
-		iter=model.iter_nth_child(None, int(path))
+		titer=model.iter_nth_child(None, int(path))
 	else:
-		iter=model.get_iter(path)
-        model.set_value(iter, _INSTALL, not cell.get_active())
+		titer=model.get_iter(path)
+        model.set_value(titer, _INSTALL, not cell.get_active())
 
     def load_types(self):
 	"""Load list of types into window"""    
         self.model.clear()
 
         for tname in self.types:
-            type=rox.mime.lookup(tname)
+            mime_type=mime.lookup(tname)
 	    if self.check:
-		    old=rox.choices.load(self.dir, '%s_%s' %
-					 (type.media, type.subtype))
+		    old=choices.load(self.dir, '%s_%s' %
+					 (mime_type.media, mime_type.subtype))
 		    if old and os.path.islink(old):
 			    old=os.readlink(old)
 			    oname=os.path.basename(old)
@@ -129,15 +128,15 @@ class InstallList(rox.Dialog):
 		    dinstall=True
 		    oname=''
 		    
-	    icon=type.get_icon(rox.mime.ICON_SIZE_SMALL)
+	    icon=mime_type.get_icon(mime.ICON_SIZE_SMALL)
 
-            iter=self.model.append()
-            self.model.set(iter, _TNAME, tname, _COMMENT, type.get_comment(),
+            titer=self.model.append()
+            self.model.set(titer, _TNAME, tname, _COMMENT, mime_type.get_comment(),
 			   _INSTALL, dinstall)
 	    if self.check:
-		    self.model.set(iter, _CURRENT, oname)
+		    self.model.set(titer, _CURRENT, oname)
 	    if icon:
-		    self.model.set(iter, _ICON, icon)
+		    self.model.set(titer, _ICON, icon)
 
 
     def get_active(self):
@@ -170,10 +169,10 @@ def _install_type_handler(types, dir, desc, application=None, overwrite=True,
 	types=win.get_active()
 
 	for tname in types:
-		type = mime.lookup(tname)
+		mime_type = mime.lookup(tname)
 
-		sname=rox.choices.save(dir,
-					  '%s_%s' % (type.media, type.subtype))
+		sname=choices.save(dir,
+					  '%s_%s' % (mime_type.media, mime_type.subtype))
 		os.symlink(application, sname+'.tmp')
 		os.rename(sname+'.tmp', sname)
 
@@ -225,9 +224,9 @@ def install_send_to_types(types, application=None):
 	types=win.get_active()
 
 	for tname in types:
-		type=lookup(tname)
+		type=mime.lookup(tname)
 		
-		sname=rox.choices.save('SendTo/.%s_%s' %  (type.media,
+		sname=choices.save('SendTo/.%s_%s' %  (type.media,
 							    type.subtype),
 					  win.aname)
 		os.symlink(application, sname+'.tmp')

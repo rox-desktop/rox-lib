@@ -40,16 +40,16 @@ class Index:
 
 class SubDir:
 	def __init__(self, index, subdir):
-		type = index.get(subdir, 'Type')
+		icontype = index.get(subdir, 'Type')
 		self.name = subdir
 		self.size = int(index.get(subdir, 'Size'))
-		if type == "Fixed":
+		if icontype == "Fixed":
 			self.min_size = self.max_size = self.size
-		elif type == "Threshold":
+		elif icontype == "Threshold":
 			threshold = int(index.get(subdir, 'Threshold'))
 			self.min_size = self.size - threshold
 			self.max_size = self.size + threshold
-		elif type == "Scaled":
+		elif icontype == "Scaled":
 			self.min_size = int(index.get(subdir, 'MinSize'))
 			self.max_size = int(index.get(subdir, 'MaxSize'))
 		else:
@@ -60,8 +60,8 @@ class IconTheme:
 		self.name = name
 
 		self.indexes = []
-		for dir in theme_dirs:
-			theme_dir = os.path.join(dir, name)
+		for leaf in theme_dirs:
+			theme_dir = os.path.join(leaf, name)
 			index_file = os.path.join(theme_dir, 'index.theme')
 			if os.path.exists(os.path.join(index_file)):
 				try:
@@ -95,5 +95,6 @@ class IconTheme:
 					iconname + '.' + extension)
 				if os.path.exists(filename):
 					return filename
+		return None
 
 rox_theme = IconTheme('ROX')
