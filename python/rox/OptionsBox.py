@@ -259,7 +259,7 @@ class OptionsBox(g.Dialog):
 			try:
 				option = self.options.options[name]
 			except KeyError:
-				print "Unknown option '%s'" % name
+				raise Exception("Unknown option '%s'" % name)
 
 		try:
 			name = node.localName.replace('-', '_')
