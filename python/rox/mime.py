@@ -114,7 +114,7 @@ app_exe = lookup('application', 'executable')
 _cache_uptodate = False
 
 def _cache_database():
-	global exts, globs, literals, _cache_database
+	global exts, globs, literals, _cache_uptodate
 
 	_cache_uptodate = True
 
@@ -237,6 +237,7 @@ def install_mime_info(application, package_file = None):
 		if old_data == new_data:
 			return	# Already installed
 
+	global _cache_uptodate
 	_cache_uptodate = False
 	
 	# Not already installed; add a new copy

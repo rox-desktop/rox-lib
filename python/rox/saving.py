@@ -8,7 +8,7 @@ the purpose and pass that to the SaveBox."""
 import os, sys
 import rox
 from rox import alert, info, g, _, filer, escape
-from rox import choices, get_local_path, TRUE, FALSE
+from rox import choices, get_local_path
 
 gdk = g.gdk
 
@@ -216,19 +216,19 @@ class SaveArea(g.VBox):
 		if it has never been saved.
 		'type' is the MIME-type to use (eg 'text/plain').
 		"""
-		g.VBox.__init__(self, FALSE, 0)
+		g.VBox.__init__(self, False, 0)
 
 		self.document = document
 		self.initial_uri = uri
 
 		drag_area = self._create_drag_area(type)
-		self.pack_start(drag_area, TRUE, TRUE, 0)
+		self.pack_start(drag_area, True, True, 0)
 		drag_area.show_all()
 
 		entry = g.Entry()
 		entry.connect('activate', lambda w: self.save_to_file_in_entry())
 		self.entry = entry
-		self.pack_start(entry, FALSE, TRUE, 4)
+		self.pack_start(entry, False, True, 4)
 		entry.show()
 
 		entry.set_text(uri)
@@ -296,11 +296,11 @@ class SaveArea(g.VBox):
 			if not self.confirm_new_path(path):
 				return
 			try:
-				self.set_sensitive(FALSE)
+				self.set_sensitive(False)
 				try:
 					self.document.save_to_file(path)
 				finally:
-					self.set_sensitive(TRUE)
+					self.set_sensitive(True)
 				self.set_uri(path)
 				self.save_done()
 			except:
@@ -338,11 +338,11 @@ class SaveArea(g.VBox):
 	def drag_data_get(self, widget, context, selection_data, info, time):
 		if info == TARGET_RAW:
 			try:
-				self.set_sensitive(FALSE)
+				self.set_sensitive(False)
 				try:
 					self.document.save_to_selection(selection_data)
 				finally:
-					self.set_sensitive(TRUE)
+					self.set_sensitive(True)
 			except:
 				_report_save_error()
 				_write_xds_property(context, None)
@@ -369,7 +369,7 @@ class SaveArea(g.VBox):
 		# If it's remote, return Failure (remote may try another method)
 		# If no URI is given, return Error
 		to_send = 'E'
-		uri = _read_xds_property(context, FALSE)
+		uri = _read_xds_property(context, False)
 		if uri:
 			path = get_local_path(uri)
 			if path:
@@ -377,15 +377,15 @@ class SaveArea(g.VBox):
 					to_send = 'E'
 				else:
 					try:
-						self.set_sensitive(FALSE)
+						self.set_sensitive(False)
 						try:
 							self.document.save_to_file(path)
 						finally:
-							self.set_sensitive(TRUE)
-						self.data_sent = TRUE
+							self.set_sensitive(True)
+						self.data_sent = True
 					except:
 						_report_save_error()
-						self.data_sent = FALSE
+						self.data_sent = False
 					if self.data_sent:
 						to_send = 'S'
 				# (else Error)
@@ -460,11 +460,11 @@ class SaveBox(g.Dialog):
 	Calls rox.toplevel_(un)ref automatically.
 	"""
 
-	def __init__(self, document, uri, type = 'text/plain', discard = FALSE):
+	def __init__(self, document, uri, type = 'text/plain', discard = False):
 		"""See SaveArea.__init__.
-		If discard is TRUE then an extra discard button is added to the dialog."""
+		If discard is True then an extra discard button is added to the dialog."""
 		g.Dialog.__init__(self)
-		self.set_has_separator(FALSE)
+		self.set_has_separator(False)
 
 		self.add_button(g.STOCK_CANCEL, g.RESPONSE_CANCEL)
 		self.add_button(g.STOCK_SAVE, g.RESPONSE_OK)
@@ -477,11 +477,11 @@ class SaveBox(g.Dialog):
 				document.discard()
 				self.destroy()
 			button = rox.ButtonMixed(g.STOCK_DELETE, _('_Discard'))
-			discard_area.pack_start(button, FALSE, TRUE, 2)
+			discard_area.pack_start(button, False, True, 2)
 			button.connect('clicked', discard_clicked)
 			button.unset_flags(g.CAN_FOCUS)
 			button.set_flags(g.CAN_DEFAULT)
-			self.vbox.pack_end(discard_area, FALSE, TRUE, 0)
+			self.vbox.pack_end(discard_area, False, True, 0)
 			self.vbox.reorder_child(discard_area, 0)
 			
 			discard_area.show_all()
