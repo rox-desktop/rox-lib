@@ -392,4 +392,4 @@ class SaveBox(g.Dialog):
 	def build_main_area(self):
 		"""Place self.save_area somewhere in self.vbox. Override this
 		for more complicated layouts."""
-		self.vbox.add(save_area)
+		self.vbox.add(self.save_area)
