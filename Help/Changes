@@ -6,6 +6,7 @@
 11-Aug-2001
 ~~~~~~~~~~~
 Changed internal structure of SaveBox to allow better subclassing.
+Savebox shaded while saving.
 
 10-Aug-2001
 ~~~~~~~~~~~

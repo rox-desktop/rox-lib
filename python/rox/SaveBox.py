@@ -202,9 +202,14 @@ class SaveBox(GtkWindow):
 		path = get_local_path(uri)
 
 		if path:
-			if self.save_as_file(path):
-				self.set_uri(path)
-				self.destroy()
+			try:
+				self.set_sensitive(FALSE)
+				if self.save_as_file(path):
+					self.set_uri(path)
+					self.destroy()
+			except:
+				report_exception()
+				self.set_sensitive(TRUE)
 		else:
 			report_error("Drag the icon to a directory viewer\n" +
 					  "(or enter a full pathname)",
@@ -231,7 +236,14 @@ class SaveBox(GtkWindow):
 	
 	def drag_data_get(self, widget, context, selection_data, info, time):
 		if info == TARGET_RAW:
-			self.save_as_selection(selection_data)
+			try:
+				self.set_sensitive(FALSE)
+				self.save_as_selection(selection_data)
+			except:
+				report_exception()
+				write_xds_property(context, None)
+				self.set_sensitive(TRUE)
+				return
 			self.data_sent = 1
 			write_xds_property(context, None)
 			
@@ -257,7 +269,13 @@ class SaveBox(GtkWindow):
 		if uri:
 			path = get_local_path(uri)
 			if path:
-				self.data_sent = self.save_as_file(path)
+				try:
+					self.set_sensitive(FALSE)
+					self.data_sent = self.save_as_file(path)
+				except:
+					report_exception()
+					self.set_sensitive(TRUE)
+					self.data_sent = FALSE
 				if self.data_sent:
 					to_send = 'S'
 				# (else Error)
