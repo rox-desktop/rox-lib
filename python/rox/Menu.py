@@ -28,6 +28,7 @@ menu = Menu('main', [
 	])
 """
 
+import rox
 from rox import g
 import choices
 
@@ -109,6 +110,9 @@ class Menu:
 	
 	def _activate(self, action, widget):
 		if self.caller:
-			getattr(self.caller, self.fns[action])()
+			try:
+				getattr(self.caller, self.fns[action])()
+			except:
+				rox.report_exception()
 		else:
 			raise Exception("No caller for menu!")

@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+08-Aug-2002
+~~~~~~~~~~~
+Trap exceptions when activating menu items and report nicely.
+
 07-Aug-2002
 ~~~~~~~~~~~
 Bugfix: Remember to call drop_finish() after a drag-and-drop operation.
