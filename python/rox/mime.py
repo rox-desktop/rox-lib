@@ -34,6 +34,7 @@ ICON_SIZE_UNSCALED=None
 exts = None		# Maps extensions to types
 globs = None		# List of (glob, type) pairs
 literals = None		# Maps liternal names to types
+magic = None
 
 def _get_node_data(node):
 	"""Get text of XML node"""
@@ -104,6 +105,214 @@ class MIMEtype:
 		h=int(base.get_width()*float(size)/base.get_height())
 		return base.scale_simple(size, h, rox.g.gdk.INTERP_BILINEAR)
 
+class MagicRule:
+	def __init__(self, f):
+		self.next=None
+		self.prev=None
+
+		#print line
+		ind=''
+		while True:
+			c=f.read(1)
+			if c=='>':
+				break
+			ind+=c
+		if not ind:
+			self.nest=0
+		else:
+			self.nest=int(ind)
+
+		start=''
+		while True:
+			c=f.read(1)
+			if c=='=':
+				break
+			start+=c
+		self.start=int(start)
+		
+		hb=f.read(1)
+		lb=f.read(1)
+		self.lenvalue=ord(lb)+(ord(hb)<<8)
+
+		self.value=f.read(self.lenvalue)
+
+		c=f.read(1)
+		if c=='&':
+			self.mask=f.read(self.lenvalue)
+			c=f.read(1)
+		else:
+			self.mask=None
+
+		if c=='~':
+			w=''
+			while c!='+' and c!='\n':
+				c=f.read(1)
+				if c=='+' or c=='\n':
+					break
+				w+=c
+			
+			self.word=int(w)
+		else:
+			self.word=1
+
+		if c=='+':
+			r=''
+			while c!='\n':
+				c=f.read(1)
+				if c=='\n':
+					break
+				r+=c
+			#print r
+			self.range=int(r)
+		else:
+			self.range=1
+
+		if c!='\n':
+			raise 'Malformed MIME magic line'
+
+	def getLength(self):
+		return self.start+self.lenvalue+self.range
+
+	def appendRule(self, rule):
+		if self.nest<rule.nest:
+			self.next=rule
+			rule.prev=self
+
+		elif self.prev:
+			self.prev.appendRule(rule)
+		
+	def match(self, buffer):
+		if self.match0(buffer):
+			if self.next:
+				return self.next.match(buffer)
+			return True
+
+	def match0(self, buffer):
+		l=len(buffer)
+		for o in range(self.range):
+			s=self.start+o
+			e=s+self.lenvalue
+			if l<e:
+				return False
+			if self.mask:
+				test=''
+				for i in range(self.lenvalue):
+					c=ord(buffer[s+i]) & ord(self.mask[i])
+					test+=chr(c)
+			else:
+				test=buffer[s:e]
+
+			if test==self.value:
+				return True
+
+	def __repr__(self):
+		return '<MagicRule %d>%d=[%d]%s&%s~%d+%d>' % (self.nest,
+							      self.start,
+							      self.lenvalue,
+							      `self.value`,
+							      `self.mask`,
+							      self.word,
+							      self.range)
+
+class MagicType:
+	def __init__(self, mtype):
+		self.mtype=mtype
+		self.top_rules=[]
+		self.last_rule=None
+
+	def getLine(self, f):
+		nrule=MagicRule(f)
+
+		if nrule.nest and self.last_rule:
+			self.last_rule.appendRule(nrule)
+		else:
+			self.top_rules.append(nrule)
+
+		self.last_rule=nrule
+
+		return nrule
+
+	def match(self, buffer):
+		for rule in self.top_rules:
+			if rule.match(buffer):
+				return self.mtype
+
+	def __repr__(self):
+		return '<MagicType %s>' % self.mtype
+	
+class MagicDB:
+	def __init__(self):
+		self.types={}   # Indexed by priority, each entry is a list of type rules
+		self.maxlen=0
+
+	def mergeFile(self, fname):
+		f=file(fname, 'r')
+		line=f.readline()
+		if line!='MIME-Magic\0\n':
+			raise 'Not a MIME magic file'
+
+		while True:
+			shead=f.readline()
+			#print shead
+			if not shead:
+				break
+			if shead[0]!='[' or shead[-2:]!=']\n':
+				raise 'Malformed section heading'
+			pri, tname=shead[1:-2].split(':')
+			#print shead[1:-2]
+			pri=int(pri)
+			mtype=lookup(tname)
+
+			try:
+				ents=self.types[pri]
+			except:
+				ents=[]
+				self.types[pri]=ents
+
+			magictype=MagicType(mtype)
+			#print tname
+
+			#rline=f.readline()
+			c=f.read(1)
+			f.seek(-1, 1)
+			while c and c!='[':
+				rule=magictype.getLine(f)
+				#print rule
+				if rule and rule.getLength()>self.maxlen:
+					self.maxlen=rule.getLength()
+
+				c=f.read(1)
+				f.seek(-1, 1)
+
+			ents.append(magictype)
+			#self.types[pri]=ents
+			if not c:
+				break
+
+	def match(self, path, max_pri=100, min_pri=0):
+		try:
+			buf=file(path, 'r').read(self.maxlen)
+			pris=self.types.keys()
+			pris.sort(lambda a, b: -cmp(a, b))
+			for pri in pris:
+				#print pri, max_pri, min_pri
+				if pri>max_pri:
+					continue
+				if pri<min_pri:
+					break
+				for type in self.types[pri]:
+					m=type.match(buf)
+					if m:
+						return m
+		except:
+			pass
+		
+		return None
+	
+	def __repr__(self):
+		return '<MagicDB %s>' % self.types
+			
+
 # Some well-known types
 text = lookup('text', 'plain')
 inode_block = lookup('inode', 'blockdevice')
@@ -118,13 +327,14 @@ app_exe = lookup('application', 'executable')
 _cache_uptodate = False
 
 def _cache_database():
-	global exts, globs, literals, _cache_uptodate
+	global exts, globs, literals, magic, _cache_uptodate
 
 	_cache_uptodate = True
 
 	exts = {}		# Maps extensions to types
 	globs = []		# List of (glob, type) pairs
 	literals = {}		# Maps liternal names to types
+	magic = MagicDB()
 
 	def _import_glob_file(path):
 		"""Loads name matching information from a MIME directory."""
@@ -147,6 +357,8 @@ def _cache_database():
 
 	for path in basedir.load_data_paths(os.path.join('mime', 'globs')):
 		_import_glob_file(path)
+	for path in basedir.load_data_paths(os.path.join('mime', 'magic')):
+		magic.mergeFile(path)
 
 	# Sort globs by length
 	globs.sort(lambda a, b: cmp(len(b[0]), len(a[0])))
@@ -185,6 +397,13 @@ def get_type_by_name(path):
 			return mime_type
 	return None
 
+def get_type_by_contents(path, max_pri=100, min_pri=0):
+	"""Returns type of file by its contents, or None if not known"""
+	if not _cache_uptodate:
+		_cache_database()
+
+	return magic.match(path, max_pri, min_pri)
+
 def get_type(path, follow=1, name_pri=100):
 	"""Returns type of file indicated by path.
 	path	 - pathname to check (need not exist)
@@ -192,7 +411,7 @@ def get_type(path, follow=1, name_pri=100):
 	name_pri - Priority to do name matches.  100=override magic"""
 	if not _cache_uptodate:
 		_cache_database()
-	# name_pri is not implemented
+	
 	try:
 		if follow:
 			st = os.stat(path)
@@ -203,7 +422,9 @@ def get_type(path, follow=1, name_pri=100):
 		return t or text
 
 	if stat.S_ISREG(st.st_mode):
-		t = get_type_by_name(path)
+		t = get_type_by_contents(path, min_pri=name_pri)
+		if not t: t = get_type_by_name(path)
+		if not t: t = get_type_by_contents(path, max_pri=name_pri)
 		if t is None:
 			if stat.S_IMODE(st.st_mode) & 0111:
 				return app_exe
@@ -267,7 +488,7 @@ def install_mime_info(application, package_file = None):
 
 def _test(name):
 	"""Print results for name.  Test routine"""
-	t=get_type(name)
+	t=get_type(name, name_pri=80)
 	print name, t, t.get_comment()
 
 if __name__=='__main__':
@@ -277,4 +498,4 @@ if __name__=='__main__':
 	else:
 		for f in sys.argv[1:]:
 			_test(f)
-	print globs
+	#print globs
