@@ -222,7 +222,7 @@ Bring up the options box with:
 	options.edit()
 
 You'll need to create an Options.xml file with the layout for the box.
-See the on-line tutorial for more information.
+See the the Options help file.
 
 Menu
 ~~~~

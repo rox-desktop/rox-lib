@@ -32,8 +32,7 @@ If you do have root access, move ROX-Lib into /usr/local/lib.
 Developers
 ~~~~~~~~~~
 For people wishing to write programs using this library, read the 'python'
-help file. There is a tutorial about creating ROX applications in python on
-the web:
+help file. There are some tutorials about using ROX-Lib on the web:
 
 	http://rox.sourceforge.net/tutor.php3
 

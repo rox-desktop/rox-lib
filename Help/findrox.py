@@ -25,7 +25,10 @@ if not found:
 	err = "This program needs ROX-Lib to run.\nI tried all of these places:\n\n" + \
 	   	string.join(paths, '\n') + '\n\n' + "ROX-Lib is available from:\n" + \
 			   "http://rox.sourceforge.net"
-	sys.stderr.write('*** ' + err + '\n')
+	try:
+		sys.stderr.write('*** ' + err + '\n')
+	except:
+		pass
 	from gtk import *
 	win = GtkDialog()
 	win.set_title('Missing ROX-Lib')
