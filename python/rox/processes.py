@@ -294,7 +294,7 @@ class PipeThroughCommand(Process):
 		if self.waiting:
 			assert self.done
 			self.waiting = False
-			g.mainquit()
+			g.main_quit()
 	
 	def wait(self):
 		"""Run a recursive mainloop until the command terminates.
@@ -303,7 +303,7 @@ class PipeThroughCommand(Process):
 			self.start()
 		self.waiting = True
 		while not self.done:
-			g.mainloop()
+			g.main()
 		if self.done is not True:
 			raise self.done
 	

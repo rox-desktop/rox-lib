@@ -3,6 +3,12 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+07-Oct-2004
+~~~~~~~~~~~
+Replace g.mainloop() and g.mainquit() with g.main() and g.main_quit() as
+recommended since pygtk 2.0.0 to avoid warnings with pygtk 2.4.0 (Stephen 
+Watson).
+
 03-Oct-2004
 ~~~~~~~~~~~
 Added options.ListOption to support multi-valued option widgets, such as

@@ -45,7 +45,7 @@ def show_exception(type, value, tb, auto_details = False):
 	reply = []
 	def response(box, resp):
 		reply.append(resp)
-		g.mainquit()
+		g.main_quit()
 	box.connect('response', response)
 	box.show()
 
@@ -59,7 +59,7 @@ def show_exception(type, value, tb, auto_details = False):
 			resp = DETAILS
 			auto_details = False
 		else:
-			g.mainloop()
+			g.main()
 			resp = reply.pop()
 		if resp == g.RESPONSE_OK or resp == g.RESPONSE_DELETE_EVENT:
 			break

@@ -257,7 +257,7 @@ def mainloop():
 	_in_mainloops = _in_mainloops + 1	# Python1.5 syntax
 	try:
 		while _toplevel_windows:
-			g.mainloop()
+			g.main()
 	finally:
 		_in_mainloops = _in_mainloops - 1
 
@@ -276,7 +276,7 @@ def toplevel_unref(*unused):
 	assert _toplevel_windows > 0
 	_toplevel_windows = _toplevel_windows - 1
 	if _toplevel_windows == 0 and _in_mainloops:
-		g.mainquit()
+		g.main_quit()
 
 _host_name = None
 def our_host_name():
