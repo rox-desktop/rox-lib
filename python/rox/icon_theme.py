@@ -15,7 +15,15 @@ class Index:
 		self.sections = {}
 		for s in sections:
 			lines = s.split('\n')
-			sname = lines[0].strip('[] \t')
+			sname = lines[0].strip()
+			
+			# Python < 2.2.2 doesn't support an argument to strip...
+			assert sname[-1] == ']'
+			if sname.startswith('['):
+				sname = sname[1:-1]
+			else:
+				sname = sname[:-1]
+			
 			section = self.sections[sname] = {}
 			for line in lines[1:]:
 				if not line.strip(): continue

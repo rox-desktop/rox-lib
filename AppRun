@@ -24,5 +24,6 @@ box.set_position(g.WIN_POS_CENTER)
 box.set_default_response(g.RESPONSE_OK)
 
 if box.run() == g.RESPONSE_HELP:
-	import os
-	os.system("rox %s/Help &" % app_dir)
+	from rox import filer
+	import os.path
+	filer.open_dir(os.path.join(app_dir, "Help"))
