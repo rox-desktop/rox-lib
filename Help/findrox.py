@@ -20,6 +20,15 @@ def version(major, minor, micro):
 		pass
 	else:
 		#print "Using ROX-Lib in PYTHONPATH"
+		if (major, minor, micro) > rox.roxlib_version:
+			print >>sys.stderr, "WARNING: ROX-Lib version " \
+				"%d.%d.%d requested, but using version " \
+				"%d.%d.%d from %s" % \
+				(major, minor, micro,
+				 rox.roxlib_version[0],
+				 rox.roxlib_version[1],
+				 rox.roxlib_version[2],
+				 rox.__file__)
 		return
 
 	if not os.getenv('ROXLIB_DISABLE_ZEROINSTALL') and os.path.exists('/uri/0install/rox.sourceforge.net'):
