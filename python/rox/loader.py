@@ -1,4 +1,4 @@
-import string
+import string, support
 
 from gtk import *
 from GDK import *
@@ -20,7 +20,7 @@ def drag_data_received(widget, context, x, y, selection_data, info, time, win):
 	else:
 		uris = extract_uris(selection_data.data)
 		if not uris:
-			report_error("Nothing to load!")
+			support.report_error("Nothing to load!")
 			return
 		paths = []
 		remote = []
@@ -31,7 +31,7 @@ def drag_data_received(widget, context, x, y, selection_data, info, time, win):
 			else:
 				remote.append(uri)
 		if remote:
-			report_error("Can't load remote files yet!")
+			support.report_error("Can't load remote files yet!")
 
 # 'widget' is the GTK widget that will accept drops
 # 'window' provides 'load_file' and 'load_data' methods.

@@ -44,7 +44,7 @@ class XDSLoader:
 			if uris:
 				self.xds_load_uris(uris)
 			else:
-				report_error("Nothing to load!")
+				support.report_error("Nothing to load!")
 	
 	def xds_load_uris(self, uris):
 		paths = []
