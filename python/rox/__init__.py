@@ -44,8 +44,13 @@ _roxlib_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 _ = i18n.translation(os.path.join(_roxlib_dir, 'Messages'))
 
 try:
-	import pygtk; pygtk.require('2.0')
+	try:
+		# Try to support 1.99.12, at lest to show an error
+		import pygtk; pygtk.require('2.0')
+	except:
+		pass
 	import gtk; g = gtk	# Don't syntax error for python1.5
+	assert g.Window		# Ensure not 1.2 bindings
 except:
 	sys.stderr.write(_('The pygtk2 package (1.99.13 or later) must be '
 			   'installed to use this program:\n'
@@ -120,6 +125,14 @@ class Window(g.Window):
 	it calls the toplevel_(un)ref functions for you automatically."""
 	def __init__(*args, **kwargs):
 		apply(g.Window.__init__, args, kwargs)
+		toplevel_ref()
+		args[0].connect('destroy', toplevel_unref)
+
+class Dialog(g.Dialog):
+	"""This works in exactly the same way as a GtkDialog, except that
+	it calls the toplevel_(un)ref functions for you automatically."""
+	def __init__(*args, **kwargs):
+		apply(g.Dialog.__init__, args, kwargs)
 		toplevel_ref()
 		args[0].connect('destroy', toplevel_unref)
 
@@ -271,3 +284,8 @@ except:
 	        "ROX-Lib2 requires. You need to install python-xmlbase "
 	        "(this is a small package; the full PyXML package is not "
 	        "required)."))
+
+if g.pygtk_version[:2] == (1, 99) and g.pygtk_version[2] < 13:
+	alert('Your version of pygtk (%s) is too old. '
+	      'Things might not work correctly.'
+	      % '.'.join(map(str, g.pygtk_version)))

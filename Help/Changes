@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+20-Oct-2002
+~~~~~~~~~~~
+More warnings about old pygtk versions.
+Added Dialog class (does ref-counting, like Window).
+
 15-Oct-2002
 ~~~~~~~~~~~
 Trying to use ROX-Lib2 with earlier versions of python now gives a sensible
