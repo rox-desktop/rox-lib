@@ -44,7 +44,6 @@ class XDSLoader:
 		
 		widget.connect('drag_data_received', self.xds_data_received)
 
-
 	def xds_data_received(self, widget, context, x, y, selection, info, time):
 		"Called when we get some data. Internal."
 		if info == TARGET_RAW:
@@ -75,23 +74,23 @@ class XDSLoader:
 	
 	def xds_load_from_file(self, path):
 		"""Try to load this local file. Override this if you have a better way
-		to load files. The default method loads the file and calls xds_load_data()."""
+		to load files. The default method loads the file and calls xds_load_from_stream()."""
 		try:
-			file = open(path, 'rb')
-			data = file.read()
-			file.close()
+			self.xds_load_from_stream(path, None, open(path, 'rb'))
 		except:
 			rox.report_exception()
-			return
-		self.xds_load_data(data)
 	
 	def xds_load_from_selection(self, selection):
 		"""Try to load this selection (data from another application). The default
-		fetches the data in one go and calls xds_load_data()."""
-		self.xds_load_data(selection.data)
+		puts the data in a cStringIO and calls xds_load_from_stream()."""
+		from cStringIO import StringIO
+		self.xds_load_from_stream(None, selection.type, StringIO(selection.data))
 	
-	def xds_load_data(self, data):
+	def xds_load_from_stream(self, name, type, stream):
 		"""Called when we get any data sent via drag-and-drop in any way (local
 		file or remote application transfer). You should override this and do
-		something with the data."""
-		alert('Got some data, but missing code to handle it!')
+		something with the data. 'name' may be None (if the data is unnamed),
+		a leafname, or a full path or URI. 'type' is the MIME type, or None if
+		unknown."""
+		alert('Got some data, but missing code to handle it!\n\n(name="%s";type="%s")'
+			% (name, type))
