@@ -5,8 +5,8 @@
 06-Sep-2004
 ~~~~~~~~~~~
 Simplified su code and interface.
-New suchild methods: open, close, read, write and rename, which work just
-like their normal Python counterparts (Thomas Leonard).
+New suchild methods: open, close, read, write, chmod and rename, which work
+just like their normal Python counterparts (Thomas Leonard).
 
 29-Aug-2004
 ~~~~~~~~~~~

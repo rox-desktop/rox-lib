@@ -80,6 +80,9 @@ class Slave:
 	def rename(self, request, old, new):
 		request.send(os.rename(old, new))
 
+	def chmod(self, request, path, mode):
+		request.send(os.chmod(path, mode))
+
 if __name__ == '__main__':
 	from select import select
 

@@ -193,5 +193,21 @@ class TestProxy(unittest.TestCase):
 		g.mainloop()
 		shutil.rmtree(tmp_dir)
 
+	def testChmod(self):
+		tmp_file = tempfile.NamedTemporaryFile(suffix = '-roxlib-test')
+		root = self.master.root
+		os.chmod(tmp_file.name, 0700)
+
+		def run():
+			assert os.stat(tmp_file.name).st_mode & 0777 == 0700
+			queue = root.chmod(tmp_file.name, 0655)
+			yield queue.blocker
+			queue.dequeue_last()
+			assert os.stat(tmp_file.name).st_mode & 0777 == 0655
+			g.mainquit()
+		tasks.Task(run())
+		g.mainloop()
+		tmp_file = None
+
 sys.argv.append('-v')
 unittest.main()
