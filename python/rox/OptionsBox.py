@@ -49,6 +49,11 @@ def data(node):
 			if text.nodeType == Node.TEXT_NODE])
 
 class OptionsBox(g.Dialog):
+	tips = None	# GtkTooltips
+	options = None	# The OptionGroup we are editing
+	revert = None	# Option -> old value
+	handlers = None	# Option -> (get, set)
+
 	"""A dialog box which lets the user edit the options. The file
 	Options.xml specifies the layout of this box."""
 	def __init__(self, options_group, options_xml, translation = None):

@@ -68,8 +68,8 @@ def load_config_paths(resource):
 	"""Returns an iterator which gives each directory named 'resource' in the
 	configuration search path. Information provided by earlier directories should
 	take precedence over later ones (ie, the user's config dir comes first)."""
-	for dir in xdg_config_dirs:
-		path = os.path.join(dir, resource)
+	for config_dir in xdg_config_dirs:
+		path = os.path.join(config_dir, resource)
 		if os.path.exists(path): yield path
 
 def load_data_paths(resource):

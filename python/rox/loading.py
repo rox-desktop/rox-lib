@@ -39,8 +39,8 @@ class XDSLoader:
 
 		targets = [('text/uri-list', 0, TARGET_URILIST)]
 		if types:
-			for type in types + ['application/octet-stream']:
-				targets.append((type, 0, TARGET_RAW))
+			for mimetype in types + ['application/octet-stream']:
+				targets.append((mimetype, 0, TARGET_RAW))
 		
 		self.targets = targets
 		if isinstance(self, g.Widget):
@@ -142,14 +142,14 @@ class XDSLoader:
 			g.gdk.beep()	# Load aborted
 			return
 		from cStringIO import StringIO
-		type = str(selection.type)
-		self.xds_load_from_stream(leafname, type, StringIO(selection.data))
+		mimetype = str(selection.type)
+		self.xds_load_from_stream(leafname, mimetype, StringIO(selection.data))
 	
-	def xds_load_from_stream(self, name, type, stream):
+	def xds_load_from_stream(self, name, mimetype, stream):
 		"""Called when we get any data sent via drag-and-drop in any way (local
 		file or remote application transfer). You should override this and do
 		something with the data. 'name' may be None (if the data is unnamed),
-		a leafname, or a full path or URI. 'type' is the MIME type, or None if
+		a leafname, or a full path or URI. 'mimetype' is the MIME type, or None if
 		unknown."""
-		alert('Got some data, but missing code to handle it!\n\n(name="%s";type="%s")'
-			% (name, type))
+		alert('Got some data, but missing code to handle it!\n\n(name="%s";mimetype="%s")'
+			% (name, mimetype))

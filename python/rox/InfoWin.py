@@ -105,7 +105,7 @@ class InfoWin(g.Dialog):
 
         self.vbox.show_all()
 
-import rox.AppInfo
+from rox import AppInfo
 
 def infowin(pname, info=None):
     """Open info window for this program.  info is a source of the
@@ -115,7 +115,7 @@ def infowin(pname, info=None):
         info=os.path.join(rox.app_dir, 'AppInfo.xml')
 
     try:
-        app_info=rox.AppInfo.AppInfo(info)
+        app_info=AppInfo.AppInfo(info)
     except:
         rox.report_exception()
         return

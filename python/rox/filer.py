@@ -27,8 +27,8 @@ def spawn_rox(args):
 	"""Run rox (either from PATH or through Zero Install) with the
 	given arguments."""
 	import os.path
-	for dir in os.environ.get('PATH', '').split(':'):
-		path = os.path.join(dir, 'rox')
+	for bindir in os.environ.get('PATH', '').split(':'):
+		path = os.path.join(bindir, 'rox')
 		if os.path.isfile(path):
 			_spawn(('rox',) + args)
 			return

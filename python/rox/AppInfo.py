@@ -49,9 +49,9 @@ class AppInfo:
     def _parseSummary(self):
         """Collect 'Summary' info in a dictionary by language."""
         self.summary = {}
-        for sum in self._doc.documentElement.getElementsByTagName('Summary'):
-            lang=sum.getAttributeNS(XML_NAMESPACE, 'lang')
-            self.summary[lang] = _data(sum)
+        for summary in self._doc.documentElement.getElementsByTagName('Summary'):
+            lang=summary.getAttributeNS(XML_NAMESPACE, 'lang')
+            self.summary[lang] = _data(summary)
 
     def _parseMenu(self):
         # XXX do <AppMenu> parsing - data structure?
@@ -149,15 +149,15 @@ class AppInfo:
         """
 
         if self.summary.has_key(lang):
-            for sum in self._doc.documentElement.getElementsByTagName(
+            for summary in self._doc.documentElement.getElementsByTagName(
               'Summary'):
-                if sum.getAttributeNS(XML_NAMESPACE, 'lang') == lang:
-                    sum.parentNode.removeChild(sum)
-        sum = self._doc.createElement('Summary')
-        sum.setAttributeNS(XML_NAMESPACE, 'xml:lang', lang)
+                if summary.getAttributeNS(XML_NAMESPACE, 'lang') == lang:
+                    summary.parentNode.removeChild(summary)
+        summary = self._doc.createElement('Summary')
+        summary.setAttributeNS(XML_NAMESPACE, 'xml:lang', lang)
         text = self._doc.createTextNode(value)
-        sum.appendChild(text)
-        self._doc.documentElement.appendChild(sum)
+        summary.appendChild(text)
+        self._doc.documentElement.appendChild(summary)
         self._parseSummary()
 
     def findElements(self, elname, ns=None):
