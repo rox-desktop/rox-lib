@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+22-Oct-2004
+~~~~~~~~~~~
+Bugfix: Theme subdirectories are separated by ',' not ';' (reported by
+	Denis Prost).
+
 20-Oct-2004
 ~~~~~~~~~~~
 Bugfix: When a menu has more than one toggle item, only one is updated

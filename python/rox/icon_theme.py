@@ -32,8 +32,11 @@ class Index:
 				key, value = map(str.strip, line.split('=', 1))
 				section[key] = value
 
-		self.subdirs = [SubDir(self, d) for
-			d in self.get('Icon Theme', 'Directories').split(';')]
+		subdirs = self.get('Icon Theme', 'Directories')
+		
+		subdirs = subdirs.replace(';', ',')	# Just in case...
+		
+		self.subdirs = [SubDir(self, d) for d in subdirs.split(',')]
 
 	def get(self, section, key):
 		"None if not found"
