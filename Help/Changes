@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+02-Oct-2004
+~~~~~~~~~~~
+Cope better with user cancelling su operation. New interface to replace
+create_su_proxy (Thomas Leonard).
+
 27-Sep-2004
 ~~~~~~~~~~~
 The choices module is now deprecated. You can use choices.migrate() to move

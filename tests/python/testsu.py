@@ -13,9 +13,12 @@ assert os.getuid() != 0, "Can't run tests as root"
 
 class TestSU(unittest.TestCase):
 	def testSu(self):	
-		root = su.create_su_proxy('Need to become root to test this module.',
-					confirm = False)
 		def run():
+			maker = su.SuProxyMaker(
+				'Need to become root to test this module.')
+			yield maker.blocker
+			root = maker.get_root()
+
 			response = root.spawnvpe(os.P_NOWAIT, 'false', ['false'])
 			yield response
 			pid = response.result
@@ -41,11 +44,11 @@ class TestSU(unittest.TestCase):
 			yield response
 			assert response.result == os.getuid()
 
+			root.finish()
 			g.mainquit()
 
 		tasks.Task(run())
 		g.mainloop()
-		root.finish()
 
 sys.argv.append('-v')
 unittest.main()

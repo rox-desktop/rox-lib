@@ -65,6 +65,7 @@ class Proxy:
 		if not new:
 			self.finish()
 			self.lost_connection()
+			return False
 		self.in_buffer += new
 		while ':' in self.in_buffer:
 			l, rest = self.in_buffer.split(':', 1)

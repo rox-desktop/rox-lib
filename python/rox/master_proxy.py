@@ -38,7 +38,7 @@ class RequestBlocker(tasks.Blocker):
 	yield blocker
 	print blocker.result
 
-	If the remote method raised an exception, accessing 'result' will raise
+	If the remote method raised an exception, accessing 'isresult' will raise
 	it rather than returning it.
 	"""
 
@@ -66,7 +66,10 @@ class RequestBlocker(tasks.Blocker):
 		else:
 			self.result = data
 		self.trigger()
-	
+		
+class LostConnection(Exception):
+	pass
+
 class MasterProxy(Proxy):
 	"""Invoking operations on MasterProxy.root will invoke the same
 	operation on the SlaveProxy's slave_object."""
@@ -74,7 +77,7 @@ class MasterProxy(Proxy):
 	def __init__(self, to_slave, from_slave):
 		Proxy.__init__(self, to_slave, from_slave)
 		self.root = MasterObject(self)
-		self._queue = {}	# Serial -> Queue
+		self._queue = {}	# Serial -> RequestBlocker
 	
 	def _dispatch(self, value):
 		serial, data = value
@@ -89,6 +92,7 @@ class MasterProxy(Proxy):
 	def _remove_blocker(self, serial):
 		del self._queue[serial]
 	
-	def finish(self):
-		Proxy.finish(self)
+	def lost_connection(self):
+		for x in self._queue.values():
+			x.add(LostConnection('Lost connection to su proxy'))
 		assert not self._queue
