@@ -1,12 +1,12 @@
-from string import rfind
+import rox
+from rox import g, ButtonMixed
 
-from gtk import *
-from GDK import Escape
+TRUE = g.TRUE
+FALSE = g.FALSE
 
 from SaveArea import SaveArea
-from support import *
 
-class SaveBox(GtkWindow):
+class SaveBox(g.Dialog):
 	"""The 'document' should have the following methods:
 
 	All methods used by SaveArea (see SaveArea class).
@@ -14,41 +14,56 @@ class SaveBox(GtkWindow):
 	discard()
 		Discard button clicked. Only needed if discard = TRUE.
 	
-	Calls rox_toplevel_(un)ref automatically.
+	Calls rox.toplevel_(un)ref automatically.
 	"""
 
 	def __init__(self, document, uri, type = 'text/plain', discard = FALSE):
-		GtkWindow.__init__(self, WINDOW_DIALOG)
+		g.Dialog.__init__(self)
+		self.set_has_separator(FALSE)
+
+		self.add_button(g.STOCK_CANCEL, g.RESPONSE_CANCEL)
+		self.add_button(g.STOCK_SAVE, g.RESPONSE_OK)
+		self.set_default_response(g.RESPONSE_OK)
+
+		if discard:
+			discard_area = g.HButtonBox()
+
+			button = ButtonMixed(g.STOCK_DELETE, '_Discard')
+			discard_area.pack_start(button, FALSE, TRUE, 2)
+			button.connect('clicked', self.discard_clicked)
+			button.unset_flags(g.CAN_FOCUS)
+			button.set_flags(g.CAN_DEFAULT)
+			self.vbox.pack_end(discard_area, FALSE, TRUE, 0)
+			self.vbox.reorder_child(discard_area, 0)
+			
+			discard_area.show_all()
+
 		self.document = document
 		self.discard = discard
 		self.set_title('Save As:')
-		self.set_position(WIN_POS_MOUSE)
-		self.set_border_width(4)
+		self.set_position(g.WIN_POS_MOUSE)
+		self.set_wmclass('savebox', 'Savebox')
+		self.set_border_width(1)
 
 		self.pass_through('save_get_data')
 		self.pass_through('save_as_file')
 		self.pass_through('save_as_selection')
 
-		save_area = SaveArea(self, uri, type, discard)
+		save_area = SaveArea(self, uri, type)
 		self.save_area = save_area
-		if discard:
-			save_area.discard.connect('clicked',
-						self.discard_clicked)
 
 		save_area.show_all()
-		self.add(save_area)
-
-		i = rfind(uri, '/')
-		i = i + 1
-		save_area.entry.grab_focus()
-		save_area.entry.realize()
-		save_area.entry.set_position(-1)
-		save_area.entry.select_region(i, -1)
-		save_area.ok_button.grab_default()
+		self.vbox.add(save_area)
 
 		self.connect('key-press-event', self.key_press)
-		rox_toplevel_ref()
+		rox.toplevel_ref()
 		self.connect('destroy', self.savebox_destroyed)
+
+		i = uri.rfind('/')
+		i = i + 1
+		# Have to do this here, or the selection gets messed up
+		save_area.entry.grab_focus()
+		save_area.entry.select_region(i, -1)
 	
 	def set_uri(self, uri):
 		if hasattr(self.document, 'set_uri'):
@@ -64,10 +79,10 @@ class SaveBox(GtkWindow):
 			setattr(self, method, getattr(self.document, method))
 
 	def savebox_destroyed(self, widget):
-		rox_toplevel_unref()
+		rox.toplevel_unref()
 
 	def key_press(self, window, event):
-		if event.keyval == Escape:
+		if event.keyval == g.keysyms.Escape:
 			self.destroy()
 			return 1
 

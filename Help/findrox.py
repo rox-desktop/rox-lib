@@ -1,8 +1,8 @@
-# Most of the common code needed by ROX applications is in ROX-Lib.
-# Except this code, which is needed to find ROX-Lib in the first place!
+# Most of the common code needed by ROX applications is in ROX-Lib2.
+# Except this code, which is needed to find ROX-Lib2 in the first place!
 
 # Just make sure you import findrox before importing anything inside
-# ROX-Lib...
+# ROX-Lib2...
 
 import os, sys
 from os.path import exists
@@ -14,44 +14,46 @@ try:
 except KeyError:
 	paths = [ os.environ['HOME'] + '/lib', '/usr/local/lib', '/usr/lib' ]
 
-paths = map(lambda p: p +'/ROX-Lib', paths)
-found = 0
+paths = map(lambda p: os.path.join(p, 'ROX-Lib2'), paths)
 for p in paths:
 	if exists(p):
-		found = 1
-		sys.path.append(p + '/python')
+		sys.path.append(os.path.join(p, 'python'))
 		break
-if not found:
-	err = "This program needs ROX-Lib to run.\n" + \
+else:
+	err = "This program needs ROX-Lib2 to run.\n" + \
 		"I tried all of these places:\n\n" + \
 	   	string.join(paths, '\n') + '\n\n' + \
-		"ROX-Lib is available from:\nhttp://rox.sourceforge.net"
+		"ROX-Lib3 is available from:\nhttp://rox.sourceforge.net"
 	try:
 		sys.stderr.write('*** ' + err + '\n')
 	except:
 		pass
-	import gtk
 	try:
+		import gtk2 as g
+	except:
+		import gtk
 		win = gtk.GtkDialog()
-		message = gtk.GtkLabel(err)
-	except AttributeError:
-		win = gtk.MessageDialog(None, 0,
-					gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, err)
+		message = gtk.GtkLabel(err + 
+				'\n\nAlso, pygtk2 needs to be present')
+		win.set_title('Missing ROX-Lib2')
 		win.set_position(gtk.WIN_POS_CENTER)
-		win.run()
-		sys.exit(1)
-	win.set_title('Missing ROX-Lib')
-	win.set_position(gtk.WIN_POS_CENTER)
-	message.set_padding(20, 20)
-	win.vbox.pack_start(message)
+		message.set_padding(20, 20)
+		win.vbox.pack_start(message)
 
-	ok = gtk.GtkButton("OK")
-	ok.set_flags(gtk.CAN_DEFAULT)
-	win.action_area.pack_start(ok)
-	ok.connect('clicked', mainquit)
-	ok.grab_default()
-	
-	win.connect('destroy', mainquit)
-	win.show_all()
-	mainloop()
+		ok = gtk.GtkButton("OK")
+		ok.set_flags(gtk.CAN_DEFAULT)
+		win.action_area.pack_start(ok)
+		ok.connect('clicked', gtk.mainquit)
+		ok.grab_default()
+		
+		win.connect('destroy', gtk.mainquit)
+		win.show_all()
+		gtk.mainloop()
+	else:
+		box = g.MessageDialog(None, g.MESSAGE_ERROR, 0,
+					g.BUTTONS_OK, err)
+		box.set_title('Missing ROX-Lib2')
+		box.set_position(g.WIN_POS_CENTER)
+		box.set_default_response(g.RESPONSE_OK)
+		box.run()
 	sys.exit(1)

@@ -1,42 +1,47 @@
-from string import rfind
+import rox
+from rox import alert, info, g, report_exception, choices
 
-from gtk import *
-from GDK import *
-import _gtk
-
-from MultipleChoice import MultipleChoice
-from support import *
+gdk = g.gdk
+TRUE = g.TRUE
+FALSE = g.FALSE
 
 TARGET_XDS = 0
 TARGET_RAW = 1
 
 def write_xds_property(context, value):
-	XdndDirectSave = _gtk.gdk_atom_intern('XdndDirectSave0', FALSE)
-	text_plain = _gtk.gdk_atom_intern('text/plain', FALSE)
 	win = context.source_window
 	if value:
-		win.property_change(XdndDirectSave, text_plain, 8,
-					PROP_MODE_REPLACE,
+		win.property_change('XdndDirectSave0', 'text/plain', 8,
+					gdk.PROP_MODE_REPLACE,
 					value)
 	else:
-		win.property_delete(XdndDirectSave)
+		win.property_delete('XdndDirectSave0')
 
 def read_xds_property(context, delete):
-	XdndDirectSave = _gtk.gdk_atom_intern('XdndDirectSave0', FALSE)
-	text_plain = _gtk.gdk_atom_intern('text/plain', FALSE)
 	win = context.source_window
-	retval = win.property_get(XdndDirectSave, text_plain, delete)
+	retval = win.property_get('XdndDirectSave0', 'text/plain', delete)
 	if retval:
 		return retval[2]
 	return None
 	
 def default_selection(document, selection):
+	print "Sending..."
+	print document.save_get_data()
 	selection.set(selection.target, 8, document.save_get_data())
 
 def default_file(document, path):
 	data = document.save_get_data()
 	try:
-		file = open(path, 'wb')
+		file = None
+		try:
+			if type(data) == unicode:
+				import codecs
+				file = codecs.open(path, 'wb',
+						   encoding = 'UTF-8')
+		except:
+			pass
+		if not file:
+			file = open(path, 'wb')
 		try:
 			file.write(data)
 		finally:
@@ -46,9 +51,23 @@ def default_file(document, path):
 		return 0
 	return 1
 
+def image_for_type(type):
+	'Search <Choices> for a suitable icon. Returns an Image.'
+	media, subtype = type.split('/', 1)
+	path = choices.load('MIME-icons', media + '_' + subtype + '.png')
+	if not path:
+		path = choices.load('MIME-icons', media + '.png')
+	if path:
+		pixbuf = gdk.pixbuf_new_from_file(path)
+	else:
+		pixbuf = None
+	if pixbuf:
+		image = g.Image()
+		image.set_from_pixbuf(pixbuf)
+		return image
+	return g.image_new_from_stock(g.STOCK_MISSING_IMAGE)
 
-	
-class SaveArea(GtkVBox):
+class SaveArea(g.VBox):
 	"""A SaveArea contains the widgets used in a save box. You can use
 	this to put a savebox area in a larger window.
 
@@ -63,11 +82,11 @@ class SaveArea(GtkVBox):
 
 	save_as_file(path)
 		Write data to file, return TRUE on success.
-		If missing, uses get_save_data() and writes that.
+		If missing, uses save_get_data() and writes that.
 
 	save_as_selection(selection_data)
 		Write data to the selection.
-		If missing, uses get_save_data() and sends that.
+		If missing, uses save_get_data() and sends that.
 	
 	save_done()
 		Time to close the savebox.
@@ -75,8 +94,8 @@ class SaveArea(GtkVBox):
 	Calls rox_toplevel_(un)ref automatically.
 	"""
 
-	def __init__(self, document, uri, type, discard = FALSE):
-		GtkVBox.__init__(self, FALSE, 0)
+	def __init__(self, document, uri, type):
+		g.VBox.__init__(self, FALSE, 0)
 
 		self.document = document
 
@@ -100,45 +119,23 @@ class SaveArea(GtkVBox):
 		self.pack_start(drag_area, TRUE, TRUE, 0)
 		drag_area.show_all()
 
-		entry = GtkEntry()
+		entry = g.Entry()
 		self.entry = entry
 		self.pack_start(entry, FALSE, TRUE, 4)
-		entry.set_text(uri)
 		entry.show()
 
-		if discard:
-			self.discard = GtkButton('Discard')
-			self.pack_end(self.discard, FALSE, TRUE, 0)
-			self.pack_end(GtkHSeparator(), FALSE, TRUE, 4)
-
-		hbox = GtkHBox(TRUE, 0)
-		self.pack_end(hbox, FALSE, TRUE, 0)
-
-		self.ok_button = GtkButton("Save")
-		self.ok_button.set_flags(CAN_DEFAULT)
-		hbox.pack_start(self.ok_button, FALSE, TRUE, 0)
-
-		cancel = GtkButton("Cancel")
-		cancel.set_flags(CAN_DEFAULT)
-		hbox.pack_start(cancel, FALSE, TRUE, 0)
-		cancel.connect('clicked', self.cancel)
-		
-		self.ok_button.connect('clicked', self.ok, entry)
-		entry.connect('activate', self.ok, entry)
-
-		hbox.show_all()
-
+		entry.set_text(uri)
+	
 	def create_drag_area(self, type):
-		align = GtkAlignment()
+		align = g.Alignment()
 		align.set(.5, .5, 0, 0)
 
-		self.drag_box = GtkEventBox()
+		self.drag_box = g.EventBox()
 		self.drag_box.set_border_width(4)
-		self.drag_box.add_events(BUTTON_PRESS_MASK)
+		self.drag_box.add_events(gdk.BUTTON_PRESS_MASK)
 		align.add(self.drag_box)
 
-		pixmap, mask = icon_for_type(self, type)
-		self.icon = GtkPixmap(pixmap, mask)
+		self.icon = image_for_type(type)
 
 		self.set_drag_source(type)
 		self.drag_box.connect('drag_begin', self.drag_begin)
@@ -173,9 +170,9 @@ class SaveArea(GtkVBox):
 		if not targets:
 			raise Exception("Document %s can't save!" %
 							self.document)
-		self.drag_box.drag_source_set(BUTTON1_MASK | BUTTON3_MASK,
+		self.drag_box.drag_source_set(gdk.BUTTON1_MASK | gdk.BUTTON3_MASK,
 					      targets,
-					      ACTION_COPY | ACTION_MOVE)
+					      gdk.ACTION_COPY | gdk.ACTION_MOVE)
 	
 	def end_save(self):
 		"""Called when the savebox should be closed (or similar action
@@ -200,7 +197,7 @@ class SaveArea(GtkVBox):
 				report_exception()
 			self.set_sensitive(TRUE)
 		else:
-			report_error("Drag the icon to a directory viewer\n" +
+			rox.info("Drag the icon to a directory viewer\n" +
 					  "(or enter a full pathname)",
 					  "To Save:")
 	
@@ -209,12 +206,11 @@ class SaveArea(GtkVBox):
 		self.destroy_on_drag_end = 0
 		self.using_xds = 0
 		self.data_sent = 0
-		p, m = self.icon.get()
-		drag_box.drag_source_set_icon(self.icon.get_colormap(), p, m)
+		drag_box.gtk_drag_source_set_icon_pixbuf(self.icon.get_pixbuf())
 
 		uri = self.entry.get_text()
 		if uri:
-			i = rfind(uri, '/')
+			i = uri.rfind('/')
 			if (i == -1):
 				leaf = uri
 			else:
@@ -244,7 +240,7 @@ class SaveArea(GtkVBox):
 			return
 		elif info != TARGET_XDS:
 			write_xds_property(context, None)
-			report_error("Bad target requested!")
+			alert("Bad target requested!")
 			return
 
 		# Using XDS:
@@ -273,7 +269,7 @@ class SaveArea(GtkVBox):
 			else:
 				to_send = 'F'	# Non-local transfer
 		else:
-			report_error("Remote application wants to use " +
+			alert("Remote application wants to use " +
 				  "Direct Save, but I can't read the " +
 				  "XdndDirectSave0 (type text/plain) " +
 				  "property.")
