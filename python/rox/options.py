@@ -27,6 +27,13 @@ from __future__ import generators
 import choices
 import rox
 
+from xml.dom import Node, minidom
+
+def data(node):
+	"""Return all the text directly inside this DOM Node."""
+	return ''.join([text.nodeValue for text in node.childNodes
+			if text.nodeType == Node.TEXT_NODE])
+
 class Option:
 	"""An Option stores a single value. Every option is part of exactly one OptionGroup.
 
@@ -94,8 +101,6 @@ class OptionGroup:
 			return
 
 		try:
-			from xml.dom import Node, minidom
-
 			doc = minidom.parse(path)
 			
 			root = doc.documentElement
@@ -107,11 +112,7 @@ class OptionGroup:
 					print "Warning: Non Option element", o
 					continue
 				name = o.getAttribute('name')
-				if o.childNodes:
-					value = o.childNodes[0].nodeValue
-				else:
-					value = ''
-				self.pending[name] = value
+				self.pending[name] = data(o)
 		except:
 			rox.report_exception()
 	

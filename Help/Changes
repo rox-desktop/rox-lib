@@ -3,7 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
-22-Feb-2003
+26-Feb-2004
+~~~~~~~~~~~
+Cope with option values split into multiple DOM text nodes (Rene Ejury).
+
+22-Feb-2004
 ~~~~~~~~~~~
 Allow a list of values to be stored in each menu Action. These are used as
 the arguments to the callback function.
@@ -11,7 +15,7 @@ If a file's details were recorded (in document.save_last_stat) when it was
 loaded, make sure they haven't changed when saving. Saving also updates this
 variable (requested by Arnaud Calvo).
 
-20-Feb-2003
+20-Feb-2004
 ~~~~~~~~~~~
 Updated examples in documentation for new findrox (Yuri Bongiorno).
 
