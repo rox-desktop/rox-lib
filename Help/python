@@ -15,6 +15,7 @@ The following modules are provided:
 	choices		- Load and save user choices
 	MultipleChoice	- A message box with buttons along the bottom
 	SaveBox		- Drag and drop saving
+	Toolbar		- A ROX-Filer style toolbar
 
 
 choices
@@ -148,3 +149,28 @@ Example:
 
 	mainloop()
 
+Toolbar
+~~~~~~~
+To add a toolbar to your application, put a VBox in the main window and
+pack_start a Toolbar into it, like this:
+
+	window = GtkWindow()
+	vbox = GtkVBox(FALSE, 0)
+	window.add(vbox)
+	toolbar = Toolbar()
+	vbox.add(toolbar)
+
+You can then add tools to the toolbar like this:
+
+	tool = toolbar.add_button('Quit', app_dir + '/icons/quit.xpm',
+				  'This tool quits the application')
+	
+'Quit' is the name of the tool (not currently used, but a large
+style will probably be supported at some point).
+
+The second argument is an icon in XPM format to display in the button.
+The third argument is the tooltip for the tool.
+
+You can connect to the 'clicked' signal of 'tool' to handle clicks.
+
+The icons are cached, not reloaded every time you create a new toolbar.
