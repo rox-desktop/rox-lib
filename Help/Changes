@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+27-Jan-2003
+~~~~~~~~~~~
+Make the default window class the name of the application directory, not
+'AppRun' (suggested by Albert Wagner).
+
 22-Jan-2003
 ~~~~~~~~~~~
 If python is too old, raise SystemExit instead of quitting.

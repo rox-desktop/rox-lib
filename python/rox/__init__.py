@@ -27,9 +27,17 @@ from sys.argv).
 
 The builtin names True and False are defined to 1 and 0, if your version of
 python is old enough not to include them already.
+
+Any trailing /App{let}Run is stripped from sys.argv[0] so that windows get
+a sensible default class.
 """
 
 import sys, os
+
+_path = sys.argv[0]
+app_dir = os.path.abspath(os.path.dirname(_path))
+if _path.endswith('/AppRun') or _path.endswith('/AppletRun'):
+	sys.argv[0] = os.path.dirname(_path)
 
 # In python2.3 there is a bool type. Later versions of 2.2 use ints, but
 # early versions don't support them at all, so create them here.
@@ -70,8 +78,6 @@ except:
 
 TRUE = g.TRUE
 FALSE = g.FALSE
-
-app_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
 
 def alert(message):
 	"Display message in an error box. Return when the user closes the box."
