@@ -60,7 +60,12 @@ class Option:
 			self.value = str(value)
 			self.has_changed = 1
 			try:
-				self.int_value = int(float(self.value))
+				if self.value == 'True':
+					self.int_value = 1
+				elif self.value == 'False':
+					self.int_value = 0
+				else:
+					self.int_value = int(float(self.value))
 			except:
 				self.int_value = -1
 	
