@@ -6,6 +6,7 @@
 18-Jul-2002
 ~~~~~~~~~~~
 License change to the LGPL (allows commercial programs to use this library).
+Added AbortSave exception.
 
 14-Jul-2002
 ~~~~~~~~~~~

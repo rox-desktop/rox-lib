@@ -5,9 +5,10 @@ methods to actually do the save.
 If you want to save a selection then you can create a new object specially for
 the purpose and pass that to the SaveBox."""
 
-import os
+import os, sys
 import rox
-from rox import alert, info, g, report_exception, choices, get_local_path, TRUE, FALSE
+from rox import alert, info, g
+from rox import choices, get_local_path, TRUE, FALSE
 
 gdk = g.gdk
 
@@ -45,6 +46,26 @@ def image_for_type(type):
 		image.set_from_pixbuf(pixbuf)
 		return image
 	return g.image_new_from_stock(g.STOCK_MISSING_IMAGE)
+
+def _report_save_error():
+	"Report a SaveAbort nicely, otherwise use report_exception()"
+	type, value = sys.exc_info()[:2]
+	if isinstance(value, AbortSave):
+		value.show()
+	else:
+		rox.report_exception()
+
+class AbortSave(Exception):
+	"""Raise this to cancel a save. If a message is given, it is displayed
+	in a normal alert box (not in the report_exception style). If the
+	message is None, no message is shown (you should have already shown
+	it!)"""
+	def __init__(self, message):
+		self.message = message
+	
+	def show(self):
+		if self.message:
+			rox.alert(self.message)
 
 class Saveable:
 	"""This class describes the interface that an object must provide
@@ -88,12 +109,13 @@ class Saveable:
 			if tmp:
 				os.rename(tmp, path)
 		except:
+			_report_save_error()
 			if tmp and os.path.exists(tmp):
 				if os.path.getsize(tmp) == 0 or \
 				   rox.confirm("Delete temporary file '%s'?" % tmp,
 				   		g.STOCK_DELETE):
 					os.unlink(tmp)
-			raise
+			raise AbortSave(None)
 
 	def save_to_selection(self, selection_data):
 		"""Write data to the selection. The default method uses save_to_stream()."""
@@ -216,12 +238,14 @@ class SaveArea(g.VBox):
 				return
 			try:
 				self.set_sensitive(FALSE)
-				self.document.save_to_file(path)
+				try:
+					self.document.save_to_file(path)
+				finally:
+					self.set_sensitive(TRUE)
 				self.set_uri(path)
 				self.save_done()
 			except:
-				report_exception()
-			self.set_sensitive(TRUE)
+				_report_save_error()
 		else:
 			rox.info("Drag the icon to a directory viewer\n" +
 					  "(or enter a full pathname)")
@@ -248,13 +272,15 @@ class SaveArea(g.VBox):
 		if info == TARGET_RAW:
 			try:
 				self.set_sensitive(FALSE)
-				self.document.save_to_selection(selection_data)
-				self.set_sensitive(TRUE)
+				try:
+					self.document.save_to_selection(selection_data)
+				finally:
+					self.set_sensitive(TRUE)
 			except:
-				report_exception()
+				_report_save_error()
 				_write_xds_property(context, None)
-				self.set_sensitive(TRUE)
 				return
+
 			self.data_sent = 1
 			_write_xds_property(context, None)
 			
@@ -285,12 +311,14 @@ class SaveArea(g.VBox):
 				else:
 					try:
 						self.set_sensitive(FALSE)
-						self.document.save_to_file(path)
+						try:
+							self.document.save_to_file(path)
+						finally:
+							self.set_sensitive(TRUE)
 						self.data_sent = TRUE
 					except:
-						report_exception()
+						_report_save_error()
 						self.data_sent = FALSE
-					self.set_sensitive(TRUE)
 					if self.data_sent:
 						to_send = 'S'
 				# (else Error)
