@@ -3,11 +3,16 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+09-Oct-2003
+~~~~~~~~~~~
+Allow event to be None for Menu.popup. This allows the menu to be activated
+from the keyboard, using the 'popup-menu' signal.
+
 08-Oct-2003
 ~~~~~~~~~~~
 Added French translation in AppInfo.xml (Vincent Lefèvre).
 
-03-Oct-2003
+03-Oct-2003 (Release 1.9.10)
 ~~~~~~~~~~~
 Added support for icon themes (doesn't do inheritance yet).
 

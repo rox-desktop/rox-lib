@@ -102,6 +102,7 @@ def alert(message):
 
 def bug(message = "A bug has been detected in this program. Please report "
 		  "the problem to the authors."):
+	"Display an error message and offer a debugging prompt."
 	try:
 		raise Exception(message)
 	except:

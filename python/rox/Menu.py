@@ -116,7 +116,10 @@ class Menu:
 		"""Display the menu. Call 'caller.<callback_name>' when an item is chosen.
 		For applets, position_fn should be my_applet.position_menu)."""
 		self.caller = caller
-		self.menu.popup(None, None, position_fn or self._position, event.button, event.time)
+		if event:
+			self.menu.popup(None, None, position_fn or self._position, event.button, event.time)
+		else:
+			self.menu.popup(None, None, position_fn or self._position, 0, 0)
 	
 	def _activate(self, action, widget):
 		if self.caller:
