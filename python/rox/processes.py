@@ -21,13 +21,15 @@ class Process:
 		
 		assert self.child is None
 
+		stderr_r = stderr_w = None
+
 		try:
 			self.pre_fork()
 			stderr_r, stderr_w = os.pipe()
 			child = os.fork()
 		except:
-			os.close(stderr_r)
-			os.close(stderr_w)
+			if stderr_r: os.close(stderr_r)
+			if stderr_w: os.close(stderr_w)
 			self.start_error()
 			raise
 

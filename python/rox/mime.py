@@ -11,7 +11,7 @@ XML file as <MIME>/packages/<application>.xml and running the
 update-mime-database command, which is provided by the freedesktop.org
 shared mime database package.
 
-See http://www.freedesktop.org/standards/shared-mime-info.html for
+See http://www.freedesktop.org/standards/shared-mime-info-spec/ for
 information about the format of these files."""
 
 import os
