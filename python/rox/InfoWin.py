@@ -94,7 +94,7 @@ class InfoWin(g.Dialog):
 
         hbox=self.action_area
 
-        button = g.Button(stock = g.STOCK_CLOSE)
+        button=g.Button(stock=g.STOCK_CLOSE)
         hbox.pack_start(button)
 
         def dismiss(widget, iw):
@@ -105,51 +105,8 @@ class InfoWin(g.Dialog):
 
         self.vbox.show_all()
 
-from xml.dom import Node, minidom, XML_NAMESPACE
-import rox.i18n
+import rox.AppInfo
 
-def data(node):
-	"""Return all the text directly inside this DOM Node."""
-	return ''.join([text.nodeValue for text in node.childNodes
-			if text.nodeType == Node.TEXT_NODE])
-
-class AppInfo:
-    """Parsed AppInfo.xml file.  Current only deals with the <About>
-    element"""
-
-    def __init__(self, source):
-        """Read the file and parse the <About> element."""
-        self.doc=minidom.parse(source)
-        self.about={}
-
-        for ab in self.doc.documentElement.getElementsByTagName('About'):
-            lang=ab.getAttributeNS(XML_NAMESPACE, 'lang')
-            self.about[lang]={}
-
-            for node in ab.childNodes:
-                if node.nodeType != Node.ELEMENT_NODE:
-                    continue
-                name=node.localName
-                self.about[lang][name]=data(node)
-
-    def getAbout(self, elname, langs=None):
-        """Return an entry from the <About> section.
-        elname is the name of the element to return text from
-        langs is a list of acceptable languages, or None to use rox.i18n.langs
-        """
-        if langs is None:
-            langs=rox.i18n.langs
-
-        for lang in langs:
-            if self.about.has_key(lang):
-                if self.about[lang].has_key(elname):
-                    return self.about[lang][elname]
-
-        if self.about[''].has_key(elname):
-            return self.about[''][elname]
-
-        return None
-                
 def infowin(pname, info=None):
     """Open info window for this program.  info is a source of the
     AppInfo.xml file, if None then $APP_DIR/AppInfo.xml is loaded instead"""
@@ -158,15 +115,16 @@ def infowin(pname, info=None):
         info=os.path.join(rox.app_dir, 'AppInfo.xml')
 
     try:
-        app_info=AppInfo(info)
+        app_info=rox.AppInfo.AppInfo(info)
     except:
         rox.report_exception()
         return
 
     try:
-        iw=InfoWin(pname, app_info.getAbout('Purpose'),
-                   app_info.getAbout('Version'), app_info.getAbout('Authors'),
-                   app_info.getAbout('Homepage'))
+        iw=InfoWin(pname, app_info.getAbout('Purpose')[1],
+                   app_info.getAbout('Version')[1],
+                   app_info.getAuthors(),
+                   app_info.getAbout('Homepage')[1])
         iw.show()
         return iw
     except:
