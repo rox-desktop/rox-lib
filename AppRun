@@ -12,7 +12,12 @@ from rox import g
 box = g.MessageDialog(None, g.MESSAGE_QUESTION, 0, g.BUTTONS_OK,
 rox._("ROX-Lib2 contains code that is useful to newer ROX applications. \
 You should place this directory somewhere where other programs can \
-find it, such as ~/lib or /usr/local/lib."))
+find it, such as ~/lib or /usr/local/lib.\n\n\
+ROX-Lib version: %s\n\
+PyGTK version: %s\n\
+GTK version: %s\n\n\
+PyGTK location:\n%s" %
+(rox.roxlib_version, g.pygtk_version, g.gtk_version, dirname(g.__file__))))
 box.add_button(g.STOCK_HELP, g.RESPONSE_HELP)
 box.set_title('ROX-Lib')
 box.set_position(g.WIN_POS_CENTER)

@@ -31,6 +31,8 @@ python is old enough not to include them already.
 
 import sys, os
 
+roxlib_version = (1, 9, 10)
+
 _path = os.path.realpath(sys.argv[0])
 app_dir = os.path.dirname(_path)
 if _path.endswith('/AppRun') or _path.endswith('/AppletRun'):

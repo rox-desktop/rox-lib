@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from xml.dom import minidom, Node
-import os
+import os, sys
 
 appinfo = minidom.parse('AppInfo.xml')
 root = appinfo.documentElement
@@ -19,6 +19,14 @@ version = ''.join([text.nodeValue for text in y.childNodes
 			if text.nodeType == Node.TEXT_NODE])
 
 a, b, c = map(int, version.split(' ')[0].split('.')[:3])
+
+sys.path.append(os.path.dirname(__file__) + '/python')
+import rox
+if rox.roxlib_version != (a, b, c):
+	print 'Version mismatch!'
+	print 'AppInfo    : (%d.%d.%d)' % (a, b, c)
+	print '__init__.py: (%d.%d.%d)' % rox.roxlib_version
+	raise SystemExit(1)
 
 raw_input("Create rox-lib-%s (%d.%d.%d)?" % (version, a, b, c))
 

@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+28-Sep-2003
+~~~~~~~~~~~
+Added some version information to the dialog you get when you run ROX-Lib
+directly.
+
 22-Sep-2003
 ~~~~~~~~~~~
 New bug() function to quickly bring up a debugging prompt.
