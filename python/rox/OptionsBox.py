@@ -301,10 +301,10 @@ class OptionsBox(g.Dialog):
 
 	def build_hbox(self, node, label):
 		"""<hbox>...</hbox> to layout child widgets horizontally."""
-		self.do_box(node, label, g.HBox(FALSE, 4))
+		return self.do_box(node, label, g.HBox(FALSE, 4))
 	def build_vbox(self, node, label):
 		"""<vbox>...</vbox> to layout child widgets vertically."""
-		self.do_box(node, label, g.VBox(FALSE, 0))
+		return self.do_box(node, label, g.VBox(FALSE, 0))
 		
 	def do_box(self, node, label, widget):
 		"Helper function for building hbox, vbox and frame widgets."
