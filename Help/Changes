@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+03-Oct-2003
+~~~~~~~~~~~
+Added support for icon themes (doesn't do inheritance yet).
+
 28-Sep-2003
 ~~~~~~~~~~~
 Added some version information to the dialog you get when you run ROX-Lib

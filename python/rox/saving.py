@@ -9,6 +9,7 @@ import os, sys
 import rox
 from rox import alert, info, g, _, filer
 from rox import choices, get_local_path, TRUE, FALSE
+import icon_theme
 
 gdk = g.gdk
 
@@ -35,6 +36,8 @@ def image_for_type(type):
 	'Search <Choices> for a suitable icon. Returns a pixbuf, or None.'
 	media, subtype = type.split('/', 1)
 	path = choices.load('MIME-icons', media + '_' + subtype + '.png')
+	if not path:
+		path = icon_theme.rox_theme.lookup_icon('mime-text:html', 48)
 	if not path:
 		path = choices.load('MIME-icons', media + '.png')
 	if path:
