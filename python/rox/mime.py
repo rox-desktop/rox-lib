@@ -89,9 +89,7 @@ class MIMEtype:
         for dir in mimedirs:
             path=os.path.join(dir, self.media, self.subtype+'.xml')
             try:
-                #print path, os.access(path, os.R_OK)
                 doc=minidom.parse(path)
-                #print path, doc
                 if doc is None:
                     continue
                 for section in doc.documentElement.childNodes:
@@ -99,7 +97,6 @@ class MIMEtype:
                         continue
                     if section.localName=='comment':
                         nlang=section.getAttribute('xml:lang')
-                        #print self.lang, nlang, type(self.lang)
                         if type(self.lang)== type(str) and nlang!=self.lang:
                             continue
                         if type(self.lang)== type(list) and nlang not in self.lang:
@@ -148,14 +145,12 @@ def import_glob_file(dir):
         lines=file(path, 'r').readlines()
     except:
         return
-    #print path
 
     for line in lines:
         if line[0]=='#':
             continue
         line=line.strip()
         type, pattern=line.split(':', 1)
-        #print type
         
         try:
             mtype=types[type]
@@ -171,7 +166,6 @@ def import_glob_file(dir):
                 literals[pattern]=mtype
 
 for dir in mimedirs:
-    #print 'import from '+dir
     import_glob_file(dir)
 
 def get_type_by_name(path):
@@ -183,7 +177,6 @@ def get_type_by_name(path):
             return literals[leaf]
         if literals.has_key(lleaf):
             return literals[lleaf]
-        #print 'not literal'
         ext=leaf
         while ext.find('.')>=0:
             p=ext.find('.')
@@ -197,7 +190,6 @@ def get_type_by_name(path):
             if exts.has_key(ext):
                 return exts[ext]
         for glob in globs:
-            #print glob
             if fnmatch.fnmatch(leaf, glob):
                 return globs[glob]
             if fnmatch.fnmatch(lleaf, glob):
@@ -223,7 +215,6 @@ def get_type(path, follow=1, name_pri=100):
         if t is None:
             return text
         return t
-    #print st
     if stat.S_ISREG(st.st_mode):
         t=get_type_by_name(path)
         if t is None:
@@ -290,7 +281,7 @@ def install_mime_info(application, package_file = None):
 	except:
 		rox.report_exception()
 
-def lookup_type(media, subtype=None):
+def lookup_type(media, subtype=None, allow_new=1):
     """Return MIMEtype for given type, or None if not defined.  Call as
     either lookup_type('media', 'subtype') or lookup_type('media/subtype')"""
     if subtype is None:
@@ -300,7 +291,9 @@ def lookup_type(media, subtype=None):
 
     if types.has_key(type):
         return types[type]
-    return type
+    if allow_new:
+        return MIMEtype(media, subtype)
+    return None
 
 def test(name):
     """Print results for name.  Test routine"""
