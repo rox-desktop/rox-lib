@@ -171,7 +171,7 @@ class Menu:
 		for path, item in items_with_update:
 			widget = factory.get_widget(path)
 			fn = item.update
-			self.update_callbacks.append(lambda: fn(self, widget))
+			self.update_callbacks.append(lambda f = fn, w = widget: f(self, w))
 
 		if accel_path:
 			g.accel_map_load(accel_path)

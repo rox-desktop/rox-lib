@@ -7,20 +7,28 @@ os.environ['CHOICESPATH'] = '/tmp/choices:/tmp/choices2'
 os.environ['XDG_CONFIG_HOME'] = '/tmp/config'
 
 import rox
-import rox.Menu
+from rox.Menu import Menu, set_save_name, SubMenu
+from rox.Menu import Separator, Action, ToggleItem
 from rox import basedir, choices, g
+set_save_name('Foo')
 
-class TestOptions(unittest.TestCase):
+class MyToggleItem(ToggleItem):
+	my_widget = None
+
+	def update(self, menu, widget):
+		self.my_menu = menu
+		self.my_widget = widget
+		ToggleItem.update(self, menu, widget)
+
+class TestMenu(unittest.TestCase):
+	t1 = False
+	t2 = True
+
 	def setUp(self):
-		for d in ['/tmp/choices', '/tmp/choices2', '/tmp/config']:
-			if os.path.isdir(d):
-				shutil.rmtree(d)
+		self.my_t1 = MyToggleItem('Toggle 1', 't1')
+		self.my_t2 = MyToggleItem('Toggle 2', 't2')
 
-		reload(rox.Menu)
-		from rox.Menu import Menu, set_save_name, SubMenu
-		from rox.Menu import Separator, Action, ToggleItem
-		set_save_name('Foo')
-		menu = Menu('main', [
+		self.menu = Menu('main', [
 		SubMenu('File', [
 		  Action('Save',	'save',	'<Ctrl>S', g.STOCK_SAVE),
 		  Action('Parent',	'up',	'', g.STOCK_GO_UP),
@@ -28,10 +36,23 @@ class TestOptions(unittest.TestCase):
 		  Separator(),
 		  Action('New',	'new',	'', g.STOCK_NEW)]),
 		Action('Help',	'help',	'F1', g.STOCK_HELP),
+		self.my_t1,
+		self.my_t2,
 		])
+	
+	def tearDown(self):
+		self.menu.menu.destroy()
 
 	def testNothing(self):
 		pass
+	
+	def testToggles(self):
+		self.menu.popup(self, None)
+		assert self.my_t1.my_widget != None
+		assert self.my_t2.my_widget != None
+
+		assert self.my_t2.my_widget != self.my_t1.my_widget
+		assert self.my_t1.my_menu == self.my_t2.my_menu == self.menu
 
 sys.argv.append('-v')
 unittest.main()

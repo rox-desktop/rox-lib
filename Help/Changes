@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+20-Oct-2004
+~~~~~~~~~~~
+Bugfix: When a menu has more than one toggle item, only one is updated
+	correctly (Ken Hayber).
+
 07-Oct-2004
 ~~~~~~~~~~~
 Replace g.mainloop() and g.mainquit() with g.main() and g.main_quit() as
