@@ -286,6 +286,5 @@ except:
 	        "required)."))
 
 if g.pygtk_version[:2] == (1, 99) and g.pygtk_version[2] < 13:
-	alert('Your version of pygtk (%s) is too old. '
-	      'Things might not work correctly.'
-	      % '.'.join(map(str, g.pygtk_version)))
+	sys.stderr.write('Your version of pygtk (%d.%d.%d) is too old. '
+	      'Things might not work correctly.' % g.pygtk_version)

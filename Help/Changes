@@ -3,7 +3,7 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
-20-Oct-2002
+20-Oct-2002 (Release 1.9.4)
 ~~~~~~~~~~~
 More warnings about old pygtk versions.
 Added Dialog class (does ref-counting, like Window).
