@@ -4,8 +4,9 @@ import choices
 class Menu:
 	def __init__(self, program, name, items):
 		"""program, name is for Choices.
-		items is a list: [(name, callback_name, type), ...].
-		type is as for GtkItemFactory."""
+		items is a list: [(name, callback_name, type, key), ...].
+		type is as for GtkItemFactory.
+		key is only used if no bindings are in Choices."""
 		self.program = program
 		self.name = name
 
@@ -13,20 +14,28 @@ class Menu:
 		self.accel_group = ag
 		factory = GtkItemFactory(GtkMenu, '<%s>' % name, ag)
 
+		path = choices.load(program, name)
+
 		out = []
 		self.fns = []
-		for (label, fn, type) in items:
+		for item  in items:
+			if len(item) == 3:
+				(label, fn, type) = item
+				key = None
+			else:
+				(label, fn, type, key) = item
 			if fn:
 				self.fns.append(fn)
 				cb = self.activate
 			else:
 				cb = None
-			out.append((label, None, cb, len(self.fns) - 1, type))
+			if path:
+				key = None
+			out.append((label, key, cb, len(self.fns) - 1, type))
 			
 		factory.create_items(out)
 		self.factory = factory
 
-		path = choices.load(program, name)
 		if path:
 			factory.parse_rc(path)
 		

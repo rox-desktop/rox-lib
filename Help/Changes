@@ -2,6 +2,10 @@
 			Shared code for ROX applications
 			by Thomas Leonard
 			http://rox.sourceforge.net
+
+18-Jun-2001
+~~~~~~~~~~~
+Allow default key bindings in menus.
 			
 22-May-2001 (Release 0.1.2)
 ~~~~~~~~~~~

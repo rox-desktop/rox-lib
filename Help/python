@@ -233,7 +233,7 @@ Create each menu only once (not once-per-window):
 	
 	from rox.Menu import Menu
 	menu = Menu('MyProg', 'main', [
-			('/Save', 'save', ''),
+			('/Save', 'save', '', 'F3'),
 			('/Options...', 'show_options', ''),
 			('/Close', 'close', ''),
 			])
@@ -244,6 +244,8 @@ Each item in the list is a menu item:
 	path/label	Can nest too, eg '/File/Save'
 	callback	Name of the callback (a string)
 	type 		(as for GtkItemFactory's create_items)
+	key		Optional short-cut. Only used if no bindings
+			are found in Choices.
 
 For each window that can show this menu, do this to accept short-cuts:
 
