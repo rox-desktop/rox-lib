@@ -253,11 +253,15 @@ def install_mime_info(application, package_file = None):
 		file(new_file, 'w').write(new_data)
 
 		# Update the database...
-		if os.spawnlp(os.P_WAIT, 'update-mime-database', 'update-mime-database', basedir.save_data_path('mime')):
+		if os.path.isdir('/uri/0install/zero-install.sourceforge.net'):
+			command = '/uri/0install/zero-install.sourceforge.net/bin/update-mime-database'
+		else:
+			command = 'update-mime-database'
+		if os.spawnlp(os.P_WAIT, command, command, basedir.save_data_path('mime')):
 			os.unlink(new_file)
-			raise Exception(_("The 'update-mime-database' command returned an error code!\n" \
+			raise Exception(_("The '%s' command returned an error code!\n" \
 					  "Make sure you have the freedesktop.org shared MIME package:\n" \
-					  "http://www.freedesktop.org/standards/shared-mime-info.html"))
+					  "http://www.freedesktop.org/standards/shared-mime-info.html") % command)
 	except:
 		rox.report_exception()
 

@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+30-May-2004
+~~~~~~~~~~~
+Get update-mime-database command through Zero Install, if possible.
+
 24-May-2004
 ~~~~~~~~~~~
 mime_handler can now uninstall (Stephen Watson).
