@@ -11,6 +11,8 @@ is no longer supported.
 In processes.PipeThroughCommand, a None input stream gets /dev/null instead
 of inheriting its parent's stream. The class has a new run_child_with_streams
 to make overriding the behaviour easier.
+findrox.py script now warns if ROX-Lib2 version is too old (unless requesting
+a version too old to have a version number).
 
 29-Oct-2003
 ~~~~~~~~~~~

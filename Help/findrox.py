@@ -21,7 +21,7 @@ def version(major, minor, micro):
 			vs = os.readlink(zpath).split('-')[-1]
 			v = map(int, vs.split('.'))
 			if v[0] < major or v[1] < minor or v[2] < micro:
-				if os.system('cd /uri/0install/rox.sourceforge.net; 0refresh'):
+				if os.system('0refresh rox.sourceforge.net'):
 					report_error('Using ROX-Lib in Zero Install, but cached version (%s) is too old (need %d.%d.%d) and updating failed (is zero-install running?)' % (vs, major, minor, micro))
 			sys.path.append(zpath + '/python')
 			return
@@ -40,13 +40,19 @@ def version(major, minor, micro):
 		if exists(p):
 			# TODO: check version is new enough
 			sys.path.append(os.path.join(p, 'python'))
-			break
-	else:
-		report_error("This program needs ROX-Lib2 to run.\n" + \
-			"I tried all of these places:\n\n" + \
-			string.join(paths, '\n') + '\n\n' + \
-			"ROX-Lib2 is available from:\n" + \
-			"http://rox.sourceforge.net")
+			import rox
+			if major == 1 and minor == 9 and micro < 10:
+				return	# Can't check version
+			if not hasattr('rox', 'roxlib_version'):
+				break
+			if (major, minor, micro) >= rox.roxlib_version:
+				return	# OK
+	report_error("This program needs ROX-Lib2 (version %d.%d.%d) " % \
+		(major, minor, micro) + "to run.\n" + \
+		"I tried all of these places:\n\n" + \
+		string.join(paths, '\n') + '\n\n' + \
+		"ROX-Lib2 is available from:\n" + \
+		"http://rox.sourceforge.net")
 
 def report_error(err):
 	"Write 'error' to stderr and, if possible, display a dialog box too."
