@@ -31,7 +31,7 @@ python is old enough not to include them already.
 
 import sys, os
 
-roxlib_version = (1, 9, 10)
+roxlib_version = (1, 9, 11)
 
 _path = os.path.realpath(sys.argv[0])
 app_dir = os.path.dirname(_path)
