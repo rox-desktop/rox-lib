@@ -145,9 +145,9 @@ class OptionGroup:
 		for option in self:
 			option._to_xml(root)
 
-		file = open(path, 'w')
-		doc.writexml(file)
-		file.close()
+		stream = open(path, 'w')
+		doc.writexml(stream)
+		stream.close()
 	
 	def add_notify(self, callback):
 		"Call callback() after one or more options have changed value."
