@@ -8,16 +8,24 @@ of which is included with ROX-Lib.
 
 To use it, create a source file (eg, 'mymodule.pyx'):
 
-def test():
-	print "Hello from C"
+	cdef extern int puts(char*)
 
-Then import this module from your program and compile it:
+	def test():
+		print "Hello from python"
+		puts("Hello from C")
 
-from rox import compile
-compile.compile('mymodule.pyx')
+Then import this module from your program, compile the .pyx and then import
+the resulting module:
 
-import mymodule
-mymodule.test()
+	from rox import compile
+	compile.compile('mymodule.pyx')
+
+	import mymodule
+	mymodule.test()
+
+To find out more about what pyrex can do, see its web site:
+
+	http://www.cosc.canterbury.ac.nz/~greg/python/Pyrex/
 """
 
 import pickle
@@ -25,6 +33,10 @@ import os.path
 import rox
 
 def compile(source, libraries = []):
+	"""Compile this .pyx source file, creating a .so file in the same
+	directory. If the path is relative, rox.app_dir is prepended.
+	If an error occurs, it is reported in an error box and an exception
+	is thrown."""
 	source = os.path.join(rox.app_dir, source)
 	if not os.path.exists(os.path.join(source)):
 		raise Exception("Source file '%s' missing" % source)
