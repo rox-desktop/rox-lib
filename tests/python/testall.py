@@ -2,6 +2,8 @@
 import unittest, os, sys
 
 my_dir = os.path.dirname(sys.argv[0])
+if not my_dir:
+	my_dir=os.getcwd()
 print "Running from", my_dir
 
 sys.argv.append('-v')
