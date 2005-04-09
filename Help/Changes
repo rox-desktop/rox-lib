@@ -1,8 +1,11 @@
-
 			ROX-Lib2
 			Shared code for ROX applications
 			by Thomas Leonard
 			http://rox.sourceforge.net
+
+09-Apr-2005
+~~~~~~~~~~~
+Changed MakeDist to allow use of other SourceForge accounts (Stephen Watson).
 
 01-Apr-2005
 ~~~~~~~~~~~
