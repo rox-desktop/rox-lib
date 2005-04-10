@@ -20,3 +20,5 @@ For 2.2.0
 Use GtkUIManager instead of GtkItemFactory when GTK+ 2.4 or later present
 
 Some more list widgets for the Options code?
+
+Ken Hayber's fix for save boxes to use the selected theme (requires PyGTK 2.4).
