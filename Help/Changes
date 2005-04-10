@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+10-Apr-2005
+~~~~~~~~~~~
+Added unit tests for processes module, based on old tests in Archive (Thomas
+Leonard).
+
 09-Apr-2005
 ~~~~~~~~~~~
 Changed MakeDist to allow use of other SourceForge accounts (Stephen Watson).
