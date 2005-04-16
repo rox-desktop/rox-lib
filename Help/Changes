@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+16-Apr-2005 (Release 2.0.0)
+~~~~~~~~~~~
+Run unit tests in alphabetical order as it fixes a strange interaction between them (Stephen Watson).
+
 10-Apr-2005
 ~~~~~~~~~~~
 Added unit tests for processes module, based on old tests in Archive (Thomas
