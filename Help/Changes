@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+17-Apr-2005
+~~~~~~~~~~~
+Fixed Zero Install version test in findrox.py (Thomas Leonard).
+
 16-Apr-2005 (Release 2.0.0)
 ~~~~~~~~~~~
 Run unit tests in alphabetical order as it fixes a strange interaction between them (Stephen Watson).

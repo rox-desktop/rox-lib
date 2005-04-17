@@ -37,8 +37,8 @@ def version(major, minor, micro):
 			'latest'
 		if os.path.exists(zpath):
 			vs = os.readlink(zpath).split('-')[-1]
-			v = map(int, vs.split('.'))
-			if v[0] < major or v[1] < minor or v[2] < micro:
+			v = tuple(map(int, vs.split('.')))
+			if v < (major, minor, micro):
 				if os.system('0refresh rox.sourceforge.net'):
 					report_error('Using ROX-Lib in Zero Install, but cached version (%s) is too old (need %d.%d.%d) and updating failed (is zero-install running?)' % (vs, major, minor, micro))
 			sys.path.append(zpath + '/python')
