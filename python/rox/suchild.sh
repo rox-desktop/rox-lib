@@ -8,6 +8,6 @@ echo "$message"
 echo
 echo "Enter the root password:"
 while true; do
-  su -c 'nohup "$roxlib_python" "$roxlib_dir/suchild.py" $roxlib_to_parent $roxlib_from_parent >/dev/null &' && break
+  su root -c 'nohup "$roxlib_python" "$roxlib_dir/suchild.py" $roxlib_to_parent $roxlib_from_parent >/dev/null &' && break
 done
 sleep 1

@@ -26,7 +26,8 @@ class TestSU(unittest.TestCase):
 			response = root.waitpid(pid, 0)
 			yield response
 			(pid, status) = response.result
-			assert status == 0x100
+			exitstatus = os.WEXITSTATUS(status)
+			assert exitstatus != 0
 
 			response = root.spawnvpe(os.P_WAIT, 'true', ['true'])
 			yield response

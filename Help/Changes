@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+29-Apr-2005
+~~~~~~~~~~~
+Compatability fixes for the su module (Stephen Watson).
+
 17-Apr-2005
 ~~~~~~~~~~~
 Fixed Zero Install version test in findrox.py (Thomas Leonard).
