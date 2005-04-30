@@ -49,7 +49,10 @@ def image_for_type(type):
 	if not path:
 		path = choices.load('MIME-icons', media + '.png')
 	if path:
-		return gdk.pixbuf_new_from_file(path)
+		if hasattr(gdk, 'pixbuf_new_from_file_at_size'):
+			return gdk.pixbuf_new_from_file_at_size(path, 48, 48)
+		else:
+			return gdk.pixbuf_new_from_file(path)
 	else:
 		return None
 

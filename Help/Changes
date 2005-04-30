@@ -5,6 +5,9 @@
 
 30-Apr-2005
 ~~~~~~~~~~~
+When getting an icon for saving, specify the size if PyGTK is recent enough.
+This prevents SVG icons from appearing in huge sizes (Thomas Leonard;
+requested by John Pettigrew).
 Bugfix: Theme index parser failed to cope with comments at the start of the
 	file (Thomas Leonard).
 
