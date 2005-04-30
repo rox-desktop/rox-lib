@@ -1,5 +1,6 @@
 """This is an internal module. Do not use it. GTK 2.4 will contain functions
 that replace those defined here."""
+from __future__ import generators
 
 import os
 import basedir
@@ -8,29 +9,33 @@ import rox
 theme_dirs = [os.path.join(os.environ.get('HOME', '/'), '.icons')] + \
 		list(basedir.load_data_paths('icons'))
 
+def _ini_parser(stream):
+	"""Yields a sequence of (section, key, value) triples."""
+	section = None
+	for line in stream:
+		line = line.strip()
+		if line.startswith("#") or not line: continue
+		if line.startswith("[") and line.endswith("]"):
+			section = line[1:-1]
+		elif section:
+			key, value = map(str.strip, line.split('=', 1))
+			yield section, key, value
+		else:
+			raise Exception("Error in file '%s': Expected '[SECTION]' but got '%s'" %
+					(stream, line))
+
 class Index:
 	"""A theme's index.theme file."""
 	def __init__(self, dir):
 		self.dir = dir
-		sections = file(os.path.join(dir, "index.theme")).read().split('\n[')
 		self.sections = {}
-		for s in sections:
-			lines = s.split('\n')
-			sname = lines[0].strip()
-			
-			# Python < 2.2.2 doesn't support an argument to strip...
-			assert sname[-1] == ']'
-			if sname.startswith('['):
-				sname = sname[1:-1]
-			else:
-				sname = sname[:-1]
-			
-			section = self.sections[sname] = {}
-			for line in lines[1:]:
-				if not line.strip(): continue
-				if line.startswith('#'): continue
-				key, value = map(str.strip, line.split('=', 1))
-				section[key] = value
+		for section, key, value in _ini_parser(file(os.path.join(dir, "index.theme"))):
+			try:
+				self.sections[section][key] = value
+			except KeyError:
+				assert section not in self.sections
+				self.sections[section] = {}
+				self.sections[section][key] = value
 
 		subdirs = self.get('Icon Theme', 'Directories')
 		
