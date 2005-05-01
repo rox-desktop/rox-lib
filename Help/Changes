@@ -8,6 +8,8 @@
 The default SaveArea.confirm_new_path() now shows an error if the target
 exists as a directory, instead of asking if you want to overwrite it (Thomas
 Leonard; reported by Jonatan Liljedahl).
+Remove "root" from the su command, as some systems call user 0 something else
+(Thomas Leonard; reported by Jonatan Liljedahl).
 
 30-Apr-2005
 ~~~~~~~~~~~
