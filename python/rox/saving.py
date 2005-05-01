@@ -425,6 +425,9 @@ class SaveArea(g.VBox):
 		Returns true to go ahead with the save."""
 		if not os.path.exists(path):
 			return True
+		if os.path.isdir(path):
+			rox.alert(_("'%s' already exists as a directory.") % path)
+			return False
 		if path == self.initial_uri:
 			if self.document.save_last_stat is None:
 				return True		# OK. Nothing to compare with.

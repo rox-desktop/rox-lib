@@ -3,6 +3,12 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+01-May-2005
+~~~~~~~~~~~
+The default SaveArea.confirm_new_path() now shows an error if the target
+exists as a directory, instead of asking if you want to overwrite it (Thomas
+Leonard; reported by Jonatan Liljedahl).
+
 30-Apr-2005
 ~~~~~~~~~~~
 When getting an icon for saving, specify the size if PyGTK is recent enough.
