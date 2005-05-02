@@ -71,6 +71,7 @@ class SuProxyMaker(tasks.Blocker):
 def _exec_child(message, to_parent, from_parent):
 	fcntl.fcntl(to_parent, fcntl.F_SETFD, 0)
 	fcntl.fcntl(from_parent, fcntl.F_SETFD, 0)
+	import pwd
 	os.execlp('xterm', 'xterm',
 		'-geometry', '40x10',
 		'-title', 'Enter password',
@@ -79,7 +80,8 @@ def _exec_child(message, to_parent, from_parent):
 		message,
 		sys.executable,
 		str(to_parent.fileno()),
-		str(from_parent.fileno()))
+		str(from_parent.fileno()),
+		pwd.getpwuid(0)[0])	# Name of UID 0 (eg "root")
 
 class _Pipe:
 	"""Contains Python file objects for two pipe ends.

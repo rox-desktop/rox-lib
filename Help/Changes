@@ -2,6 +2,10 @@
 			Shared code for ROX applications
 			by Thomas Leonard
 			http://rox.sourceforge.net
+02-May-2005
+~~~~~~~~~~~
+Put "root" back in su command, but detect what the exact string should be, as
+Solaris needs something here (reported by Stephen Watson).
 
 01-May-2005
 ~~~~~~~~~~~
