@@ -65,6 +65,9 @@ _ = i18n.translation(os.path.join(_roxlib_dir, 'Messages'))
 
 _old_sys_path = sys.path[:]
 
+# Work-around for GTK bug #303166
+_have_stdin = '-' in sys.argv
+
 try:
 	zhost = 'zero-install.sourceforge.net'
 	zpath = '/uri/0install/' + zhost
@@ -100,6 +103,8 @@ except:
 
 # Put argv back the way it was, now that Gtk has initialised
 sys.argv[0] = _path
+if _have_stdin and '-' not in sys.argv:
+	sys.argv.append('-')
 
 def _warn_old_findrox():
 	try:

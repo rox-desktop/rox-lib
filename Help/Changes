@@ -2,6 +2,12 @@
 			Shared code for ROX applications
 			by Thomas Leonard
 			http://rox.sourceforge.net
+
+05-May-2005
+~~~~~~~~~~~
+Some versions of GTK silently remove '-' from sys.argv (GTK bug #303166).
+Added a work-around (Thomas Leonard).
+
 02-May-2005
 ~~~~~~~~~~~
 Put "root" back in su command, but detect what the exact string should be, as
