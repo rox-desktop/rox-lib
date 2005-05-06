@@ -14,9 +14,9 @@ class TestTasks(unittest.TestCase):
 	def testIdleBlocker(self):
 		def run():
 			yield None
-			g.mainquit()
+			g.main_quit()
 		tasks.Task(run())
-		g.mainloop()
+		g.main()
 
 	def testTimeoutBlocker(self):
 		def run():
@@ -24,9 +24,9 @@ class TestTasks(unittest.TestCase):
 			yield tasks.TimeoutBlocker(0.5)
 			end = time.time()
 			assert end > start + 0.5
-			g.mainquit()
+			g.main_quit()
 		tasks.Task(run())
-		g.mainloop()
+		g.main()
 	
 	def testInputBlocker(self):
 		readable, writeable = os.pipe()
@@ -43,9 +43,9 @@ class TestTasks(unittest.TestCase):
 			assert ib.happened
 			assert not tb.happened
 
-			g.mainquit()
+			g.main_quit()
 		tasks.Task(run())
-		g.mainloop()
+		g.main()
 
 	def testOutputBlocker(self):
 		readable, writeable = os.pipe()
@@ -75,9 +75,9 @@ class TestTasks(unittest.TestCase):
 			assert ob.happened
 			assert not tb.happened
 
-			g.mainquit()
+			g.main_quit()
 		tasks.Task(run())
-		g.mainloop()
+		g.main()
 
 suite = unittest.makeSuite(TestTasks)
 if __name__ == '__main__':

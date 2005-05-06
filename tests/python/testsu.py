@@ -46,10 +46,10 @@ class TestSU(unittest.TestCase):
 			assert response.result == os.getuid()
 
 			root.finish()
-			g.mainquit()
+			g.main_quit()
 
 		tasks.Task(run())
-		g.mainloop()
+		g.main()
 
 suite = unittest.makeSuite(TestSU)
 if __name__ == '__main__':

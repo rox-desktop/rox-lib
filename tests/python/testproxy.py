@@ -59,9 +59,9 @@ class TestProxy(unittest.TestCase):
 				assert 0, 'Expected an exception!'
 			except AttributeError:
 				pass
-			g.mainquit()
+			g.main_quit()
 		tasks.Task(run())
-		g.mainloop()
+		g.main()
 
 	def testTooSoon(self):
 		def run():
@@ -73,9 +73,9 @@ class TestProxy(unittest.TestCase):
 				pass
 			yield response
 			response.result
-			g.mainquit()
+			g.main_quit()
 		tasks.Task(run())
-		g.mainloop()
+		g.main()
 
 	
 	# spawnvpe, waitpid, setuid and getuid are tested in testsu.py
@@ -89,9 +89,9 @@ class TestProxy(unittest.TestCase):
 			yield response
 			assert response.result is None
 			assert not os.path.exists(tmp_dir)
-			g.mainquit()
+			g.main_quit()
 		tasks.Task(run())
-		g.mainloop()
+		g.main()
 
 	def testUnlink(self):
 		tmp = tempfile.mktemp('-roxlib-test')
@@ -102,9 +102,9 @@ class TestProxy(unittest.TestCase):
 			yield response
 			assert response.result is None
 			assert not os.path.exists(tmp)
-			g.mainquit()
+			g.main_quit()
 		tasks.Task(run())
-		g.mainloop()
+		g.main()
 	
 	def testFileRead(self):
 		tmp_file = tempfile.mktemp(suffix = '-roxlib-test')
@@ -125,9 +125,9 @@ class TestProxy(unittest.TestCase):
 			yield response
 			assert response.result is None
 
-			g.mainquit()
+			g.main_quit()
 		tasks.Task(run())
-		g.mainloop()
+		g.main()
 		os.unlink(tmp_file)
 
 	def testFileWrite(self):
@@ -160,9 +160,9 @@ class TestProxy(unittest.TestCase):
 			except KeyError:
 				pass
 
-			g.mainquit()
+			g.main_quit()
 		tasks.Task(run())
-		g.mainloop()
+		g.main()
 		shutil.rmtree(tmp_dir)
 
 	def testRename(self):
@@ -181,9 +181,9 @@ class TestProxy(unittest.TestCase):
 
 			assert file(join(tmp_dir, 'new')).read() == 'Hello\n'
 
-			g.mainquit()
+			g.main_quit()
 		tasks.Task(run())
-		g.mainloop()
+		g.main()
 		shutil.rmtree(tmp_dir)
 
 	def testChmod(self):
@@ -199,9 +199,9 @@ class TestProxy(unittest.TestCase):
 			yield response
 			response.result
 			assert os.stat(tmp_file).st_mode & 0777 == 0655
-			g.mainquit()
+			g.main_quit()
 		tasks.Task(run())
-		g.mainloop()
+		g.main()
 		os.unlink(tmp_file)
 
 suite = unittest.makeSuite(TestProxy)
