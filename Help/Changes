@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+06-May-2005
+~~~~~~~~~~~
+MIME handler install now uses basedir (Stephen Watson).
+Tests use gtk.main() instead of the deprecated gtk.mainloop() (Stephen Watson).
+
 05-May-2005
 ~~~~~~~~~~~
 Some versions of GTK silently remove '-' from sys.argv (GTK bug #303166).

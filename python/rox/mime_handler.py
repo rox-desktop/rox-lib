@@ -5,7 +5,9 @@ annoys users if programs fight over the defaults."""
 import os
 
 import rox
-from rox import _, mime, choices
+from rox import _, mime, choices, basedir
+
+SITE='rox.sourceforge.net'
 
 _TNAME = 0
 _COMMENT = 1
@@ -15,9 +17,29 @@ _ICON = 4
 _UNINSTALL = 5
 _IS_OURS = 6   # Hidden column
 
+def load_path(site, dir, leaf):
+    path=None
+    try:
+        path=basedir.load_first_config(site, dir, leaf)
+        if not path:
+            path=choices.load(dir, leaf)
+    except:
+        pass
+    return path
+
+def save_path(site, dir, leaf, create=1):
+    parent=basedir.save_config_path(site, dir)
+    if os.path.isdir(parent):
+        path=basedir.save_config_path(site, dir, leaf)
+    else:
+        path=choices.save(dir, leaf, create)
+
+    return path
+
 class InstallList(rox.Dialog):
     """Dialog to select installation of MIME type handlers"""
-    def __init__(self, application, itype, dir, types, info=None, check=True):
+    def __init__(self, application, itype, dir, types, info=None, check=True,
+                 site=SITE):
         """Create the install list dialog.
 	application - path to application to install
 	itype - string describing the type of action to install
@@ -31,6 +53,7 @@ class InstallList(rox.Dialog):
 
         self.itype=itype
         self.dir=dir
+        self.site=site
         self.types=types
 	self.app=application
 	self.aname=os.path.basename(application)
@@ -137,7 +160,8 @@ class InstallList(rox.Dialog):
         for tname in self.types:
             mime_type=mime.lookup(tname)
 	    if self.check:
-		    old=choices.load(self.dir, '%s_%s' %
+		    old=load_path(self.site, self.dir,
+                                  '%s_%s' %
 					 (mime_type.media, mime_type.subtype))
 		    if old and os.path.islink(old):
 			    old=os.readlink(old)
@@ -217,7 +241,7 @@ def _install_type_handler(types, dir, desc, application=None, overwrite=True,
             for tname in types:
 		mime_type = mime.lookup(tname)
 
-		sname=choices.save(dir,
+		sname=save_path(SITE, dir,
 			      '%s_%s' % (mime_type.media, mime_type.subtype))
 		os.symlink(application, sname+'.tmp')
 		os.rename(sname+'.tmp', sname)
@@ -227,7 +251,7 @@ def _install_type_handler(types, dir, desc, application=None, overwrite=True,
             for tname in types:
 		mime_type = mime.lookup(tname)
 
-		sname=choices.save(dir,
+		sname=save_path(SITE, dir,
 			       '%s_%s' % (mime_type.media, mime_type.subtype))
 		os.remove(sname)
     finally:
@@ -281,7 +305,7 @@ def install_send_to_types(types, application=None):
 	for tname in types:
 		mime_type=mime.lookup(tname)
 		
-		sname=choices.save('SendTo/.%s_%s' %  (mime_type.media,
+		sname=save_path(SITE, 'SendTo/.%s_%s' %  (mime_type.media,
 							    mime_type.subtype),
 					  win.aname)
 		os.symlink(application, sname+'.tmp')
@@ -292,7 +316,7 @@ def install_send_to_types(types, application=None):
 	for tname in types:
 		mime_type=mime.lookup(tname)
 		
-		sname=choices.save('SendTo/.%s_%s' %  (mime_type.media,
+		sname=save_path(SITE, 'SendTo/.%s_%s' %  (mime_type.media,
 							    mime_type.subtype),
 					  win.aname)
 		os.remove(sname)
