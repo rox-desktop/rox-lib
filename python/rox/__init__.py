@@ -63,43 +63,19 @@ import i18n
 _roxlib_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 _ = i18n.translation(os.path.join(_roxlib_dir, 'Messages'))
 
-_old_sys_path = sys.path[:]
-
 # Work-around for GTK bug #303166
 _have_stdin = '-' in sys.argv
 
 try:
-	zhost = 'zero-install.sourceforge.net'
-	zpath = '/uri/0install/' + zhost
-	if not os.getenv('ROXLIB_DISABLE_ZEROINSTALL') and os.path.exists(zpath):
-		zpath = os.path.join(zpath, 'libs/pygtk-2/platform/latest')
-		if not os.path.exists(zpath):
-			os.system('0refresh ' + zhost)
-		if os.path.exists(zpath):
-			sys.path.insert(0, zpath +
-				'/lib/python%d.%d/site-packages' % sys.version_info[:2])
 	import pygtk; pygtk.require('2.0')
-	import gtk._gtk		# If this fails, don't leave a half-inited gtk
-	import gtk; g = gtk	# Don't syntax error for python1.5
-	assert g.Window		# Ensure not 1.2 bindings
 except:
-	try:
-		# Try again without Zero Install
-		sys.path = _old_sys_path
-		if 'gtk' in sys.modules:
-			del sys.modules['gtk']
-		try:
-			# Try to support 1.99.12, at least to show an error
-			import pygtk; pygtk.require('2.0')
-		except:
-			print "Warning: very old pygtk!"
-		import gtk; g = gtk	# Don't syntax error for python1.5
-		assert g.Window		# Ensure not 1.2 bindings
-	except:
-		sys.stderr.write(_('The pygtk2 package (1.99.13 or later) must be '
-			   'installed to use this program:\n'
-			   'http://rox.sourceforge.net/rox_lib.php3\n'))
-		raise
+	sys.stderr.write(_('The pygtk2 package (2.0.0 or later) must be '
+		   'installed to use this program:\n'
+		   'http://rox.sourceforge.net/rox_lib.html\n'))
+	raise
+
+import gtk; g = gtk	# Don't syntax error for python1.5
+assert g.Window		# Ensure not 1.2 bindings
 
 # Put argv back the way it was, now that Gtk has initialised
 sys.argv[0] = _path

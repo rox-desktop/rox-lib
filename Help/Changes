@@ -3,6 +3,12 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+07-May-2005
+~~~~~~~~~~~
+Don't try to get pygtk through Zero Install. The injector can be used to
+choose the implementation of pygtk to use, including a version in Zero
+Install if desired (Thomas Leonard).
+
 06-May-2005
 ~~~~~~~~~~~
 MIME handler install now uses basedir (Stephen Watson).
