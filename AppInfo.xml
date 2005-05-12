@@ -3,6 +3,7 @@
   <Summary xml:lang="en">Shared code for other ROX applications</Summary>
   <Summary xml:lang="fr">Code partagé pour les autres applications ROX</Summary>
   <Summary xml:lang="it">Codice condiviso per altre applicazioni ROX</Summary>
+  <Summary xml:lang="pt_BR">C�digo compartilhado para outras aplica��es ROX</Summary>
   <Summary xml:lang="zh_CN">ROX 应用程式函式库</Summary>
   <Summary xml:lang="zh_TW">ROX 應用程式函式庫</Summary>
   <About xml:lang="en">
@@ -38,5 +39,12 @@
     <Author label="作者"/>
     <License label="版權"/>
     <Homepage label="網頁"/>
+  </About>
+  <About xml:lang="pt_BR">
+    <Purpose>Biblioteca compartilhada para o ROX</Purpose>
+    <Author label="Autor" />
+    <Version label="Vers�o" />
+    <License label="Licensa" />
+    <Homepage label="WebSite" />
   </About>
 </AppInfo>

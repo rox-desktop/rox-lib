@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+11-May-2005
+~~~~~~~~~~~
+Added Portuguese translation (José Carlos do Nascimento).
+
 07-May-2005
 ~~~~~~~~~~~
 Don't try to get pygtk through Zero Install. The injector can be used to
