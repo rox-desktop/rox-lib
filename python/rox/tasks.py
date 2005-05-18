@@ -36,7 +36,7 @@ callbacks. See the Task class (below) for more information.
 
 from __future__ import generators
 
-import rox
+import rox, gobject
 from rox import g, _
 
 # The list of Blockers whose event has happened, in the order they were
@@ -242,7 +242,7 @@ class Task:
 def _schedule():
 	assert not _run_queue
 	rox.toplevel_ref()
-	g.idle_add(_handle_run_queue)
+	gobject.idle_add(_handle_run_queue)
 
 def _handle_run_queue():
 	global _idle_blocker

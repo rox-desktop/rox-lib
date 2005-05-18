@@ -503,7 +503,7 @@ class OptionsBox(g.Dialog):
 		except:
 			ch='*'
 		
-		entry.set_visibility(g.FALSE)
+		entry.set_visibility(False)
 		entry.set_invisible_char(ch)
 
 		return result
@@ -692,7 +692,7 @@ class OptionsBox(g.Dialog):
 		else:
 			slide.set_size_request(120, -1)
 		if showvalue:
-			slide.draw_value(True)
+			slide.set_draw_value(True)
 			slide.set_value_pos(g.POS_LEFT)
 			slide.set_digits(0)
 		else:

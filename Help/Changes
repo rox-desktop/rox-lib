@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+18-May-2005
+~~~~~~~~~~~
+Compatability with PyGTK 2.4 retaining backwards compatability with
+2.2 at least (Ken Hayber, Stephen Watson).
+
 12-May-2005
 ~~~~~~~~~~~
 Updated Chinese translation (Babyfai Cheung).

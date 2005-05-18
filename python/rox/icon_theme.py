@@ -72,6 +72,11 @@ class IconTheme:
 	def __init__(self, name):
 		self.name = name
 
+		try:
+			self.gtk_theme=g.icon_theme_get_default()
+		except:
+			self.gtk_theme=None
+
 		self.indexes = []
 		for leaf in theme_dirs:
 			theme_dir = os.path.join(leaf, name)
@@ -108,6 +113,11 @@ class IconTheme:
 					iconname + '.' + extension)
 				if os.path.exists(filename):
 					return filename
+		return None
+
+	def load_icon(self, iconname, size, flags):
+		if self.gtk_theme:
+			return self.gtk_theme.load_icon(iconname, size, flags)
 		return None
 
 rox_theme = IconTheme('ROX')

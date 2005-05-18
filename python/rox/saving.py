@@ -32,24 +32,44 @@ def _read_xds_property(context, delete):
 		return retval[2]
 	return None
 	
-def image_for_type(type):
+def image_for_type(type, size=48, flags=0):
 	'Search <Choices> for a suitable icon. Returns a pixbuf, or None.'
 	from icon_theme import rox_theme
+	
 	media, subtype = type.split('/', 1)
+	at_size=hasattr(gdk, 'pixbuf_new_from_file_at_size')
+
 	path = choices.load('MIME-icons', media + '_' + subtype + '.png')
+	icon=None
 	if not path:
-		icon = 'mime-%s:%s' % (media, subtype)
+		icon_name = 'mime-%s:%s' % (media, subtype)
+
 		try:
-			path = rox_theme.lookup_icon(icon, 48)
+			icon=rox_theme.load_icon(icon_name, size, flags)
+			if icon:
+				return icon
+		except:
+			pass
+		
+		try:
+			path = rox_theme.lookup_icon(icon_name, 48)
 			if not path:
-				icon = 'mime-%s' % media
-				path = rox_theme.lookup_icon(icon, 48)
+				icon_name = 'mime-%s' % media
+				path = rox_theme.lookup_icon(icon_name, 48)
+
+			try:
+				icon=rox_theme.load_icon(icon_name, size,
+							 flags)
+				if icon:
+					return icon
+			except:
+				pass
 		except:
 			print "Error loading MIME icon"
 	if not path:
 		path = choices.load('MIME-icons', media + '.png')
 	if path:
-		if hasattr(gdk, 'pixbuf_new_from_file_at_size'):
+		if at_size:
 			return gdk.pixbuf_new_from_file_at_size(path, 48, 48)
 		else:
 			return gdk.pixbuf_new_from_file(path)
