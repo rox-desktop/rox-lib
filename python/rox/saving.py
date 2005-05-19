@@ -37,7 +37,6 @@ def image_for_type(type, size=48, flags=0):
 	from icon_theme import rox_theme
 	
 	media, subtype = type.split('/', 1)
-	at_size=hasattr(gdk, 'pixbuf_new_from_file_at_size')
 
 	path = choices.load('MIME-icons', media + '_' + subtype + '.png')
 	icon=None
@@ -45,32 +44,19 @@ def image_for_type(type, size=48, flags=0):
 		icon_name = 'mime-%s:%s' % (media, subtype)
 
 		try:
-			icon=rox_theme.load_icon(icon_name, size, flags)
-			if icon:
-				return icon
-		except:
-			pass
-		
-		try:
-			path = rox_theme.lookup_icon(icon_name, 48)
+			path=rox_theme.lookup_icon(icon_name, size, flags)
 			if not path:
 				icon_name = 'mime-%s' % media
-				path = rox_theme.lookup_icon(icon_name, 48)
+				path = rox_theme.lookup_icon(icon_name, size)
 
-			try:
-				icon=rox_theme.load_icon(icon_name, size,
-							 flags)
-				if icon:
-					return icon
-			except:
-				pass
 		except:
 			print "Error loading MIME icon"
+
 	if not path:
 		path = choices.load('MIME-icons', media + '.png')
 	if path:
-		if at_size:
-			return gdk.pixbuf_new_from_file_at_size(path, 48, 48)
+		if hasattr(gdk, 'pixbuf_new_from_file_at_size'):
+			return gdk.pixbuf_new_from_file_at_size(path, size, size)
 		else:
 			return gdk.pixbuf_new_from_file(path)
 	else:

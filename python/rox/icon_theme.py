@@ -68,14 +68,28 @@ class SubDir:
 class IconTheme:
 	"""Icon themes are located by searching through various directories. You can use an IconTheme
 	to convert an icon name into a suitable image."""
-	
+		
 	def __init__(self, name):
+		"""name = icon theme to load"""
 		self.name = name
 
-		try:
-			self.gtk_theme=g.icon_theme_get_default()
-		except:
-			self.gtk_theme=None
+	def lookup_icon(self, iconname, size, flags=0):
+		"""return path to required icon at specified size"""
+		pass
+
+	def load_icon(self, iconname, size, flags=0):
+		"""return gdk_pixbuf of icon"""
+		pass
+	
+class IconThemeROX(IconTheme):
+	"""Icon themes are located by searching through various directories. You can use an IconTheme
+	to convert an icon name into a suitable image.  This implementation is for PyGTK 2.0 or 2.2"""
+	
+	def __init__(self, name):
+		if not name:
+			name='ROX'
+
+		IconTheme.__init__(self, name)
 
 		self.indexes = []
 		for leaf in theme_dirs:
@@ -87,7 +101,7 @@ class IconTheme:
 				except:
 					rox.report_exception()
 	
-	def lookup_icon(self, iconname, size):
+	def lookup_icon(self, iconname, size, flags=0):
 		icon = self._lookup_this_theme(iconname, size)
 		if icon: return icon
 		# XXX: inherits
@@ -115,9 +129,46 @@ class IconTheme:
 					return filename
 		return None
 
-	def load_icon(self, iconname, size, flags):
-		if self.gtk_theme:
-			return self.gtk_theme.load_icon(iconname, size, flags)
+	def load_icon(self, iconname, size, flags=0):
+		path=self.lookup_icon(iconname, size, flags)
+		if path:
+			if hasattr(rox.g.gdk, 'pixbuf_new_from_file_at_size'):
+				return rox.g.gdk.pixbuf_new_from_file_at_size(path, size, size)
+			else:
+				return rox.g.gdk.pixbuf_new_from_file(path)
 		return None
 
-rox_theme = IconTheme('ROX')
+class IconThemeGTK(IconTheme):
+	"""Icon themes are located by searching through various directories. You can use an IconTheme
+	to convert an icon name into a suitable image.  This implementation is for PyGTK 2.4 or later"""
+		
+	def __init__(self, name):
+		IconTheme.__init__(self, name)
+
+		if not name:
+			self.gtk_theme=rox.g.icon_theme_get_default()
+		else:
+			self.gtk_theme=rox.g.IconTheme()
+			self.gtk_theme.set_custom_theme(name)
+
+
+	def lookup_icon(self, iconname, size, flags=0):
+		info=self.gtk_theme.lookup_icon(iconname, size, flags)
+		if info:
+			path=info.get_filename()
+			info.free()
+			return path
+		return None
+
+	def load_icon(self, iconname, size, flags=0):
+		return self.gtk_theme.load_icon(iconname, size, flags)
+
+def get_theme(name=None):
+	try:
+		theme=IconThemeGTK(name)
+	except:
+		theme=IconThemeROX(name)
+		
+	return theme
+	
+rox_theme = get_theme('ROX')

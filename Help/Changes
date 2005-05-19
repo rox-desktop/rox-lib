@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+19-May-2005
+~~~~~~~~~~~
+Clean up of icon theme handling (Stephen Watson).
+
 18-May-2005
 ~~~~~~~~~~~
 Compatability with PyGTK 2.4 retaining backwards compatability with
