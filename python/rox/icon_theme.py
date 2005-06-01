@@ -156,7 +156,8 @@ class IconThemeGTK(IconTheme):
 		info=self.gtk_theme.lookup_icon(iconname, size, flags)
 		if info:
 			path=info.get_filename()
-			info.free()
+			#if rox.g.pygtk_version[0]==2 and rox.g.pygtk_version[1]<4:
+			#	info.free()
 			return path
 		return None
 
