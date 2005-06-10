@@ -25,6 +25,7 @@ about filenames containing spaces, quotes, apostrophes, etc).
 """
 
 from rox import g, saving
+import gobject
 
 import os, sys, fcntl
 import signal
@@ -96,7 +97,6 @@ class Process:
 		os.close(stderr_w)
 		self.err_from_child = stderr_r
 
-		import gobject
 		if not hasattr(gobject, 'io_add_watch'):
 			self.tag = g.input_add_full(self.err_from_child,
 					g.gdk.INPUT_READ, self._got_errors)
@@ -162,7 +162,7 @@ class Process:
 			return True
 
 		os.close(self.err_from_child)
-		g.input_remove(self.tag)
+		gobject.source_remove(self.tag)
 		del self.tag
 
 		pid, status = os.waitpid(self.child, 0)

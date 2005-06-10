@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+10-Jun-2005
+~~~~~~~~~~~
+Fixed deprecation warning in processes.py (Thomas Leonard).
+
 01-Jun-2005
 ~~~~~~~~~~~
 Avoid apparent PyGTK bug related to icon themes, may result in a
