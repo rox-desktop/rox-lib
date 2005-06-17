@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+17-Jun-2005
+~~~~~~~~~~~
+Send GtkDeprecationWarnings to stdout, not stderr, so only developers will
+see them (Thomas Leonard).
+
 10-Jun-2005
 ~~~~~~~~~~~
 Fixed deprecation warning in processes.py (Thomas Leonard).

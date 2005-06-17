@@ -93,6 +93,14 @@ def _warn_old_findrox():
 			"old and may cause problems." % app_dir
 _warn_old_findrox()
 
+import warnings as _warnings
+def _stdout_warn(message, category, filename, lineno, file = None,
+		 showwarning = _warnings.showwarning):
+	if file is None and issubclass(category, g.DeprecationWarning):
+		file = sys.stdout
+	showwarning(message, category, filename, lineno, file)
+_warnings.showwarning = _stdout_warn
+
 # For backwards compatibility. Use True and False in new code.
 TRUE = True
 FALSE = False
