@@ -41,7 +41,7 @@ class Applet(g.Plug):
 		"""Use this as the third argument to Menu.popup()."""
 		x, y, mods = _root_window.get_pointer()
 		pos = self.socket.property_get('_ROX_PANEL_MENU_POS',
-						'STRING', True)
+						'STRING', False)
 		if pos: pos = pos[2]
 		if pos:
 			side, margin = pos.split(',')
