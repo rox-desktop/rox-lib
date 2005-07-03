@@ -9,7 +9,7 @@
   <About xml:lang="en">
     <Purpose>Shared library for ROX</Purpose>
     <Author>Thomas Leonard</Author>
-    <Version>2.0.0 (16-Apr-2005)</Version>
+    <Version>2.0.1 (PREVIEW)</Version>
     <License>GNU General Public License</License>
     <Homepage>http://rox.sourceforge.net</Homepage>
   </About>
