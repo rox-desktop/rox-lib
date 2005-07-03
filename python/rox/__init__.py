@@ -96,8 +96,7 @@ _warn_old_findrox()
 import warnings as _warnings
 def _stdout_warn(message, category, filename, lineno, file = None,
 		 showwarning = _warnings.showwarning):
-	if file is None and issubclass(category, g.DeprecationWarning):
-		file = sys.stdout
+	if file is None: file = sys.stdout
 	showwarning(message, category, filename, lineno, file)
 _warnings.showwarning = _stdout_warn
 
