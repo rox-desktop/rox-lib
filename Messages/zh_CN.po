@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 1.9.13\n"
-"POT-Creation-Date: 2005-05-04 22:30+HKT\n"
+"POT-Creation-Date: 2005-07-06 12:10+0200\n"
 "PO-Revision-Date: 2005-05-07 16:40+0200\n"
 "Last-Translator: Babyfai Cheung <babyfai1@yahoo.com.hk>\n"
 "Language-Team: none\n"
@@ -20,41 +20,38 @@ msgstr "复原(_R)"
 msgid "Restore all options to how they were when the window was opened"
 msgstr "当打开窗口后，载入已储存的设置"
 
-#: __init__.py:96
+#: __init__.py:72
 msgid ""
-"The pygtk2 package (1.99.13 or later) must be installed to use this "
-"program:\n"
-"http://rox.sourceforge.net/rox_lib.php3\n"
+"The pygtk2 package (2.0.0 or later) must be installed to use this program:\n"
+"http://rox.sourceforge.net/rox_lib.html\n"
 msgstr ""
-"pygtk2 (1.99.13 或以上版本) 必须安装"
-"，请参阅：\n"
+"pygtk2 (2.0.0 或以上版本) 必须安装，请参阅：\n"
 "http://rox.sourceforge.net/rox_lib.php3\n"
 
-#: __init__.py:124
+#: __init__.py:112
 msgid "Operation aborted at user's request"
 msgstr "操作被用户终结"
 
-#: __init__.py:131 debug.py:44
+#: __init__.py:119 debug.py:44
 msgid "Error"
 msgstr "错误"
 
-#: __init__.py:157
+#: __init__.py:145
 msgid "Information"
 msgstr "讯息"
 
-#: __init__.py:179
+#: __init__.py:167
 msgid "Confirm:"
 msgstr "确定："
 
-#: __init__.py:383
+#: __init__.py:371
 msgid ""
 "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "
 "package is not required)."
 msgstr ""
-"Python 'xml' 模组尚未安装，它是 ROX-Lib2 必需的。"
-"您可只安装 python-xmlbase (一个较小而基本的套件；完整的 PyXML "
-"版本是没有必要的)."
+"Python 'xml' 模组尚未安装，它是 ROX-Lib2 必需的。您可只安装 python-xmlbase "
+"(一个较小而基本的套件；完整的 PyXML 版本是没有必要的)."
 
 #: debug.py:34
 msgid "_Details"
@@ -91,7 +88,7 @@ msgstr "错误："
 #: fileutils.py:59
 msgid ""
 "Could not create directory `%s' because a file already exists at that path.\n"
-msgstr "未能创建目录 `%s'  目标早已存在.\n"
+msgstr "未能创建目录 `%s' 目标早已存在.\n"
 
 #: fileutils.py:65
 msgid "Could not create directory `%s'.\n"
@@ -113,7 +110,7 @@ msgstr ""
 "请确定您已安装 freedesktop.org 的 MIME 套件：\n"
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 
-#: mime_handler.py:236
+#: mime_handler.py:260
 msgid ""
 "Run actions can be changed by selecting a file of the appropriate type in "
 "the Filer and selecting the menu option 'Set Run Action...'"
@@ -121,40 +118,40 @@ msgstr ""
 "执行的动作可被改变为另一更合适的应用程式，请在 ROX-Filer 的菜单内 '设定执行"
 "档...' 中更改."
 
-#: mime_handler.py:244
+#: mime_handler.py:268
 msgid "run action"
 msgstr "执行动作"
 
-#: mime_handler.py:254
+#: mime_handler.py:278
 msgid "thumbnail handler"
 msgstr "缩图处理员"
 
-#: mime_handler.py:255
+#: mime_handler.py:279
 msgid ""
 "Thumbnail handlers provide support for creating thumbnail images of types of "
 "file.  The filer can generate thumbnails for most types of image (JPEG, PNG, "
 "etc.) but relies on helper applications for the others."
 msgstr ""
-"缩图处理员提供影像档的缩图显生功能，影像档包括所有 (JPEG, PNG, 等等.) 的文件，"
-"但某些类型或会依赖相关程式的安装."
+"缩图处理员提供影像档的缩图显生功能，影像档包括所有 (JPEG, PNG, 等等.) 的文"
+"件，但某些类型或会依赖相关程式的安装."
 
-#: mime_handler.py:271
+#: mime_handler.py:295
 msgid "type handler"
 msgstr "类型处理员"
 
-#: mime_handler.py:272
+#: mime_handler.py:296
 msgid ""
 "The application can handle files of these types.  Click on OK to add it to "
 "the SendTo menu for the type of file, and also the customized File menu."
 msgstr ""
-"此功能可帮助处理文件的类型，点击 '确定' 并将其加进到菜单的 '传送至' 以设定"
-"文件的类型，亦可在自定菜单内进行."
+"此功能可帮助处理文件的类型，点击 '确定' 并将其加进到菜单的 '传送至' 以设定文"
+"件的类型，亦可在自定菜单内进行."
 
-#: saving.py:145
+#: saving.py:151
 msgid "Delete temporary file '%s'?"
 msgstr "删除暂存文件 '%s'?"
 
-#: saving.py:321
+#: saving.py:327
 msgid ""
 "Drag the icon to a directory viewer\n"
 "(or enter a full pathname)"
@@ -162,38 +159,38 @@ msgstr ""
 "将图标拖放到目录内\n"
 "(或键入完整的路径)"
 
-#: saving.py:347
+#: saving.py:353
 msgid "Unnamed"
 msgstr "取消命名"
 
-#: saving.py:429
+#: saving.py:435
 msgid "'%s' already exists as a directory."
 msgstr "文件 '%s' 已存在并且为一个目录"
 
-#: saving.py:438
+#: saving.py:444
 msgid "Permissions changed from %o to %o."
 msgstr "权限改变从 %o 变为 %o."
 
-#: saving.py:441
+#: saving.py:447
 msgid "Size was %d bytes; now %d bytes."
-msgstr "大小原是 %d bytes, 现在是 %d bytes."
+msgstr "大小原是 %d bytes；现在是 %d bytes."
 
-#: saving.py:444
+#: saving.py:450
 msgid "Modification time changed."
 msgstr "修改时间已变更."
 
-#: saving.py:450
+#: saving.py:456
 msgid "File '%s' already exists -- overwrite it?"
 msgstr "文件 '%s' 已存在 -- 覆盖？"
 
-#: saving.py:451
+#: saving.py:457
 msgid "_Overwrite"
 msgstr "覆盖(_O)"
 
-#: saving.py:491
+#: saving.py:497
 msgid "_Discard"
 msgstr "丢弃(_D)"
 
-#: saving.py:501
+#: saving.py:507
 msgid "Save As:"
 msgstr "储存为："
