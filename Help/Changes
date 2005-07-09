@@ -3,7 +3,7 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
-17-Jun-2005
+17-Jun-2005 (Release 2.0.1)
 ~~~~~~~~~~~
 Send deprecation warnings to stdout, not stderr, so only developers will
 see them (Thomas Leonard).
