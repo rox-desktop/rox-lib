@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+25-Jul-2005
+~~~~~~~~~~~
+Bugfix: Installing MIME handlers under the XDG base dir system didn't 
+        work (Stephen Watson).
+
 17-Jun-2005 (Release 2.0.1)
 ~~~~~~~~~~~
 Send deprecation warnings to stdout, not stderr, so only developers will

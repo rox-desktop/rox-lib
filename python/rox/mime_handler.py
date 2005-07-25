@@ -29,8 +29,10 @@ def load_path(site, dir, leaf):
 
 def save_path(site, dir, leaf, create=1):
     parent=basedir.save_config_path(site, dir)
+
     if os.path.isdir(parent):
-        path=basedir.save_config_path(site, dir, leaf)
+        path=basedir.save_config_path(site, dir)
+        path=os.path.join(path, leaf)
     else:
         path=choices.save(dir, leaf, create)
 
