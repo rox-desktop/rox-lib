@@ -3,7 +3,7 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
-25-Jul-2005
+25-Jul-2005 (Release 2.0.2)
 ~~~~~~~~~~~
 Bugfix: Installing MIME handlers under the XDG base dir system didn't 
         work (Stephen Watson).
