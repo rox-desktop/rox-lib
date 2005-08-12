@@ -14,7 +14,9 @@ def fn():
 
 	root.finish()
 
-tasks.run(fn())
+tasks.Task(fn())
+
+See rox.suchild for a list of operations available on the 'root' object.
 """
 
 import os, sys
