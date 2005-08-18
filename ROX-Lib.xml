@@ -1,0 +1,13 @@
+<?xml version='1.0'?>
+<interface xmlns='http://zero-install.sourceforge.net/2004/injector/interface'
+	   uri='http://rox.sourceforge.net/2005/interfaces/ROX-Lib'
+	   main='ROX-Lib2/AppRun'>
+  <name>ROX-Lib2</name>
+  <summary>library for ROX applications</summary>
+  <description>
+    ROX-Lib contains shared code used by most of the ROX applications.
+  </description>
+  <icon type='image/png' href='http://rox.sourceforge.net/Icons/ROX-Lib.png'/>
+
+  <implementation version="2.0.2.0" id=".." stability='testing'/>
+</interface>

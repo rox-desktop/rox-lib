@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+18-Aug-2005
+~~~~~~~~~~~
+Added ROX-Lib.xml file, which makes it easy to register a CVS copy of ROX-Lib
+with the 0launch, using '0launch --add-feed' (Thomas Leonard).
+
 25-Jul-2005 (Release 2.0.2)
 ~~~~~~~~~~~
 Bugfix: Installing MIME handlers under the XDG base dir system didn't 
