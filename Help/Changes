@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+20-Aug-2005
+~~~~~~~~~~~
+If 'xterm' isn't available, give a sensible error message when using the
+su module (Thomas Leonard; reported by Vincent Lefevre).
+
 18-Aug-2005
 ~~~~~~~~~~~
 Added ROX-Lib.xml file, which makes it easy to register a CVS copy of ROX-Lib

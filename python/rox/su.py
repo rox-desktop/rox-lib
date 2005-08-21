@@ -39,14 +39,22 @@ class SuProxyMaker(tasks.Blocker):
 		to_child = _Pipe()
 		from_child = _Pipe()
 
+		exec_term = get_term_command()
+
 		if os.fork() == 0:
 			try:
 				try:
 					to_child.writeable.close()
 					from_child.readable.close()
-					_exec_child(message,
-						    from_child.writeable,
-						    to_child.readable)
+					to_parent = from_child.writeable
+					from_parent = to_child.readable
+					fcntl.fcntl(to_parent, fcntl.F_SETFD, 0)
+					fcntl.fcntl(from_parent, fcntl.F_SETFD, 0)
+					import pwd
+					exec_term(message,
+						    to_parent,
+						    from_parent,
+						    pwd.getpwuid(0)[0])
 				except:
 					traceback.print_exc()
 			finally:
@@ -70,10 +78,17 @@ class SuProxyMaker(tasks.Blocker):
 		self.blocker = None
 		return self._root
 
-def _exec_child(message, to_parent, from_parent):
-	fcntl.fcntl(to_parent, fcntl.F_SETFD, 0)
-	fcntl.fcntl(from_parent, fcntl.F_SETFD, 0)
-	import pwd
+def get_term_command():
+	def present_in_PATH(command):
+		for x in os.environ['PATH'].split(':'):
+			if os.access(os.path.join(x, command), os.X_OK):
+				return True
+		return False
+	if present_in_PATH('xterm'):
+		return _exec_xterm
+	raise Exception('No suitable terminal emulator could be found. Try installing "xterm"')
+
+def _exec_xterm(message, to_parent, from_parent, root_user):
 	os.execlp('xterm', 'xterm',
 		'-geometry', '40x10',
 		'-title', 'Enter password',
@@ -83,7 +98,7 @@ def _exec_child(message, to_parent, from_parent):
 		sys.executable,
 		str(to_parent.fileno()),
 		str(from_parent.fileno()),
-		pwd.getpwuid(0)[0])	# Name of UID 0 (eg "root")
+		root_user)
 
 class _Pipe:
 	"""Contains Python file objects for two pipe ends.
