@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+30-Aug-2005
+~~~~~~~~~~~
+If pygtk is found, but not gtk, give a better error (Thomas Leonard; reported
+by Albert).
+
 20-Aug-2005
 ~~~~~~~~~~~
 If 'xterm' isn't available, give a sensible error message when using the

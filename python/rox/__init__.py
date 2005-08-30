@@ -74,7 +74,11 @@ except:
 		   'http://rox.sourceforge.net/rox_lib.html\n'))
 	raise
 
-import gtk; g = gtk	# Don't syntax error for python1.5
+try:
+	import gtk; g = gtk	# Don't syntax error for python1.5
+except ImportError:
+	sys.stderr.write(_('Broken pygtk installation: found pygtk (%s), but not gtk!\n') % pygtk.__file__)
+	raise
 assert g.Window		# Ensure not 1.2 bindings
 
 # Put argv back the way it was, now that Gtk has initialised
