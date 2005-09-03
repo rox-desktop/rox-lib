@@ -3,6 +3,12 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+02-Sep-2005
+~~~~~~~~~~~
+Added launch module, which allows running programs easily using the injector,
+and made filer.py use 0launch if available (Thomas Leonard; requested by
+Christopher Arndt).
+
 30-Aug-2005
 ~~~~~~~~~~~
 If pygtk is found, but not gtk, give a better error (Thomas Leonard; reported

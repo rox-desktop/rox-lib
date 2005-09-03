@@ -1,5 +1,7 @@
 """An easy way to get ROX-Filer to do things."""
 
+rox_filer_interface = "http://rox.sourceforge.net/2005/interfaces/ROX-Filer"
+
 # Note: do a double-fork in case it's an old version of the filer
 # and doesn't automatically background itself.
 def _spawn(argv):
@@ -27,11 +29,20 @@ def spawn_rox(args):
 	"""Run rox (either from PATH or through Zero Install) with the
 	given arguments."""
 	import os.path
-	for bindir in os.environ.get('PATH', '').split(':'):
+	binpath = os.environ.get('PATH', '').split(':')
+	# Try to run with '0launch'
+	for bindir in binpath:
+		path = os.path.join(bindir, '0launch')
+		if os.path.isfile(path):
+			_spawn(('0launch', rox_filer_interface) + args)
+			return
+	# Try to run 'rox'
+	for bindir in binpath:
 		path = os.path.join(bindir, 'rox')
 		if os.path.isfile(path):
 			_spawn(('rox',) + args)
 			return
+	# Try to run through the zero install filesystem
 	if os.path.exists('/uri/0install/rox.sourceforge.net'):
 		_spawn(('/bin/0run', 'rox.sourceforge.net/rox 2002-01-01') + args)
 	else:
