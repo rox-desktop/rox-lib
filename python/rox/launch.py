@@ -1,6 +1,7 @@
 """Launch programs using 0launch"""
 
 import os
+from rox import _
 
 class InjectorNotInstalled(Exception):
 	uri = None
