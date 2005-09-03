@@ -103,10 +103,11 @@ def show_exception(type, value, tb, auto_details = False):
 
 class ExceptionExplorer(g.Frame):
 	"""Displays details from a traceback object."""
-	FILE = 0
+	LEAF = 0
 	LINE = 1
 	FUNC = 2
 	CODE = 3
+	FILE = 4
 	def __init__(self, tb):
 		g.Frame.__init__(self, _('Stack trace (innermost last)'))
 
@@ -122,13 +123,14 @@ class ExceptionExplorer(g.Frame):
 		self.tb = tb
 		
 		self.model = g.ListStore(gobject.TYPE_STRING, gobject.TYPE_INT,
-					 gobject.TYPE_STRING, gobject.TYPE_STRING)
+					 gobject.TYPE_STRING, gobject.TYPE_STRING,
+					 gobject.TYPE_STRING)
 		tree = g.TreeView(self.model)
 		inner.add(tree)
 
 		cell = g.CellRendererText()
 
-		column = g.TreeViewColumn('File', cell, text = ExceptionExplorer.FILE)
+		column = g.TreeViewColumn('File', cell, text = ExceptionExplorer.LEAF)
 		cell.set_property('xalign', 1)
 		tree.append_column(column)
 
@@ -162,13 +164,14 @@ class ExceptionExplorer(g.Frame):
 			name = co.co_name
 			line = linecache.getline(filename, lineno).strip()
 
-			filename = os.path.basename(filename)
+			leafname = os.path.basename(filename)
 			
 			new = self.model.append()
-			self.model.set(new, ExceptionExplorer.FILE, filename,
+			self.model.set(new, ExceptionExplorer.LEAF, leafname,
 					    ExceptionExplorer.LINE, lineno,
 					    ExceptionExplorer.FUNC, name,
-					    ExceptionExplorer.CODE, line)
+					    ExceptionExplorer.CODE, line,
+					    ExceptionExplorer.FILE, filename)
 
 		def selected_frame():
 			selected = sel.get_selected()
@@ -189,6 +192,14 @@ class ExceptionExplorer(g.Frame):
 				new = vars.append()
 				vars.set(new, 0, str(n), 1, value)
 		sel.connect('changed', select_frame)
+		def show_source(tree, path, column):
+			line = self.model[path][ExceptionExplorer.LINE]
+			file = self.model[path][ExceptionExplorer.FILE]
+			import launch
+			launch.launch('http://rox.sourceforge.net/2005/interfaces/Edit',
+					'-l%d' % line, file)
+			
+		tree.connect('row-activated', show_source)
 
 		# Area to show the local variables
 		tree = g.TreeView(vars)

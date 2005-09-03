@@ -56,6 +56,9 @@ frame. The stack trace also shows the file and line number of the instruction
 in each function that was being executed (for all but the last one, this is the
 instruction that called the function on the line below).
 
+Double-click on a line in the stack trace to load the source file into Edit,
+with the cursor on that line.
+
 If after looking at all this information you still don't understand what the
 problem is, click on Bug Report and save the stack trace somewhere, then email
 it to the author of the program.
