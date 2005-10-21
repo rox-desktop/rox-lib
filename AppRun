@@ -16,8 +16,8 @@ find it, such as ~/lib or /usr/local/lib.\n\n\
 ROX-Lib version: %s\n\
 PyGTK version: %s\n\
 GTK version: %s\n\n\
-PyGTK location:\n%s" %
-(rox.roxlib_version, g.pygtk_version, g.gtk_version, dirname(g.__file__))))
+PyGTK location:\n%s") %
+(rox.roxlib_version, g.pygtk_version, g.gtk_version, dirname(g.__file__)))
 box.add_button(g.STOCK_HELP, g.RESPONSE_HELP)
 box.set_title('ROX-Lib')
 box.set_position(g.WIN_POS_CENTER)

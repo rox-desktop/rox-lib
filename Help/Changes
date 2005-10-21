@@ -3,11 +3,17 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+21-Oct-2005
+~~~~~~~~~~~
+Made message in AppRun translatable (Andras Mohari).
+
 02-Sep-2005
 ~~~~~~~~~~~
 Added launch module, which allows running programs easily using the injector,
 and made filer.py use 0launch if available (Thomas Leonard; requested by
 Christopher Arndt).
+Double-click on a line in the stack-trace display of an error to open the
+source file in Edit (Thomas Leonard).
 
 30-Aug-2005
 ~~~~~~~~~~~
