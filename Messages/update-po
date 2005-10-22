@@ -3,7 +3,7 @@
 echo Extracting messages from source files...
 echo
 
-(cd ../python/rox; pygettext *.py)
+(cd ../python/rox; pygettext *.py ../../AppRun)
 
 echo
 echo Updating all .po files...

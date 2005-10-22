@@ -77,7 +77,7 @@ class OptionsBox(g.Dialog):
 	options = None	# The OptionGroup we are editing
 	revert = None	# Option -> old value
 	handlers = None	# Option -> (get, set)
-	_ = None	# Translation function (application's, not ROX-Lib's)
+	trans = None	# Translation function (application's, not ROX-Lib's)
 
 	def __init__(self, options_group, options_xml, translation = None):
 		"""options_xml is an XML file, usually <app_dir>/Options.xml,
@@ -111,7 +111,7 @@ class OptionsBox(g.Dialog):
 				translation = __main__.__builtins__._
 			else:
 				translation = lambda x: x
-		self._ = translation
+		self.trans = translation
 
 		g.Dialog.__init__(self)
 		self.tips = g.Tooltips()
@@ -294,7 +294,7 @@ class OptionsBox(g.Dialog):
 
 		titer = self.sections.append(parent)
 		self.sections.set(titer,
-				0, self._(section.getAttribute('title')),
+				0, self.trans(section.getAttribute('title')),
 				1, self.notebook.page_num(page))
 		for node in section.childNodes:
 			if node.nodeType != Node.ELEMENT_NODE:
@@ -312,7 +312,7 @@ class OptionsBox(g.Dialog):
 		label = node.getAttribute('label')
 		name = node.getAttribute('name')
 		if label:
-			label = self._(label)
+			label = self.trans(label)
 
 		old_size_group = self.current_size_group
 		sg = node.getAttributeNode('size-group')
@@ -355,7 +355,7 @@ class OptionsBox(g.Dialog):
 		else:
 			data = None
 		if data:
-			self.tips.set_tip(widget, self._(data))
+			self.tips.set_tip(widget, self.trans(data))
 	
 	def get_size_group(self, name):
 		"""Return the GtkSizeGroup for this name, creating one
@@ -387,7 +387,7 @@ class OptionsBox(g.Dialog):
 
 	def build_label(self, node, label):
 		help_flag = int(node.getAttribute('help') or '0')
-		widget = self.make_sized_label(self._(data(node)))
+		widget = self.make_sized_label(self.trans(data(node)))
 		if help_flag:
 			widget.set_alignment(0, 0.5)
 		else:
@@ -548,7 +548,7 @@ class OptionsBox(g.Dialog):
 		else:
 			step = 1
 		if unit:
-			unit = self._(unit)
+			unit = self.trans(unit)
 
 		hbox = g.HBox(False, 4)
 		if label:
@@ -599,7 +599,7 @@ class OptionsBox(g.Dialog):
 		for item in node.getElementsByTagName('item'):
 			assert item.hasAttribute('value')
 			value = item.getAttribute('value')
-			label_item = self._(item.getAttribute('label')) or value
+			label_item = self.trans(item.getAttribute('label')) or value
 
 			menu.append(g.MenuItem(label_item))
 			values.append(value)
@@ -630,7 +630,7 @@ class OptionsBox(g.Dialog):
 		values = []
 		button = None
 		for radio in node.getElementsByTagName('radio'):
-			label = self._(radio.getAttribute('label'))
+			label = self.trans(radio.getAttribute('label'))
 			button = g.RadioButton(button, label)
 			self.may_add_tip(button, radio)
 			radios.append(button)
@@ -680,7 +680,7 @@ class OptionsBox(g.Dialog):
 			hbox.pack_start(widget, False, True, 0)
 		
 		if end:
-			hbox.pack_end(self.make_sized_label(_(end),
+			hbox.pack_end(self.make_sized_label(self.trans(end),
 							suffix = '-unit'),
 					False, True, 0)
 		
