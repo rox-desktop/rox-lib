@@ -4,32 +4,33 @@ each Menu once, and attach it to windows as required.
 
 Example:
 
-from rox.Menu import Menu, set_save_name
+from rox.Menu import Menu, set_save_name, Action, Separator, SubMenu
 
 set_save_name('Edit')
 
 menu = Menu('main', [
-	('/File',		'',		'<Branch>'),
-	('/File/Save',		'save',		''),
-	('/File/Open Parent',	'up',		''),
-	('/File/Close',		'close',	''),
-	('/File/',		'',		'<Separator>'),
-	('/File/New',		'new',		''),
-	('/Edit',		'',		'<Branch>'),
-	('/Edit/Undo',		'undo',		''),
-	('/Edit/Redo',		'redo',		''),
-	('/Edit/',		'',		'<Separator>'),
-	('/Edit/Search...',	'search',	''),
-	('/Edit/Goto line...',	'goto',		''),
-	('/Edit/',		'',		'<Separator>'),
-	('/Edit/Process...',	'process',	''),
-	('/Options',		'show_options', ''),
-	('/Help',		'help',		'<StockItem>',	'F1', g.STOCK_HELP),
+	SubMenu('File', Menu([
+	  Action('Save',		'save'),
+	  Action('Open Parent',	        'up'),
+	  Action('Close',		'close'),
+	  Separator(),
+	  Action('New',		        'new')
+	])),
+	SubMenu('/Edit', Menu([
+	  Action('Undo',		'undo'),
+	  Action('Redo',		'redo'),
+	  Separator(),
+	  Action('Search...',	        'search'),
+	  Action('Goto line...',	'goto'),
+	  Separator(),
+	  Action('Process...',	        'process'),
+	])),
+	Action('Options',		'show_options'),
+	Action('Quit',		        'show_options', 'F1', stock=g.STOCK_HELP),
 	])
 
-There is also a new syntax, supported from 1.9.13, where you pass instances of MenuItem
-instead of tuples to the Menu constructor. Be sure to require version 1.9.13 if
-using this feature.
+There is also an older syntax, where you pass tuples of strings 
+to the Menu constructor. This has not been required since 1.9.13.
 """
 
 from __future__ import generators

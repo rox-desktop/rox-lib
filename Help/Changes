@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+05-Nov-2005
+~~~~~~~~~~~
+Changed the doc string in Menu.py to prefer the new MenuItem based method
+of defining menus not the old tuple method (Stephen Watson).
+
 22-Oct-2005
 ~~~~~~~~~~~
 Added Hungarian translation (Andras Mohari).
