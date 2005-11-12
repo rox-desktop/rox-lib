@@ -369,6 +369,37 @@ def edit_options(options_file = None):
 	_options_box.connect('destroy', closed)
 	_options_box.open()
 
+def isappdir(path):
+	"""Return True if the path refers to a valid ROX AppDir.
+	The tests are:
+	- path is a directory
+	- path is not world writable
+	- path contains an executable AppRun
+	- path/AppRun is not world writable
+	- path and path/AppRun are owned by the same user."""
+
+	if not os.path.isdir(path):
+		return False
+	run=os.path.join(path, 'AppRun')
+	if not os.path.isfile(run) and not os.path.islink(run):
+		return False
+	try:
+		spath=os.stat(path)
+		srun=os.stat(run)
+	except OSError:
+		return False
+
+	if not os.access(run, os.X_OK):
+		return False
+
+	if spath.st_mode & os.path.stat.S_IWOTH:
+		return False
+
+	if srun.st_mode & os.path.stat.S_IWOTH:
+		return False
+
+	return spath.st_uid==srun.st_uid
+
 try:
 	import xml
 except:
