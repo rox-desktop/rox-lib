@@ -3,6 +3,12 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+12-Nov-2005
+~~~~~~~~~~~
+Added rox.isappdir() function to test the validity of an AppDir (Stephen
+Watson).
+EXPERIMENTAL code for installing MIME handlers via 0launch (Stephen Watson).
+
 05-Nov-2005
 ~~~~~~~~~~~
 Changed the doc string in Menu.py to prefer the new MenuItem based method

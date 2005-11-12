@@ -219,9 +219,35 @@ class InstallList(rox.Dialog):
 
         return uninstall
 
+def _run_by_injector():
+    """Internal function."""
+    try:
+        from zeroinstall.injector import basedir
+        for d in basedir.xdg_cache_dirs:
+            if rox._roxlib_dir.find(d)==0:
+                # ROX-Lib is in a cache dir, we are probably being run by the
+                # injector
+                return True
+    except:
+        pass
+    return False
 
+def _install_at(path, app_dir, injint):
+    """Internal function.  Set one type."""
+    tmp=path+'.tmp%d' % os.getpid()
+    if injint and _run_by_injector(app_dir):
+        f=file(tmp, 'w')
+        f.write('#!/bin/sh\n')
+        f.write('0launch %s\n' % injint)
+        f.close()
+        os.chmod(tmp, 0755)
+    else:
+        os.symlink(app_dir, tmp)
+        
+    os.rename(tmp, path)
+   
 def _install_type_handler(types, dir, desc, application=None, overwrite=True,
-                          info=None):
+                          info=None, injint=None):
     """Internal function.  Does the work of setting MIME-types or MIME-thumb"""
     if len(types)<1:
 	    return
@@ -245,8 +271,7 @@ def _install_type_handler(types, dir, desc, application=None, overwrite=True,
 
 		sname=save_path(SITE, dir,
 			      '%s_%s' % (mime_type.media, mime_type.subtype))
-		os.symlink(application, sname+'.tmp')
-		os.rename(sname+'.tmp', sname)
+		_install_at(sname, application, injint)
 
             types=win.get_uninstall()
 
@@ -260,7 +285,7 @@ def _install_type_handler(types, dir, desc, application=None, overwrite=True,
             win.destroy()
 
 run_action_msg=_("""Run actions can be changed by selecting a file of the appropriate type in the Filer and selecting the menu option 'Set Run Action...'""")
-def install_run_action(types, application=None, overwrite=True):
+def install_run_action(types, application=None, overwrite=True, injint=None):
 	"""Install application as the run action for 1 or more types.
 	application should be the full path to the AppDir.
 	If application is None then it is the running program which will
@@ -268,9 +293,10 @@ def install_run_action(types, application=None, overwrite=True):
 	not be changed.  The user is asked to confirm the setting for each
 	type."""
 	_install_type_handler(types, "MIME-types", _("run action"),
-			     application, overwrite, run_action_msg)
+			     application, overwrite, run_action_msg,
+                              injint)
 
-def install_thumbnailer(types, application=None, overwrite=True):
+def install_thumbnailer(types, application=None, overwrite=True, injint=None):
 	"""Install application as the thumbnail handler for 1 or more types.
 	application should be the full path to the AppDir.
 	If application is None then it is the running program which will
@@ -278,9 +304,10 @@ def install_thumbnailer(types, application=None, overwrite=True):
 	not be changed.  The user is asked to confirm the setting for each
 	type."""
 	_install_type_handler(types, "MIME-thumb", _("thumbnail handler"),
-			     application, overwrite, _("""Thumbnail handlers provide support for creating thumbnail images of types of file.  The filer can generate thumbnails for most types of image (JPEG, PNG, etc.) but relies on helper applications for the others."""))
+			     application, overwrite, _("""Thumbnail handlers provide support for creating thumbnail images of types of file.  The filer can generate thumbnails for most types of image (JPEG, PNG, etc.) but relies on helper applications for the others."""),
+                              injint)
 
-def install_send_to_types(types, application=None):
+def install_send_to_types(types, application=None, injint=None):
 	"""Install application in the SendTo menu for 1 or more types.
 	application should be the full path to the AppDir.
 	If application is None then it is the running program which will
@@ -296,7 +323,7 @@ def install_send_to_types(types, application=None):
 		
 	win=InstallList(application, _('type handler'), 'SendTo', types,
 			_("""The application can handle files of these types.  Click on OK to add it to the SendTo menu for the type of file, and also the customized File menu."""),
-			check=False)
+			check=False, injint=injint)
 
 	if win.run()!=rox.g.RESPONSE_ACCEPT:
 		win.destroy()
@@ -310,8 +337,7 @@ def install_send_to_types(types, application=None):
 		sname=save_path(SITE, 'SendTo/.%s_%s' %  (mime_type.media,
 							    mime_type.subtype),
 					  win.aname)
-		os.symlink(application, sname+'.tmp')
-		os.rename(sname+'.tmp', sname)
+		_install_at(sname, application, injint)
 	
 	types=win.get_uninstall()
 
@@ -325,11 +351,12 @@ def install_send_to_types(types, application=None):
 	
 	win.destroy()
 	
-def install_from_appinfo(appdir = rox.app_dir):
+def install_from_appinfo(appdir = rox.app_dir, injint=None):
 	"""Read the AppInfo file from the AppDir and perform the installations
 	indicated. The elements to use are <CanThumbnail> and <CanRun>, each containing
 	a number of <MimeType type='...'/> elements.
 	appdir - Path to application (defaults to current app)
+        injint - Zero install injector interface, or None if none
 	"""
 	import rox.AppInfo
 
@@ -339,9 +366,9 @@ def install_from_appinfo(appdir = rox.app_dir):
 	can_run = ainfo.getCanRun()
 	can_thumbnail = ainfo.getCanThumbnail()
 	if can_run or can_thumbnail:
-		install_run_action(can_run, appdir)
-		install_thumbnailer(can_thumbnail, appdir)
-                install_send_to_types(can_run, appdir)
+		install_run_action(can_run, appdir, injint)
+		install_thumbnailer(can_thumbnail, appdir, injint)
+                install_send_to_types(can_run, appdir, injint)
 	else:
 		raise Exception('Internal error: No actions found in %s. '
 				'Check your namespaces!' % app_info_path)
