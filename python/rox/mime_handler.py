@@ -28,9 +28,9 @@ def load_path(site, dir, leaf):
     return path
 
 def save_path(site, dir, leaf, create=1):
-    parent=basedir.save_config_path(site, dir)
+    filer=basedir.load_first_config(SITE, 'ROX-Filer')
 
-    if os.path.isdir(parent):
+    if filer and os.path.isdir(filer):
         path=basedir.save_config_path(site, dir)
         path=os.path.join(path, leaf)
     else:
@@ -224,10 +224,14 @@ def _run_by_injector():
     try:
         from zeroinstall.injector import basedir
         for d in basedir.xdg_cache_dirs:
-            if rox._roxlib_dir.find(d)==0:
+            if rox.app_dir.find(d)==0:
+                # Applicaion is in a cache dir
+                return True
+            elif rox._roxlib_dir.find(d)==0:
                 # ROX-Lib is in a cache dir, we are probably being run by the
                 # injector
                 return True
+            
     except:
         pass
     return False
@@ -243,7 +247,9 @@ def _install_at(path, app_dir, injint):
         os.chmod(tmp, 0755)
     else:
         os.symlink(app_dir, tmp)
-        
+
+    if os.access(path, os.F_OK):
+        os.remove(path)
     os.rename(tmp, path)
    
 def _install_type_handler(types, dir, desc, application=None, overwrite=True,

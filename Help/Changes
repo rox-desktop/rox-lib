@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+25-Nov-2005
+~~~~~~~~~~~
+Better detection of the MIME-types/MIME-thumb location when installing 
+type handlers (Stephen Watson).
+
 12-Nov-2005
 ~~~~~~~~~~~
 Added rox.isappdir() function to test the validity of an AppDir (Stephen
