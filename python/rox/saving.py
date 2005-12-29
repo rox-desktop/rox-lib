@@ -15,6 +15,17 @@ gdk = g.gdk
 TARGET_XDS = 0
 TARGET_RAW = 1
 
+def _chmod(path, mode):
+	"""Like os.chmod, except that permission denied errors are not fatal
+	(for FAT partitions)."""
+	try:
+		os.chmod(path, mode)
+	except OSError, ex:
+		if ex.errno != 1:
+			raise
+		# Log the error and continue.
+		print >>sys.stderr, "Warning: Failed to set permissions:", ex
+
 def _write_xds_property(context, value):
 	win = context.source_window
 	if value:
@@ -175,11 +186,11 @@ class Saveable:
 			save_mode = self.save_mode
 		
 		if save_mode is not None:
-			os.chmod(path, save_mode)
+			_chmod(path, save_mode)
 		else:
 			mask = os.umask(0077)	# Get the current umask
 			os.umask(mask)		# Set it back how it was
-			os.chmod(path, 0666 & ~mask)
+			_chmod(path, 0666 & ~mask)
 	
 	def save_done(self):
 		"""Time to close the savebox. Default method does nothing."""

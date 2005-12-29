@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+29-Dec-2005
+~~~~~~~~~~~
+When saving a file to a FAT filesystem, the chmod would fail. Log a warning
+instead of aborting (Thomas Leonard; reported by QS Computing).
+
 25-Nov-2005
 ~~~~~~~~~~~
 Better detection of the MIME-types/MIME-thumb location when installing 
