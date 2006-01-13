@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+13-Jan-2006
+~~~~~~~~~~~
+Save box now selects icon from same icon theme as ROX-Filer (Stephen Watson).
+
 29-Dec-2005
 ~~~~~~~~~~~
 When saving a file to a FAT filesystem, the chmod would fail. Log a warning

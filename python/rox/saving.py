@@ -45,7 +45,7 @@ def _read_xds_property(context, delete):
 	
 def image_for_type(type, size=48, flags=0):
 	'Search <Choices> for a suitable icon. Returns a pixbuf, or None.'
-	from icon_theme import rox_theme
+	from icon_theme import users_theme
 	
 	media, subtype = type.split('/', 1)
 
@@ -55,10 +55,10 @@ def image_for_type(type, size=48, flags=0):
 		icon_name = 'mime-%s:%s' % (media, subtype)
 
 		try:
-			path=rox_theme.lookup_icon(icon_name, size, flags)
+			path=users_theme.lookup_icon(icon_name, size, flags)
 			if not path:
 				icon_name = 'mime-%s' % media
-				path = rox_theme.lookup_icon(icon_name, size)
+				path = users_theme.lookup_icon(icon_name, size)
 
 		except:
 			print "Error loading MIME icon"

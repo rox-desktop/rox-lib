@@ -225,11 +225,11 @@ class OptionGroup:
 		"""Remove a callback added with add_notify()."""
 		self.callbacks.remove(callback)
 	
-	def notify(self):
+	def notify(self, warn_unused=True):
 		"""Call this after creating any new options or changing their values."""
 		if not self.too_late_for_registrations:
 			self.too_late_for_registrations = 1
-			if self.pending:
+			if self.pending and warn_unused:
 				print "Warning: Some options loaded but unused:"
 				for (key, value) in self.pending.iteritems():
 					print "%s=%s" % (key, value)

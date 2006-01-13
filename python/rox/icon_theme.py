@@ -173,3 +173,11 @@ def get_theme(name=None):
 	return theme
 	
 rox_theme = get_theme('ROX')
+try:
+	from rox import options
+	ogrp=options.OptionGroup('ROX-Filer', 'Options', 'rox.sourceforge.net')
+	theme_name = options.Option('icon_theme', 'ROX', ogrp)
+	ogrp.notify(warn_unused=False)
+	users_theme = get_theme(theme_name.value)
+except:
+	users_theme = rox_theme
