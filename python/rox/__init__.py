@@ -180,8 +180,12 @@ def report_exception():
 	when the user closes the box. This is useful in the 'except' clause
 	of a 'try' block. Uses rox.debug.show_exception()."""
 	type, value, tb = sys.exc_info()
+	_excepthook(type, value, tb)
+
+def _excepthook(type, value, tb):
 	import debug
 	debug.show_exception(type, value, tb)
+sys.excepthook = _excepthook
 
 _icon_path = os.path.join(app_dir, '.DirIcon')
 _window_icon = None
