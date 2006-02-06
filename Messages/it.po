@@ -1,11 +1,11 @@
 # ROX-Lib2 Italian Translation.
-# Copyright @ 2005 Free Software Foundation, Inc.
-# Current translator: Yuri Bongiorno http://yuri.webhop.org, 2005.
+# Copyright @ 2006 Free Software Foundation, Inc.
+# Current translator: Yuri Bongiorno http://yuri.webhop.org, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: ROX-Lib2 2.0.0\n"
-"POT-Creation-Date: 2005-05-26 21:20+CEST\n"
-"PO-Revision-Date: 2005-01-18 16:40+0200\n"
+"Project-Id-Version: ROX-Lib2 2.0.2\n"
+"POT-Creation-Date: 2006-02-05 21:44+CET\n"
+"PO-Revision-Date: 2006-02-05 21:44+0200\n"
 "Last-Translator: Yuri Bongiorno http://yuri.webhop.org\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -29,23 +29,23 @@ msgstr ""
 "(2.0.0 o successivo):\n"
 "http://rox.sourceforge.net/rox_lib.html\n"
 
-#: __init__.py:105
+#: __init__.py:112
 msgid "Operation aborted at user's request"
 msgstr "Operazione interrotta per richiesta dell'utente"
 
-#: __init__.py:112 debug.py:44
+#: __init__.py:119 debug.py:44
 msgid "Error"
 msgstr "Errore"
 
-#: __init__.py:138
+#: __init__.py:145
 msgid "Information"
 msgstr "Informazione"
 
-#: __init__.py:160
+#: __init__.py:167
 msgid "Confirm:"
 msgstr "Conferma:"
 
-#: __init__.py:364
+#: __init__.py:371
 msgid ""
 "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "
@@ -114,7 +114,27 @@ msgstr ""
 "Assicurarsi di avere il pacchetto shared MIME di freedesktop.org:\n"
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 
-#: mime_handler.py:260
+#: mime_handler.py:85
+msgid "Type"
+msgstr "Tipo"
+
+#: mime_handler.py:90
+msgid "Name"
+msgstr "Nome"
+
+#: mime_handler.py:96
+msgid "Current"
+msgstr "Attuale"
+
+#: mime_handler.py:103
+msgid "Install?"
+msgstr "Installa?"
+
+#: mime_handler.py:109
+msgid "Uninstall?"
+msgstr "Disinstalla?"
+
+#: mime_handler.py:262
 msgid ""
 "Run actions can be changed by selecting a file of the appropriate type in "
 "the Filer and selecting the menu option 'Set Run Action...'"
@@ -122,15 +142,15 @@ msgstr ""
 "L'azione predefinita può essere cambiata selezionando un file di tipo "
 "appropriato nel filer e poi il menù «Imposta azione...»"
 
-#: mime_handler.py:268
+#: mime_handler.py:270
 msgid "run action"
 msgstr "esegui azione"
 
-#: mime_handler.py:278
+#: mime_handler.py:280
 msgid "thumbnail handler"
 msgstr "gestore di miniature"
 
-#: mime_handler.py:279
+#: mime_handler.py:281
 msgid ""
 "Thumbnail handlers provide support for creating thumbnail images of types of "
 "file.  The filer can generate thumbnails for most types of image (JPEG, PNG, "
@@ -141,11 +161,11 @@ msgstr ""
 "(jpeg, png, ecc...), ma occorrono opportune applicazioni per gli altri tipi "
 "di file."
 
-#: mime_handler.py:295
+#: mime_handler.py:297
 msgid "type handler"
 msgstr "gestore tipi"
 
-#: mime_handler.py:296
+#: mime_handler.py:298
 msgid ""
 "The application can handle files of these types.  Click on OK to add it to "
 "the SendTo menu for the type of file, and also the customized File menu."
