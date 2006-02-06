@@ -82,31 +82,31 @@ class InstallList(rox.Dialog):
         view.append_column(column)
         
         cell = rox.g.CellRendererText()
-        column = rox.g.TreeViewColumn('Type', cell, text = _TNAME)
+        column = rox.g.TreeViewColumn(_('Type'), cell, text = _TNAME)
         view.append_column(column)
         column.set_sort_column_id(_TNAME)
         
         cell = rox.g.CellRendererText()
-        column = rox.g.TreeViewColumn('Name', cell, text = _COMMENT)
+        column = rox.g.TreeViewColumn(_('Name'), cell, text = _COMMENT)
         view.append_column(column)
         column.set_sort_column_id(_COMMENT)
 
         if check:
             cell = rox.g.CellRendererText()
-            column = rox.g.TreeViewColumn('Current', cell, text = _CURRENT)
+            column = rox.g.TreeViewColumn(_('Current'), cell, text = _CURRENT)
             view.append_column(column)
             column.set_sort_column_id(_CURRENT)
 
         cell = rox.g.CellRendererToggle()
         cell.set_property('activatable', True)
         cell.connect('toggled', self.install_toggled, self.model)
-        column = rox.g.TreeViewColumn('Install?', cell, active = _INSTALL)
+        column = rox.g.TreeViewColumn(_('Install?'), cell, active = _INSTALL)
         view.append_column(column)
         column.set_sort_column_id(_INSTALL)
 
         cell = rox.g.CellRendererToggle()
         cell.connect('toggled', self.uninstall_toggled, self.model)
-        column = rox.g.TreeViewColumn('Uninstall?', cell, active = _UNINSTALL,
+        column = rox.g.TreeViewColumn(_('Uninstall?'), cell, active = _UNINSTALL,
                                       activatable= _IS_OURS)
         view.append_column(column)
         column.set_sort_column_id(_UNINSTALL)
