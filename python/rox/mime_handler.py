@@ -49,7 +49,7 @@ class InstallList(rox.Dialog):
 	types - list of MIME types
 	info - optional message to display below list
 	check - if true (the default), check for existing entries"""
-        rox.Dialog.__init__(self, title='Install %s' % itype,
+        rox.Dialog.__init__(self, title=_('Install %s') % itype,
                             buttons=(rox.g.STOCK_CANCEL, rox.g.RESPONSE_CLOSE,
                                      rox.g.STOCK_OK, rox.g.RESPONSE_ACCEPT))
 

@@ -118,7 +118,7 @@ class OptionsBox(g.Dialog):
 		self.set_has_separator(False)
 
 		self.options = options_group
-		self.set_title(('%s options') % options_group.program)
+		self.set_title((_('%s options')) % options_group.program)
 		self.set_position(g.WIN_POS_CENTER)
 
 		button = rox.ButtonMixed(g.STOCK_UNDO, _('_Revert'))
