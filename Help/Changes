@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+14-Feb-2006
+~~~~~~~~~~~
+Added rox.session module for communicating with ROX-Session.
+Added method for applets to determine the panel orientation (Stephen Watson).
+
 21-Jan-2006
 ~~~~~~~~~~~
 Set sys.excepthook to our graphical exception explorer so that untrapped

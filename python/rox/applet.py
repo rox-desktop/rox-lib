@@ -36,6 +36,27 @@ class Applet(g.Plug):
 		self.socket = g.gdk.window_foreign_new(xid)
 		rox.toplevel_ref()
 		self.connect('destroy', rox.toplevel_unref)
+
+	def is_vertical_panel(self):
+		"""Returns True if the panel this applet is on is a left
+		or right panel."""
+		pos = self.socket.property_get('_ROX_PANEL_MENU_POS',
+						'STRING', False)
+		if pos: pos = pos[2]
+		if pos:
+			side, margin = pos.split(',')
+			margin = int(margin)
+		else:
+			side, margin = None, 2
+
+		if side == 'Left' or side == 'Right':
+			return True
+		elif side == 'Top' or side == 'Bottom':
+			return False
+
+		# Couldn't work out the side, return None which will
+		# probably be interpreted as False.
+		return None
 	
 	def position_menu(self, menu):
 		"""Use this as the third argument to Menu.popup()."""
