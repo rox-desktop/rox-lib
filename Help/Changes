@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+17-Feb-2006
+~~~~~~~~~~~
+New class Setting in rox.session is an option tied to a ROX-Session setting
+(Stephen Watson).
+
 14-Feb-2006
 ~~~~~~~~~~~
 Added rox.session module for communicating with ROX-Session.

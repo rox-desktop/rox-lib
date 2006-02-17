@@ -61,6 +61,7 @@ class Option:
 		self.group = group
 		self.value = None
 		self.int_value = None
+		self.store = True
 
 		self.group._register(self)
 	
@@ -209,7 +210,8 @@ class OptionGroup:
 		doc.appendChild(root)
 
 		for option in self:
-			option._to_xml(root)
+			if option.store:
+				option._to_xml(root)
 
 		stream = open(path, 'w')
 		doc.writexml(stream)
