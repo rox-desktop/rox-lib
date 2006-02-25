@@ -71,7 +71,7 @@ try:
 except:
 	sys.stderr.write(_('The pygtk2 package (2.0.0 or later) must be '
 		   'installed to use this program:\n'
-		   'http://rox.sourceforge.net/rox_lib.html\n'))
+		   'http://rox.sourceforge.net/desktop/ROX-Lib\n'))
 	raise
 
 try:
@@ -183,8 +183,12 @@ def report_exception():
 	_excepthook(type, value, tb)
 
 def _excepthook(type, value, tb):
+	if issubclass(type, KeyboardInterrupt):
+		return _old_excepthook(type, value, tb)
 	import debug
 	debug.show_exception(type, value, tb)
+
+_old_excepthook = sys.excepthook
 sys.excepthook = _excepthook
 
 _icon_path = os.path.join(app_dir, '.DirIcon')
