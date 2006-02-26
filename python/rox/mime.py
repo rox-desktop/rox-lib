@@ -486,6 +486,18 @@ def install_mime_info(application, package_file = None):
 	except:
 		rox.report_exception()
 
+def get_type_handler(mime_type, handler_type = 'MIME-types'):
+	"""Lookup the ROX-defined run action for a given mime type.
+	mime_type is an object returned by lookup().
+	handler_type is a config directory leaf (e.g.'MIME-types')."""
+	handler = basedir.load_first_config('rox.sourceforge.net', handler_type,
+				 mime_type.media + '_' + mime_type.subtype)
+	if not handler:
+		# Fall back to the base handler if no subtype handler exists
+		handler = basedir.load_first_config('rox.sourceforge.net', handler_type,
+					 mime_type.media)
+	return handler
+
 def _test(name):
 	"""Print results for name.  Test routine"""
 	t=get_type(name, name_pri=80)

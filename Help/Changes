@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+25-Feb-2006
+~~~~~~~~~~~
+Added mime.get_type_handler(), which uses the same algorithm as ROX-Filer to
+find the handler for a file (Ken Hayber and Thomas Leonard).
+
 17-Feb-2006
 ~~~~~~~~~~~
 New class Setting in rox.session is an option tied to a ROX-Session setting
