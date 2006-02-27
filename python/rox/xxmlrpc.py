@@ -1,5 +1,5 @@
 """XML-RPC over X."""
-from logging import warn
+#from logging import warn		Not in Python2.2
 from rox import g
 import xmlrpclib
 
@@ -50,15 +50,15 @@ class XXMLRPCServer:
 	
 	def process_requests(self, requests):
 		for xid in requests:
-			foreign = g.gdk.window_foreign_new(xid)
+			foreign = g.gdk.window_foreign_new(long(xid))
 			xml = foreign.property_get(
 					_message_prop, 'XA_STRING', False)
 			if xml:
 				params, method = xmlrpclib.loads(xml[2])
 				self.invoke(method, *params)
 			else:
-				warn("No '%s' property on window %x",
-					_message_prop, xid)
+				print >>sys.stderr, "No '%s' property on window %x", \
+					_message_prop, xid
 	
 	def invoke(self, method, *params):
 		if len(params) == 0:
@@ -72,7 +72,9 @@ class XXMLRPCServer:
 
 class ExportedObject:
 	def _invoke(self, method, params):
-		print "Invoking", method, params
+		if method not in self.allowed_methods:
+			raise Exception("Method '%s' not a public method (allowed_methods)" % method)
+		return getattr(self, method)(*params)
 
 class XXMLProxy:
 	def __init__(self, service):
@@ -80,36 +82,37 @@ class XXMLProxy:
 		xid = g.gdk.get_default_root_window().property_get(
 				self.service, 'XA_WINDOW', False)
 
-		assert xid[0] == 'XA_WINDOW'
-		assert xid[1] == 32
-		assert len(xid[2]) == 1
+		if not xid:
+			raise Exception("No such service '%s'" % service)
+		# Note: xid[0] might be str or Atom
+		if str(xid[0]) != 'XA_WINDOW' or \
+		   xid[1] != 32 or \
+		   len(xid[2]) != 1:
+			raise Exception("Root property '%s' not a service!" % service)
 
-		self.remote = g.gdk.window_foreign_new(xid[2][0])
+		self.remote = g.gdk.window_foreign_new(long(xid[2][0]))
 		self.ipc_window = g.Invisible()
 		self.ipc_window.realize()
 	
+	def get_object(self, path):
+		return XXMLObjectProxy(self, path)
+
+class XXMLObjectProxy:
+	def __init__(self, service, path):
+		self.service = service
+		self.path = path
+
 	def invoke(self, method, *params):
 		# Store the message on our window
-		xml = xmlrpclib.dumps(params, method)
+		xml = xmlrpclib.dumps(tuple([self.path] + list(params)), method)
 
-		self.ipc_window.window.property_change(_message_prop,
+		self.service.ipc_window.window.property_change(_message_prop,
 				'XA_STRING', 8,
 				g.gdk.PROP_MODE_REPLACE,
 				xml)
 
 		# Tell the service about it
-		self.remote.property_change(_message_id_prop,
+		self.service.remote.property_change(_message_id_prop,
 				'XA_WINDOW', 32,
 				g.gdk.PROP_MODE_APPEND,
-				[self.ipc_window.window.xid])
-		print "Invoked"
-
-service = XXMLRPCServer('rox_TEST')
-service.register()
-service.objects['/foo'] = ExportedObject()
-
-proxy = XXMLProxy('rox_TEST')
-proxy.invoke('bang', '/foo')
-proxy.invoke('bang', '/foo')
-
-g.main()
+				[self.service.ipc_window.window.xid])
