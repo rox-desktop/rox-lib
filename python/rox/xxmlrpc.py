@@ -116,6 +116,8 @@ class XXMLProxy:
 			raise Exception("Root property '%s' not a service!" % service)
 
 		self.remote = g.gdk.window_foreign_new(long(xid[2][0]))
+		if self.remote is None:
+			raise NoSuchService("Service '%s' is no longer running" % service)
 	
 	def get_object(self, path):
 		return XXMLObjectProxy(self, path)
