@@ -7,6 +7,9 @@ import xmlrpclib
 _message_prop = g.gdk.atom_intern('_XXMLRPC_MESSAGE', False)
 _message_id_prop = g.gdk.atom_intern('_XXMLRPC_ID', False)
 
+class NoSuchService(Exception):
+	pass
+
 class XXMLRPCServer:
 	def __init__(self, service):
 		self.service = service
@@ -32,12 +35,20 @@ class XXMLRPCServer:
 		self.ipc_window.connect('property-notify-event',
 						self.property_changed)
 
-	def register(self):
 		# Make the root window contain a pointer to the IPC window
 		g.gdk.get_default_root_window().property_change(
 				self.service, 'XA_WINDOW', 32,
 				g.gdk.PROP_MODE_REPLACE,
 				[self.ipc_window.window.xid])
+
+	def add_object(self, path, obj):
+		if path in self.objects:
+			raise Exception("An object with the path '%s' is already registered!" % path)
+		assert isinstance(path, str)
+		self.objects[path] = obj
+	
+	def remove_object(self, path):
+		del self.objects[path]
 	
 	def property_changed(self, win, event):
 		if event.atom != _message_id_prop:
@@ -71,21 +82,24 @@ class XXMLRPCServer:
 		try:
 			obj = self.objects[obpath]
 		except KeyError:
-			raise xmlrpclib.Fault("UnknownObject",
+			return xmlrpclib.Fault("UnknownObject",
 					"Unknown object '%s'" % obpath)
+		if method not in obj.allowed_methods:
+			return xmlrpclib.Fault('NoSuchMethod',
+					"Method '%s' not a public method (check 'allowed_methods')" % method)
 		try:
-			return (obj._invoke(method, params[1:]),)
+			method = getattr(obj, method)
+			retval = method(*params[1:])
+			if retval is None:
+				# XML-RPC doesn't allow returning None
+				return (True,)
+			else:
+				return (retval,)
 		except Exception, ex:
 			#import traceback
 			#traceback.print_exc(file = sys.stderr)
 			return xmlrpclib.Fault(ex.__class__.__name__,
 					str(ex))
-
-class ExportedObject:
-	def _invoke(self, method, params):
-		if method not in self.allowed_methods:
-			raise Exception("Method '%s' not a public method (allowed_methods)" % method)
-		return getattr(self, method)(*params)
 
 class XXMLProxy:
 	def __init__(self, service):
@@ -94,7 +108,7 @@ class XXMLProxy:
 				self.service, 'XA_WINDOW', False)
 
 		if not xid:
-			raise Exception("No such service '%s'" % service)
+			raise NoSuchService("No such service '%s'" % service)
 		# Note: xid[0] might be str or Atom
 		if str(xid[0]) != 'XA_WINDOW' or \
 		   xid[1] != 32 or \
@@ -111,9 +125,13 @@ class XXMLObjectProxy:
 		self.service = service
 		self.path = path
 
-	def invoke(self, method, *params):
-		call = ClientCall(self.service, method, tuple([self.path] + list(params)))
-		return call
+	def __getattr__(self, method):
+		if method.startswith('_'):
+			raise AttributeError("No attribute '" + method + "'")
+		def invoke(*params):
+			call = ClientCall(self.service, method, tuple([self.path] + list(params)))
+			return call
+		return invoke
 
 class ClientCall(g.Invisible):
 	waiting = False
@@ -161,7 +179,7 @@ class ClientCall(g.Invisible):
 			else:
 				self.response = val[2]
 				if self.waiting:
-					g.mainquit()
+					g.main_quit()
 
 	def get_response(self):
 		if self.response is None:
