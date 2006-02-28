@@ -1,5 +1,6 @@
 """XML-RPC over X."""
 #from logging import warn		Not in Python2.2
+import sys
 from rox import g
 import xmlrpclib
 
@@ -55,10 +56,13 @@ class XXMLRPCServer:
 					_message_prop, 'XA_STRING', False)
 			if xml:
 				params, method = xmlrpclib.loads(xml[2])
-				self.invoke(method, *params)
+				retval = self.invoke(method, *params)
+				retxml = xmlrpclib.dumps(retval, methodresponse = True)
+				foreign.property_change(_message_prop, 'XA_STRING', 8,
+					g.gdk.PROP_MODE_REPLACE, retxml)
 			else:
-				print >>sys.stderr, "No '%s' property on window %x", \
-					_message_prop, xid
+				print >>sys.stderr, "No '%s' property on window %x" % (
+					_message_prop, xid)
 	
 	def invoke(self, method, *params):
 		if len(params) == 0:
@@ -67,8 +71,15 @@ class XXMLRPCServer:
 		try:
 			obj = self.objects[obpath]
 		except KeyError:
-			raise Exception("Unknown object '%s'" % obpath)
-		obj._invoke(method, params[1:])
+			raise xmlrpclib.Fault("UnknownObject",
+					"Unknown object '%s'" % obpath)
+		try:
+			return (obj._invoke(method, params[1:]),)
+		except Exception, ex:
+			#import traceback
+			#traceback.print_exc(file = sys.stderr)
+			return xmlrpclib.Fault(ex.__class__.__name__,
+					str(ex))
 
 class ExportedObject:
 	def _invoke(self, method, params):
@@ -91,8 +102,6 @@ class XXMLProxy:
 			raise Exception("Root property '%s' not a service!" % service)
 
 		self.remote = g.gdk.window_foreign_new(long(xid[2][0]))
-		self.ipc_window = g.Invisible()
-		self.ipc_window.realize()
 	
 	def get_object(self, path):
 		return XXMLObjectProxy(self, path)
@@ -103,16 +112,65 @@ class XXMLObjectProxy:
 		self.path = path
 
 	def invoke(self, method, *params):
-		# Store the message on our window
-		xml = xmlrpclib.dumps(tuple([self.path] + list(params)), method)
+		call = ClientCall(self.service, method, tuple([self.path] + list(params)))
+		return call
 
-		self.service.ipc_window.window.property_change(_message_prop,
+class ClientCall(g.Invisible):
+	waiting = False
+
+	def __init__(self, service, method, params):
+		g.Invisible.__init__(self)
+		self.service = service
+		self.add_events(g.gdk.PROPERTY_NOTIFY)
+		self.realize()
+
+		self.connect('property-notify-event',
+						self.property_changed)
+
+		# Store the message on our window
+		self.ignore_next_change = True
+		xml = xmlrpclib.dumps(params, method)
+
+		self.window.property_change(_message_prop,
 				'XA_STRING', 8,
 				g.gdk.PROP_MODE_REPLACE,
 				xml)
+
+		self.response = None
 
 		# Tell the service about it
 		self.service.remote.property_change(_message_id_prop,
 				'XA_WINDOW', 32,
 				g.gdk.PROP_MODE_APPEND,
-				[self.service.ipc_window.window.xid])
+				[self.window.xid])
+
+	def property_changed(self, win, event):
+		if event.atom != _message_prop:
+			return
+		
+		if event.state == g.gdk.PROPERTY_NEW_VALUE:
+			if self.ignore_next_change:
+				# This is just us sending the request
+				self.ignore_next_change = False
+				return
+
+			val = self.window.property_get(
+				_message_prop, 'XA_STRING', True)
+			if val is None:
+				raise Exception('No response to XML-RPC call')
+			else:
+				self.response = val[2]
+				if self.waiting:
+					g.mainquit()
+
+	def get_response(self):
+		if self.response is None:
+			self.waiting = True
+			try:
+				g.main()
+			finally:
+				self.waiting = False
+		assert self.response is not None
+		retval, method = xmlrpclib.loads(self.response)
+		assert len(retval) == 1
+		return retval[0]

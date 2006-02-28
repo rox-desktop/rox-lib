@@ -2,7 +2,7 @@
 from __future__ import generators
 import unittest
 import sys
-import os, time
+import os, time, xmlrpclib
 from os.path import dirname, abspath, join
 
 rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
@@ -15,7 +15,6 @@ class TestObject(xxmlrpc.ExportedObject):
 
 	def echo(self, msg):
 		#print "Got", msg
-		g.mainquit()
 		return "Echo: " + msg
 
 class TestXXMLRPC(unittest.TestCase):
@@ -26,9 +25,35 @@ class TestXXMLRPC(unittest.TestCase):
 
 		proxy = xxmlrpc.XXMLProxy('rox_test_service')
 		obj = proxy.get_object('/foo')
-		obj.invoke('echo', 'Hello World')
+		call = obj.invoke('echo', 'Hello World')
+		self.assertEquals("Echo: Hello World", call.get_response())
 
-		g.main()
+	def testFault(self):
+		service = xxmlrpc.XXMLRPCServer('rox_test_service')
+		service.register()
+		service.objects['/foo'] = TestObject()
+
+		proxy = xxmlrpc.XXMLProxy('rox_test_service')
+		obj = proxy.get_object('/foo')
+		call = obj.invoke('echo', 0)
+		try:
+			call.get_response()
+			assert false
+		except xmlrpclib.Fault, ex:
+			self.assertEquals('TypeError', ex.faultCode)
+			assert ex.faultString.find('cannot concatenate') >= 0
+
+	def testAsync(self):
+		service = xxmlrpc.XXMLRPCServer('rox_test_service')
+		service.register()
+		service.objects['/foo'] = TestObject()
+
+		proxy = xxmlrpc.XXMLProxy('rox_test_service')
+		obj = proxy.get_object('/foo')
+		call1 = obj.invoke('echo', 'Hello')
+		call2 = obj.invoke('echo', 'World')
+		self.assertEquals("Echo: World", call2.get_response())
+		self.assertEquals("Echo: Hello", call1.get_response())
 
 suite = unittest.makeSuite(TestXXMLRPC)
 if __name__ == '__main__':
