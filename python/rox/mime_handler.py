@@ -242,7 +242,7 @@ def _install_at(path, app_dir, injint):
     if injint and _run_by_injector(app_dir):
         f=file(tmp, 'w')
         f.write('#!/bin/sh\n')
-        f.write('0launch %s\n' % injint)
+        f.write('0launch -c "%s" "$@"\n' % injint)
         f.close()
         os.chmod(tmp, 0755)
     else:

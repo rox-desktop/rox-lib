@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+04-Mar-2006
+~~~~~~~~~~~
+When installing a type handler under Zero Install, make sure to pass the
+arguments to the program and run 0launch in console mode (Stephen Watson).
+
 25-Feb-2006
 ~~~~~~~~~~~
 Added mime.get_type_handler(), which uses the same algorithm as ROX-Filer to
