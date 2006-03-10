@@ -3,6 +3,11 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+10-Mar-2006
+~~~~~~~~~~~
+Bugfix: spurious argument when installing SendTo handler under Zero 
+        Install (Stephen Watson, reported by Andras Mohari)
+
 04-Mar-2006
 ~~~~~~~~~~~
 When installing a type handler under Zero Install, make sure to pass the

@@ -329,7 +329,7 @@ def install_send_to_types(types, application=None, injint=None):
 		
 	win=InstallList(application, _('type handler'), 'SendTo', types,
 			_("""The application can handle files of these types.  Click on OK to add it to the SendTo menu for the type of file, and also the customized File menu."""),
-			check=False, injint=injint)
+			check=False)
 
 	if win.run()!=rox.g.RESPONSE_ACCEPT:
 		win.destroy()
