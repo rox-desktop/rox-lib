@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ROX-Lib2 2.0.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-11 16:34+CET\n"
-"PO-Revision-Date: 2006-03-11 16:47+0100\n"
+"PO-Revision-Date: 2006-03-12 17:30+0100\n"
 "Last-Translator: Andras Mohari <mayday@mailpont.hu>\n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -237,7 +237,7 @@ msgstr "_Felülírás"
 
 #: saving.py:508
 msgid "_Discard"
-msgstr "_Mégsem"
+msgstr "El_vetés"
 
 #: saving.py:518
 msgid "Save As:"
