@@ -581,9 +581,14 @@ class OptionsBox(g.Dialog):
 
 		values = []
 
-		option_menu = g.OptionMenu()
-		menu = g.Menu()
-		option_menu.set_menu(menu)
+		has_combo = hasattr(g, 'combo_box_new_text')
+		if has_combo:
+			option_menu = g.combo_box_new_text()
+			option_menu.get_history = option_menu.get_active
+			option_menu.set_history = option_menu.set_active
+		else:
+			option_menu = g.OptionMenu()
+			menu = g.Menu()
 
 		if label:
 			box = g.HBox(False, 4)
@@ -601,9 +606,16 @@ class OptionsBox(g.Dialog):
 			value = item.getAttribute('value')
 			label_item = self.trans(item.getAttribute('label')) or value
 
-			menu.append(g.MenuItem(label_item))
+			if has_combo:
+				option_menu.append_text(label_item)
+			else:
+				menu.append(g.MenuItem(label_item))
+
 			values.append(value)
 
+		if not has_combo:
+			menu.show_all()
+			option_menu.set_menu(menu)
 		option_menu.connect('changed', lambda e: self.check_widget(option))
 
 		def get():
