@@ -183,8 +183,8 @@ def report_exception():
 	_excepthook(type, value, tb)
 
 def _excepthook(type, value, tb):
-	if issubclass(type, KeyboardInterrupt):
-		return _old_excepthook(type, value, tb)
+	_old_excepthook(type, value, tb)
+	if issubclass(type, KeyboardInterrupt): return
 	import debug
 	debug.show_exception(type, value, tb)
 
