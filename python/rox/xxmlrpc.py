@@ -1,7 +1,7 @@
 """XML-RPC over X."""
 #from logging import warn		Not in Python2.2
 import sys
-from rox import g
+from rox import g, tasks
 import xmlrpclib
 
 _message_prop = g.gdk.atom_intern('_XXMLRPC_MESSAGE', False)
@@ -135,11 +135,12 @@ class XXMLObjectProxy:
 			return call
 		return invoke
 
-class ClientCall(g.Invisible):
+class ClientCall(g.Invisible, tasks.Blocker):
 	waiting = False
 
 	def __init__(self, service, method, params):
 		g.Invisible.__init__(self)
+		tasks.Blocker.__init__(self)
 		self.service = service
 		self.add_events(g.gdk.PROPERTY_NOTIFY)
 		self.realize()
@@ -180,6 +181,7 @@ class ClientCall(g.Invisible):
 				raise Exception('No response to XML-RPC call')
 			else:
 				self.response = val[2]
+				self.trigger()
 				if self.waiting:
 					g.main_quit()
 
