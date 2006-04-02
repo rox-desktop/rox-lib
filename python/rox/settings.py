@@ -88,11 +88,12 @@ def get_gconf():
 		client = None
 	return client
 
-
 class Settings(OptionGroup):
 	"""A group of options associated with the dbus interface. """
-	program = os.path.basename(rox.app_dir)
-	def __init__(self, bus = get_xsettings(), client = None):
+
+	program = os.path.basename(rox.app_dir)	# For dialog box title
+
+	def __init__(self, bus = None, client = None):
 		"""Constructor
 
 			bus: ROX-Session's dbus interface. Omit to use default
@@ -100,7 +101,7 @@ class Settings(OptionGroup):
 		"""
 		self.options = {}
 		self.callbacks = []
-		self.bus = bus
+		self.bus = bus or get_xsettings()
 		self.client = client
 	
 	def notify(self):
@@ -110,7 +111,6 @@ class Settings(OptionGroup):
 	
 	def save(self):
 		pass
-
 
 class Setting(Option):
 	def __init__(self, name, default, settings, garbage = False,
