@@ -3,6 +3,10 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
+Note: for a detailed changelog, do:
+			
+  svn log -v https://svn.sourceforge.net/svnroot/rox/trunk/ROX-Lib2
+
 10-Mar-2006
 ~~~~~~~~~~~
 Bugfix: spurious argument when installing SendTo handler under Zero 
