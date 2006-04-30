@@ -1,6 +1,6 @@
 """XML-RPC over X."""
 #from logging import warn		Not in Python2.2
-import sys
+import sys, weakref
 from rox import g, tasks
 import xmlrpclib
 
@@ -135,64 +135,77 @@ class XXMLObjectProxy:
 			return call
 		return invoke
 
-class ClientCall(g.Invisible, tasks.Blocker):
+# It's easy to forget to read the response, which will cause the invisible window
+# to hang around forever. Warn if we do that...
+def _call_destroyed(invisible):
+	if invisible.xmlrpc_response is None:
+		print >>sys.stderr, "ClientCall object destroyed without waiting for response!"
+	invisible.destroy()
+
+class ClientCall(tasks.Blocker):
 	waiting = False
+	invisible = None
 
 	def __init__(self, service, method, params):
-		g.Invisible.__init__(self)
 		tasks.Blocker.__init__(self)
 		self.service = service
-		self.add_events(g.gdk.PROPERTY_NOTIFY)
-		self.realize()
 
-		self.connect('property-notify-event',
-						self.property_changed)
+		self.invisible = g.Invisible()
+		self.invisible.realize()
+		self.invisible.add_events(g.gdk.PROPERTY_NOTIFY)
+
+		weakself = weakref.ref(self, lambda r,i=self.invisible: _call_destroyed(i))
+		def property_changed(win, event):
+			if event.atom != _message_prop:
+				return
+			if event.state == g.gdk.PROPERTY_NEW_VALUE:
+				call = weakself()
+				if call is not None:
+					call.message_property_changed()
+		self.invisible.connect('property-notify-event', property_changed)
 
 		# Store the message on our window
 		self.ignore_next_change = True
 		xml = xmlrpclib.dumps(params, method)
 
-		self.window.property_change(_message_prop,
+		self.invisible.window.property_change(_message_prop,
 				'XA_STRING', 8,
 				g.gdk.PROP_MODE_REPLACE,
 				xml)
 
-		self.response = None
+		self.invisible.xmlrpc_response = None
 
 		# Tell the service about it
 		self.service.remote.property_change(_message_id_prop,
 				'XA_WINDOW', 32,
 				g.gdk.PROP_MODE_APPEND,
-				[self.window.xid])
+				[self.invisible.window.xid])
 
-	def property_changed(self, win, event):
-		if event.atom != _message_prop:
+	def message_property_changed(self):
+		if self.ignore_next_change:
+			# This is just us sending the request
+			self.ignore_next_change = False
 			return
-		
-		if event.state == g.gdk.PROPERTY_NEW_VALUE:
-			if self.ignore_next_change:
-				# This is just us sending the request
-				self.ignore_next_change = False
-				return
 
-			val = self.window.property_get(
-				_message_prop, 'XA_STRING', True)
-			if val is None:
-				raise Exception('No response to XML-RPC call')
-			else:
-				self.response = val[2]
-				self.trigger()
-				if self.waiting:
-					g.main_quit()
+		val = self.invisible.window.property_get(
+			_message_prop, 'XA_STRING', True)
+		self.invisible.destroy()
+		if val is None:
+			raise Exception('No response to XML-RPC call')
+		else:
+			self.invisible.xmlrpc_response = val[2]
+			self.trigger()
+			if self.waiting:
+				g.main_quit()
 
 	def get_response(self):
-		if self.response is None:
+		if self.invisible.xmlrpc_response is None:
 			self.waiting = True
 			try:
 				g.main()
 			finally:
 				self.waiting = False
-		assert self.response is not None
-		retval, method = xmlrpclib.loads(self.response)
+		assert self.invisible.xmlrpc_response is not None
+		retval, method = xmlrpclib.loads(self.invisible.xmlrpc_response)
 		assert len(retval) == 1
 		return retval[0]

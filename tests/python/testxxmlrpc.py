@@ -1,7 +1,7 @@
 #!/usr/bin/env python2.2
 from __future__ import generators
 import unittest
-import sys
+import sys, StringIO
 import os, time, xmlrpclib
 from os.path import dirname, abspath, join
 
@@ -70,6 +70,24 @@ class TestXXMLRPC(unittest.TestCase):
 		obj = self.proxy.get_object('/foo')
 		call = obj.none()
 		self.assertEquals(True, call.get_response())
+	
+	def testNoReturn(self):
+		obj = self.proxy.get_object('/foo')
+		call = obj.none()
+		olderr = sys.stderr
+		sys.stderr = StringIO.StringIO()
+		try:
+			del call
+			err = sys.stderr.getvalue()
+			assert err.index("ClientCall object destroyed") == 0
+			sys.stderr = StringIO.StringIO()
+			# Wait for proxy to try to read window
+			while not sys.stderr.getvalue():
+				g.main_iteration()
+			err = sys.stderr.getvalue()
+			assert err.index("No '_XXMLRPC_MESSAGE' property") == 0
+		finally:
+			sys.stderr = olderr
 
 suite = unittest.makeSuite(TestXXMLRPC)
 if __name__ == '__main__':
