@@ -19,7 +19,7 @@ import rox
 from rox.options import OptionGroup, Option
 from rox import OptionsBox, g
 import rox.xxmlrpc
-import gobject
+# import gobject
 
 try:
     import dbus
@@ -108,42 +108,6 @@ def running():
 	services = proxy.ListNames()
 
     return session_service in services
-
-class Setting(Option):
-    """A Setting is an Option whose value is communicated with ROX-Session
-    instead of being stored in the program's options."""
-    
-    def __init__(self, name, default, group=None):
-        """Initialize the option.  Unlike the normal Option the value
-        is available immediatley (provided ROX-Session is running)."""
-        Option.__init__(self, name, default, group)
-        self.store = False # Do not let OptionGroup this write to file
-        
-        self.is_string = isinstance(default, basestring)
-        self.proxy = get_settings()
-        try:
-            type, value = self.proxy.GetSetting(name)
-        except: 
-            self._set(default)
-        else:
-            self._set(value, notify = False)
-	
-    def _set(self, value, notify = True):
-        Option._set(self, value)
-        if not notify: return
-		
-        def set(obj, value):
-            # Changing the theme will make GTK try to rebuild all
-            # its top-levels. Included destroyed ones that Python's
-            # GC holds a reference to still. Drop them now...
-            import gc; gc.collect()
-            if obj.is_string:
-                obj.proxy.SetString(obj.name, value)
-            else:
-                obj.proxy.SetInt(obj.name, obj.int_value)
-
-        gobject.idle_add(set, self, value)
-
 
 # Test routine
 if __name__=='__main__':

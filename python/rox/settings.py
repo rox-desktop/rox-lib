@@ -10,6 +10,7 @@ import os
 import rox
 from rox.options import OptionGroup, Option
 from rox import OptionsBox
+import rox.session
 import gobject
 
 gconf = None
@@ -19,57 +20,11 @@ _warned_connect = False
 _warned_norox = False
 
 def get_xsettings():
-	"""Returns ROX-Session's Settings dbus interface.
+	"""Returns ROX-Session's Settings dbus/xxmlrpc interface.
 	
 		Called automatically if and when necessary
 	"""
-	global _warned_import
-	global _warned_connect
-	global _warned_norox
-	try:
-		import dbus
-	except ImportError:
-		if not _warned_import:
-			rox.alert("Failed to import dbus module. You probably need "
-				"to install a package with a name like 'python2.3-dbus'"
-				"or 'python2.4-dbus'.\n"
-				"D-BUS can also be downloaded from http://freedesktop.org.")
-			_warned_import = True
-		return None
-
-	try:
-		if (hasattr(dbus, 'SessionBus')):
-			bus = dbus.SessionBus()
-		else:
-			bus = dbus.Bus(dbus.Bus.TYPE_SESSION)
-	except:
-		if not _warned_connect:
-			rox.alert('Failed to connect to D-BUS session bus. This probably '
-				"means that you're running an old version of ROX-Session "
-				'(or not using ROX-Session at all). Settings cannot be set '
-				"using this program until a newer version of ROX-Session is "
-				"running.")
-			_warned_connect = True
-		return None
-
-	try:
-		if hasattr(bus, 'get_service'):
-			rox_session = bus.get_service('net.sf.rox.Session')
-			rox_settings = rox_session.get_object('/Settings',
-					'net.sf.rox.Session.Settings')
-		else:
-			rox_settings = dbus.Interface(bus.get_object('net.sf.rox.Session',
-							'/Settings'),
-					'net.sf.rox.Session.Settings')
-	except:
-		if not _warned_norox:
-			rox.alert("ROX-Session doesn't appear to be running (or "
-				"you are running an old version). Changing many of "
-				"these settings will have no effect.")
-			_warned_norox = True
-		return None
-	
-	return rox_settings
+	return rox.session.get_settings()
 
 def get_gconf():
 	"""Get GConf connection.
@@ -225,3 +180,12 @@ class BoolSetting(Setting):
 		Setting.__init__(self, name, default, settings, theme, gconf_key)
 	def make_gconf_value(self):
 		return self.int_value != 0
+
+# Test routine
+if __name__=='__main__':
+	setobj=get_xsettings()
+	print 'object=', setobj
+	v='Gtk/KeyThemeName'
+	print '%s = %s' % (v, setobj.GetSetting(v))
+	v='Net/ThemeName'
+	print '%s = %s' % (v, setobj.GetSetting(v))
