@@ -14,7 +14,7 @@ but has two important differences: it is not saved to the options file and
 it is synchronized with a value of the same name in the ROX-Session settings.
 """
 
-import os
+import os, sys
 import rox
 from rox.options import OptionGroup, Option
 from rox import OptionsBox, g
@@ -76,7 +76,7 @@ def _xxmlrpc_get_proxy(service_name, object_name, interface_name):
 def get_proxy(service_name, object_name, interface_name):
     """Get a proxy object for the required service, object path and interface.
     This selects an appropriate transport for you, either DBus or XMLRPC."""
-    if dbus_ok:
+    if dbus_ok and bus:
         return _dbus_get_proxy(bus, service_name, object_name, interface_name)
     return _xxmlrpc_get_proxy(service_name, object_name, interface_name)
 
@@ -92,7 +92,7 @@ def get_settings():
 
 def running():
     """Return True if ROX-Session is detected as running"""
-    if not dbus_ok:
+    if not dbus_ok or not bus:
         proxy=_xxmlrpc_get_proxy(session_service, control_object,
                                  control_interface)
         return proxy is not None
@@ -109,18 +109,23 @@ def running():
 
     return session_service in services
 
+if bus and not running():
+    bus=None
+
 # Test routine
 if __name__=='__main__':
     print 'Session running? %s' % running()
     settings=get_settings()
-    #print 'settings=', settings
-    v='Gtk/KeyThemeName'
-    print '%s = %s' % (v, settings.GetSetting(v))
-    #x=settings.GetSetting(v)
-    #print str(x), `x`
-    #y=x.get_response()
-    #print y
-    v='Net/ThemeName'
-    print '%s = %s' % (v, settings.GetSetting(v))
+
+    def test_get(name):
+        try:
+            v=settings.GetSetting(name)
+            print '%s = %s' % (name, v)
+        except Exception, exc:
+            print "Can't get %s: %s" % (name, exc)
+
+    test_get('Gtk/KeyThemeName')
+    test_get('Net/ThemeName')
+
     control=get_session()
     control.ShowMessages()

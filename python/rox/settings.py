@@ -6,7 +6,7 @@
 	Use get_xsettings to get the dbus interface, then create a Settings object
 	with it to pass to each Setting.
 """
-import os
+import os, sys
 import rox
 from rox.options import OptionGroup, Option
 from rox import OptionsBox
