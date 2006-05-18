@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 2.0.0\n"
-"POT-Creation-Date: Fri Mar 18 15:41:50 2005\n"
+"POT-Creation-Date: 2006-05-18 00:23+UTC\n"
 "PO-Revision-Date: 2005-03-18 19:48+0100\n"
 "Last-Translator: Guido Schimmels <__guido__@web.de>\n"
 "Language-Team: ROX Mailing List <rox-devel@lists.sourceforge.net>\n"
@@ -16,51 +16,82 @@ msgstr ""
 "X-Poedit-Language: German\n"
 "X-Poedit-Country: GERMANY\n"
 
+#: ../../AppRun:13
+msgid ""
+"ROX-Lib2 contains code that is useful to newer ROX applications. You should "
+"place this directory somewhere where other programs can find it, such as ~/"
+"lib or /usr/local/lib.\n"
+"\n"
+"ROX-Lib version: %s\n"
+"PyGTK version: %s\n"
+"GTK version: %s\n"
+"\n"
+"PyGTK location:\n"
+"%s"
+msgstr ""
+"ROX-Lib2 enthält Code für aktuelle ROX-Programme. Sie sollten "
+"das Verzeichnis platzieren, wo andere Programme es finden können, wie ~/"
+"lib oder /usr/local/lib.\n"
+"\n"
+"ROX-Lib Version: %s\n"
+"PyGTK Version: %s\n"
+"GTK Version: %s\n"
+"\n"
+"PyGTK Ort:\n"
+"%s"
+
+#: OptionsBox.py:121
+msgid "%s options"
+msgstr ""
+
 #: OptionsBox.py:124
 msgid "_Revert"
 msgstr "_Rückgängig"
 
 #: OptionsBox.py:126
 msgid "Restore all options to how they were when the window was opened"
-msgstr "Alle Einstellungen auf ihren Ausgangswert beim Öffnen des Fensters setzen"
-
-#: OptionsBox.py:297
-msgid "title"
-msgstr "Titel"
-
-#: OptionsBox.py:602
-#: OptionsBox.py:633
-msgid "label"
-msgstr "Bezeichnung"
-
-#: __init__.py:96
-msgid ""
-"The pygtk2 package (1.99.13 or later) must be installed to use this program:\n"
-"http://rox.sourceforge.net/rox_lib.php3\n"
 msgstr ""
-"Zur Nutzung dieses Programms, muss das Paket pygtk2 (1.99.13 oder später) installiert sein:\n"
+"Alle Einstellungen auf ihren Ausgangswert beim Öffnen des Fensters setzen"
+
+#: __init__.py:72
+#, fuzzy
+msgid ""
+"The pygtk2 package (2.0.0 or later) must be installed to use this program:\n"
+"http://rox.sourceforge.net/desktop/ROX-Lib\n"
+msgstr ""
+"Zur Nutzung dieses Programms, muss das Paket pygtk2 (1.99.13 oder später) "
+"installiert sein:\n"
 "http://rox.sourceforge.net/rox_lib.php3\n"
 
-#: __init__.py:124
+#: __init__.py:80
+msgid "Broken pygtk installation: found pygtk (%s), but not gtk!\n"
+msgstr "PyGTK nicht korrekt installiert: pygtk (%s) gefunden, nicht aber gtk!\n"
+
+#: __init__.py:116
 msgid "Operation aborted at user's request"
 msgstr "Aktion auf Benutzerwunsch abgebrochen"
 
-#: __init__.py:131
-#: debug.py:44
+#: __init__.py:123 debug.py:44
 msgid "Error"
 msgstr "Fehler"
 
-#: __init__.py:157
+#: __init__.py:149
 msgid "Information"
 msgstr "Hinweis"
 
-#: __init__.py:179
+#: __init__.py:171
 msgid "Confirm:"
 msgstr "Bestätigen:"
 
-#: __init__.py:383
-msgid "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. You need to install python-xmlbase (this is a small package; the full PyXML package is not required)."
-msgstr "Das Python 'xml'-Modul ist nicht installiert, welches von ROX-Lib2 benötigt wird.Es muss python-xmlbase installiert sein (ein kleines Paket; das vollständige PyXML-Paket wird nicht benötigt)."
+#: __init__.py:414
+msgid ""
+"You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
+"You need to install python-xmlbase (this is a small package; the full PyXML "
+"package is not required)."
+msgstr ""
+"Das Python 'xml'-Modul ist nicht installiert, welches von ROX-Lib2 benötigt "
+"wird.Es muss python-xmlbase installiert sein (ein kleines Paket; das "
+"vollständige PyXML-Paket wird nicht benötigt)."
 
 #: debug.py:34
 msgid "_Details"
@@ -68,43 +99,62 @@ msgstr "_Details"
 
 #: debug.py:86
 msgid "_Bug Report"
-msgstr ""
+msgstr "Fehler_bericht"
 
 #: debug.py:92
 msgid "Forced Quit"
-msgstr ""
+msgstr "Erzwungener Programmabbruch"
 
-#: debug.py:111
+#: debug.py:112
 msgid "Stack trace (innermost last)"
-msgstr ""
+msgstr "Stackrückverfolgung (von aussen nach innen)"
 
-#: debug.py:196
+#: debug.py:207
 msgid "Local variables in selected frame:"
-msgstr ""
+msgstr "Lokale Variablen in gewähltem Rahmen:"
 
 #: fileutils.py:22
 msgid "Retry"
-msgstr ""
+msgstr "Erneut versuchen"
 
 #: fileutils.py:27
 msgid "Examine"
-msgstr ""
+msgstr "Durchsuchen"
 
 #: fileutils.py:33
 msgid "Error:"
-msgstr ""
+msgstr "Fehler:"
 
 #: fileutils.py:59
-msgid "Could not create directory `%s' because a file already exists at that path.\n"
+msgid ""
+"Could not create directory `%s' because a file already exists at that path.\n"
 msgstr ""
+"Konnte Verzeichnis `%s' nicht anlegen, da eine gleichnamige Datei bereits existiert.\n"
 
 #: fileutils.py:65
 msgid "Could not create directory `%s'.\n"
+msgstr "Konnte Verzeichnis `%s' nicht anlegen.\n"
+
+#: launch.py:11
+msgid ""
+"The program '%s' cannot be run, as the 0launch command is not available. It "
+"can be downloaded from here:\n"
+"\n"
+"http://0install.net/injector.html"
 msgstr ""
+"Das Programm '%s' kann nicht ausgeführt werden, da der 0launch-Befehl nicht verfügbar ist. Er"
+"kann von hier runtergeladen werden:\n"
+"\n"
+"http://0install.net/injector.html"
+
 
 #: loading.py:28
-msgid "Cannot load files from a remote machine (multiple files, or target application/octet-stream not provided)"
+msgid ""
+"Cannot load files from a remote machine (multiple files, or target "
+"application/octet-stream not provided)"
 msgstr ""
+"Kann Netzwerkdateien nicht laden (laden mehrere Dateien auf einmal oder Dateityp "
+"application/octet-stream nicht unterstützt)"
 
 #: mime.py:483
 msgid ""
@@ -112,36 +162,80 @@ msgid ""
 "Make sure you have the freedesktop.org shared MIME package:\n"
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 msgstr ""
+"Der Befehl '%s' hat eine Fehlermeldung übergeben!\n"
+"Versichern Sie sich, dass das freedesktop.org MIME-Paket installiert ist:\n"
+"http://www.freedesktop.org/standards/shared-mime-info.html"
 
-#: mime_handler.py:236
-msgid "Run actions can be changed by selecting a file of the appropriate type in the Filer and selecting the menu option 'Set Run Action...'"
+#: mime_handler.py:52
+msgid "Install %s"
+msgstr "Installieren von %s"
+
+#: mime_handler.py:85
+msgid "Type"
+msgstr "Typ"
+
+#: mime_handler.py:90
+msgid "Name"
+msgstr "Name"
+
+#: mime_handler.py:96
+msgid "Current"
+msgstr "Aktuell"
+
+#: mime_handler.py:103
+msgid "Install?"
+msgstr "Installieren?"
+
+#: mime_handler.py:109
+msgid "Uninstall?"
+msgstr "Entfernen?"
+
+#: mime_handler.py:293
+msgid ""
+"Run actions can be changed by selecting a file of the appropriate type in "
+"the Filer and selecting the menu option 'Set Run Action...'"
 msgstr ""
+"Startaktionen lassen sich ändern durch Wahl einer Datei passenden Typs im "
+"Dateimanager und Wahl des Menüpunktes 'Startaktion ändern...'"
 
-#: mime_handler.py:244
+#: mime_handler.py:301
 msgid "run action"
-msgstr ""
+msgstr "Startaktion"
 
-#: mime_handler.py:254
+#: mime_handler.py:312
 msgid "thumbnail handler"
 msgstr "Miniaturvorschau-Dienstprogramm"
 
-#: mime_handler.py:255
-msgid "Thumbnail handlers provide support for creating thumbnail images of types of file.  The filer can generate thumbnails for most types of image (JPEG, PNG, etc.) but relies on helper applications for the others."
-msgstr "Miniaturvorschau-Dienstprogramme bieten die Möglichkeit, Bildchen (Thumbnails) für bestimmte Dateitypen zu erzeugen. Der Dateimanager kann solche Bildchen für die meisten Arten von Bilddateien (JPEG, PNG; etc.) erzeugen, für andere Typen nimmt er hingegen geeignete Dienstprogramme zur Hilfe."
+#: mime_handler.py:313
+msgid ""
+"Thumbnail handlers provide support for creating thumbnail images of types of "
+"file.  The filer can generate thumbnails for most types of image (JPEG, PNG, "
+"etc.) but relies on helper applications for the others."
+msgstr ""
+"Miniaturvorschau-Dienstprogramme bieten die Möglichkeit, Bildchen "
+"(Thumbnails) für bestimmte Dateitypen zu erzeugen. Der Dateimanager kann "
+"solche Bildchen für die meisten Arten von Bilddateien (JPEG, PNG; etc.) "
+"erzeugen, für andere Typen nimmt er hingegen geeignete Dienstprogramme zur "
+"Hilfe."
 
-#: mime_handler.py:271
+#: mime_handler.py:330
 msgid "type handler"
 msgstr "Dienstprogramm für diesen Typ"
 
-#: mime_handler.py:272
-msgid "The application can handle files of these types.  Click on OK to add it to the SendTo menu for the type of file, and also the customized File menu."
-msgstr "Das Programm kann Dateien dieses Typs verarbeiten. Drücken Sie OK, um es zum \"Öffnen mit...\"-Menü für diesen Dateityp hinzuzufügen, als auch zum benutzerspezifischen Dateimenü."
+#: mime_handler.py:331
+msgid ""
+"The application can handle files of these types.  Click on OK to add it to "
+"the SendTo menu for the type of file, and also the customized File menu."
+msgstr ""
+"Das Programm kann Dateien dieses Typs verarbeiten. Drücken Sie OK, um es zum "
+"\"Öffnen mit...\"-Menü für diesen Dateityp hinzuzufügen, als auch zum "
+"benutzerspezifischen Dateimenü."
 
-#: saving.py:142
+#: saving.py:162
 msgid "Delete temporary file '%s'?"
 msgstr "Die temporäre Datei '%s' löschen?"
 
-#: saving.py:318
+#: saving.py:338
 msgid ""
 "Drag the icon to a directory viewer\n"
 "(or enter a full pathname)"
@@ -149,35 +243,39 @@ msgstr ""
 "Ziehe das Symbol auf ein Dateienfenster\n"
 "(oder den vollen Dateipfad eingeben)"
 
-#: saving.py:344
+#: saving.py:364
 msgid "Unnamed"
 msgstr "Unbenannt"
 
-#: saving.py:432
+#: saving.py:446
+msgid "'%s' already exists as a directory."
+msgstr "'%s' bereits als Verzeichnis vorhanden."
+
+#: saving.py:455
 msgid "Permissions changed from %o to %o."
 msgstr "Zugriffsrechte geändert von %o zu %o."
 
-#: saving.py:435
+#: saving.py:458
 msgid "Size was %d bytes; now %d bytes."
 msgstr "Größe war %d Bytes; jetzt %d Bytes."
 
-#: saving.py:438
+#: saving.py:461
 msgid "Modification time changed."
 msgstr "Änderungszeit geändert."
 
-#: saving.py:444
+#: saving.py:467
 msgid "File '%s' already exists -- overwrite it?"
 msgstr "Datei mit Namen '%s' bereits vorhanden -- diese überschreiben?"
 
-#: saving.py:445
+#: saving.py:468
 msgid "_Overwrite"
 msgstr "_Überschreiben"
 
-#: saving.py:485
+#: saving.py:508
 msgid "_Discard"
 msgstr "_Verwerfen:"
 
-#: saving.py:495
+#: saving.py:518
 msgid "Save As:"
 msgstr "Speichern Als:"
 
