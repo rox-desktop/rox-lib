@@ -1,0 +1,282 @@
+# Polish translation of ROX-Lib2.
+# Copyright (C) 2006 Free Software Foundation
+# Bart Kreska <bart-rpm % silesianet.pl>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ROX-Lib2 2.0.3\n"
+"POT-Creation-Date: 2006-05-15 19:42+CEST\n"
+"PO-Revision-Date: 2006-05-15 19:42+CEST\n"
+"Last-Translator: Bart Kreska <bart-rpm % silesianet.pl>\n"
+"Language-Team: Polish <>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+#: ../../AppRun:13
+msgid ""
+"ROX-Lib2 contains code that is useful to newer ROX applications. You "
+"should place this directory somewhere where other programs can find "
+"it, such as ~/lib or /usr/local/lib.\n"
+"\n"
+"ROX-Lib version: %s\n"
+"PyGTK version: %s\n"
+"GTK version: %s\n"
+"\n"
+"PyGTK location:\n"
+"%s"
+msgstr ""
+"ROX-Lib2 zawiera kod używany przez nowsze aplikacje ROX Filera. Ten "
+"katalog powinien zostać umieszczony w miejscu, gdzie inne programy "
+"będą mogły go odnaleźć. Na przykład w ~/lib lub /usr/local/lib.\n"
+"\n"
+"Wersja ROX-Lib: %s\n"
+"Wersja PyGTK: %s\n"
+"Wersja GTK: %s\n"
+"\n"
+"Położenie PyGTK:\n"
+"%s"
+
+#: OptionsBox.py:121
+msgid "%s options"
+msgstr "%s opcje"
+
+#: OptionsBox.py:124
+msgid "_Revert"
+msgstr "_Przywróć"
+
+#: OptionsBox.py:126
+msgid "Restore all options to how they were when the window was opened"
+msgstr "Przywróć poprzednie wartości opcji"
+
+#: __init__.py:72
+msgid ""
+"The pygtk2 package (2.0.0 or later) must be installed to use this "
+"program:\n"
+"http://rox.sourceforge.net/desktop/ROX-Lib\n"
+msgstr ""
+"Aby użyć tego programu, pakiet pygtk2 (2.0.0 lub nowszy) musi być "
+"zainstalowany:\n"
+"http://rox.sourceforge.net/desktop/ROX-Lib\n"
+
+#: __init__.py:80
+msgid "Broken pygtk installation: found pygtk (%s), but not gtk!\n"
+msgstr "Uszkodzona instalacja pygtk: znaleziono pygtk (%s), lecz "
+"brakuje gtk!\n"
+
+#: __init__.py:116
+msgid "Operation aborted at user's request"
+msgstr "Operacja przerwana na żądanie użytkownika"
+
+#: __init__.py:123 debug.py:44
+msgid "Error"
+msgstr "Błąd"
+
+#: __init__.py:149
+msgid "Information"
+msgstr "Informacja"
+
+#: __init__.py:171
+msgid "Confirm:"
+msgstr "Potwierdź:"
+
+#: __init__.py:414
+msgid ""
+"You do not have the Python 'xml' module installed, which ROX-Lib2 "
+"requires. You need to install python-xmlbase (this is a small "
+"package; the full PyXML package is not required)."
+msgstr ""
+"Nie masz modułu Pythona 'xml' wymaganego przez ROX-Lib2. Musisz "
+"zainstalować python-xmlbase (to mały pakiet; pełny PyXML nie jest "
+"potrzebny)."
+
+#: debug.py:34
+msgid "_Details"
+msgstr "_Szczegóły"
+
+#: debug.py:86
+msgid "_Bug Report"
+msgstr "Raport o _błędzie"
+
+#: debug.py:92
+# Skracam bo tam jest mało miejsca
+msgid "Forced Quit"
+msgstr "_Wyjście"
+
+#: debug.py:112
+# Zrzut => Ślad?/Wydruk?
+msgid "Stack trace (innermost last)"
+msgstr "Zrzut stosu (wewnętrzne są ostatnie)"
+
+#: debug.py:207
+msgid "Local variables in selected frame:"
+msgstr "Zmienne lokalne w zaznaczonej ramce:"
+
+#: fileutils.py:22
+msgid "Retry"
+msgstr "Ponów"
+
+#: fileutils.py:27
+msgid "Examine"
+msgstr "Przebadaj"
+
+#: fileutils.py:33
+msgid "Error:"
+msgstr "Błąd:"
+
+#: fileutils.py:59
+msgid ""
+"Could not create directory `%s' because a file already exists at that "
+"path.\n"
+msgstr ""
+"Nie można utworzyć katalogu '%s' ponieważ istnieje już plik w tej "
+"lokalizacji.\n"
+
+#: fileutils.py:65
+msgid "Could not create directory `%s'.\n"
+msgstr "Nie można utworzyć katalogu '%s'.\n"
+
+#: launch.py:11
+msgid ""
+"The program '%s' cannot be run, as the 0launch command is not "
+"available. It can be downloaded from here:\n"
+"\n"
+"http://0install.net/injector.html"
+msgstr ""
+"Nie można uruchomić programu '%s' ponieważ komenda 0launch jest "
+"niedostępna. Możesz ją pobrać stąd:\n"
+"\n"
+"http://0install.net/injector.html"
+
+#: loading.py:28
+# zbyt wiele plików?
+msgid ""
+"Cannot load files from a remote machine (multiple files, or target "
+"application/octet-stream not provided)"
+msgstr ""
+"Nie można załadować plików ze zdalnego hosta (zbyt wiele plików lub "
+"aplikacja obsługująca typ application/octet-stream nie ustawiona)"
+
+#: mime.py:483
+msgid ""
+"The '%s' command returned an error code!\n"
+"Make sure you have the freedesktop.org shared MIME package:\n"
+"http://www.freedesktop.org/standards/shared-mime-info.html"
+msgstr ""
+"Komenda '%s' zwróciła błąd!\n"
+"Upewnij się, że pakiet shared-mime-info z freedesktop.org jest "
+"zainstalowany:\n"
+"http://www.freedesktop.org/standards/shared-mime-info.html"
+
+#: mime_handler.py:52
+msgid "Install %s"
+msgstr "Instaluj %s"
+
+#: mime_handler.py:85
+msgid "Type"
+msgstr "Typ"
+
+#: mime_handler.py:90
+msgid "Name"
+msgstr "Nazwa"
+
+#: mime_handler.py:96
+msgid "Current"
+msgstr "Bieżący"
+
+#: mime_handler.py:103
+msgid "Install?"
+msgstr "Zainstalować?"
+
+#: mime_handler.py:109
+msgid "Uninstall?"
+msgstr "Odinstalować?"
+
+#: mime_handler.py:293
+msgid ""
+"Run actions can be changed by selecting a file of the appropriate "
+"type in the Filer and selecting the menu option 'Set Run Action...'"
+msgstr ""
+"Akcje mogą być zmieniane poprzez wybranie pliku właściwego typu w "
+"oknie Filera i użycie opcji menu 'Określ akcję...'"
+
+#: mime_handler.py:301
+msgid "run action"
+msgstr "akcja"
+
+#: mime_handler.py:312
+msgid "thumbnail handler"
+msgstr "aplikacja generująca miniaturki"
+
+#: mime_handler.py:313
+msgid ""
+"Thumbnail handlers provide support for creating thumbnail images of "
+"types of file.  The filer can generate thumbnails for most types of "
+"image (JPEG, PNG, etc.) but relies on helper applications for the "
+"others."
+msgstr ""
+"Filer potrafi samodzielnie tworzyć miniaturki obrazów w popularnych "
+"formatach (JPEG, PNG, itd.) lecz używa aplikacji generującej "
+"miniaturki dla pozostałych."
+
+#: mime_handler.py:330
+msgid "type handler"
+msgstr "aplikacja obsługująca typ"
+
+#: mime_handler.py:331
+msgid ""
+"The application can handle files of these types.  Click on OK to add "
+"it to the SendTo menu for the type of file, and also the customized "
+"File menu."
+msgstr ""
+"Aplikacja obsługująca pliki danych typów. Kliknij w OK aby dodać "
+"aplikację dla danego typu pliku do menu 'Wyślij do...' oraz 'Plik'."
+
+#: saving.py:162
+msgid "Delete temporary file '%s'?"
+msgstr "Usunąć tymczasowy plik '%s'?"
+
+#: saving.py:338
+msgid ""
+"Drag the icon to a directory viewer\n"
+"(or enter a full pathname)"
+msgstr ""
+"Przeciągnij ikonę do przeglądarki katalogów\n"
+"(lub wprowadź pełną ścieżkę)"
+
+#: saving.py:364
+msgid "Unnamed"
+msgstr "Bez nazwy"
+
+#: saving.py:446
+msgid "'%s' already exists as a directory."
+msgstr "'%s' już istnieje w tym katalogu."
+
+#: saving.py:455
+msgid "Permissions changed from %o to %o."
+msgstr "Uprawnienia zmienione z %o na %o."
+
+#: saving.py:458
+msgid "Size was %d bytes; now %d bytes."
+msgstr "Poprzedni rozmiar: %d bajtów; obecny %d bajtów."
+
+#: saving.py:461
+msgid "Modification time changed."
+msgstr "Data modyfikacji zmieniona."
+
+#: saving.py:467
+msgid "File '%s' already exists -- overwrite it?"
+msgstr "Plik '%s' już istnieje -- nadpisać?"
+
+#: saving.py:468
+msgid "_Overwrite"
+msgstr "_Nadpisz"
+
+#: saving.py:508
+msgid "_Discard"
+msgstr "_Porzuć"
+
+#: saving.py:518
+msgid "Save As:"
+msgstr "Zapisz jako:"
