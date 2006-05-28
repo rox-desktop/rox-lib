@@ -2,7 +2,9 @@
 import unittest
 import os, sys, shutil
 from StringIO import StringIO
-sys.path.append('../../python')
+from os.path import dirname, abspath, join
+rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
+sys.path.insert(0, join(rox_lib, 'python'))
 
 if os.environ.has_key('ROXLIB_TEST_SUB'):
 	import rox

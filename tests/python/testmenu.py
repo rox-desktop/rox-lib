@@ -1,7 +1,9 @@
 #!/usr/bin/env python2.2
 import unittest
 import os, sys, shutil
-sys.path.append('../../python')
+from os.path import dirname, abspath, join
+rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
+sys.path.insert(0, join(rox_lib, 'python'))
 
 os.environ['CHOICESPATH'] = '/tmp/choices:/tmp/choices2'
 os.environ['XDG_CONFIG_HOME'] = '/tmp/config'
