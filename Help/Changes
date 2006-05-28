@@ -7,6 +7,154 @@ Note: for a detailed changelog, do:
 			
   svn log -v https://svn.sourceforge.net/svnroot/rox/trunk/ROX-Lib2
 
+Release 2.0.3:
+
+General:
+
+- Added ROX-Lib.xml file, which makes it easy to register a CVS copy of ROX-Lib
+  with the 0launch, using '0launch --add-feed' (Thomas Leonard).
+
+- If pygtk is found, but not gtk, give a better error (Thomas Leonard; reported
+  by Albert).
+
+- Double-click on a line in the stacktrace display of the debug box to
+  open the source code in Edit.
+
+- Added rox.isappdir() function to test the validity of an AppDir (Stephen
+  Watson).
+
+- Set sys.excepthook to our graphical exception explorer so that untrapped
+  exceptions are reported nicely.
+
+- Don't display KeyboardInterrupt in an error box.
+
+- Added unittests.
+  Support Python 2.2.
+
+- When displaying an uncaught exception, still write it to stderr as well as
+  opening the exception dialog box.
+
+Translations:
+
+- Made message in AppRun translatable (Andras Mohari).
+
+- Include AppRun when generating translations, and rename translation function
+  in OptionsBox to avoid confusing pygettext (reported by Andras Mohari).
+
+- Added Hungarian translation.
+
+- More strings marked for translation.
+
+Current translations:
+
+ de      Guido Schimmels
+ es      Juan Carlos Jimenez Garcia
+ fr      Vincent Lefèvre
+ hu      Andras Mohari
+ it      Yuri Bongiorno
+ pl      Bart Kreska
+ pt_BR * Jose Carlos do Nascimento
+ zh_CN * cheungsiufai
+ zh_TW * cheungsiufai
+
+* indicates a translation which is out-of-date.
+
+applet:
+
+- Added method for applets to determine the panel orientation (Stephen Watson).
+
+filer:
+
+- Made filer.py use 0launch if available (Thomas Leonard; requested by
+  Christopher Arndt).
+
+launch: *NEW*
+
+- Added launch module, which allows running programs easily using the injector,
+  and made filer.py use 0launch if available (Thomas Leonard; requested by
+  Christopher Arndt).
+
+Menu:
+
+- Changed the doc string in Menu.py to prefer the new MenuItem based method
+  of defining menus not the old tuple method (Stephen Watson).
+
+mime:
+
+- Added mime.get_type_handler(), which uses the same algorithm as ROX-Filer to
+  find the handler for a file (Ken Hayber and Thomas Leonard).
+
+mime_handler:
+
+- EXPERIMENTAL code for installing MIME handlers via 0launch (Stephen Watson)
+
+- Better detection of the MIME-types/MIME-thumb location when installing type
+  handlers (Stephen Watson).
+
+- Improve installation of MIME type handler under Zero Install (Stephen Watson)
+
+- Bugfix: spurious argument when installing SendTo handler under Zero Install
+  (Stephen Watson, reported by Andras Mohari)
+
+OptionsBox:
+
+- Rename translation function in OptionsBox to avoid confusing pygettext.
+
+- Make the options box use ComboBox instead of OptionMenu whenever possible. It
+  also makes sure that the OptionMenu's initial width is large enough to
+  display the widest item (Andras Mohari).
+
+saving:
+
+- When saving a file to a FAT filesystem, the chmod would fail. Log a warning
+  instead of aborting (Thomas Leonard; reported by QS Computing).
+
+- Save box now selects icon from same icon theme as ROX-Filer (Stephen Watson).
+
+session: *NEW*
+
+- Added rox.session module for communicating with ROX-Session.
+
+- Use XMLRPC if the DBUS version is too old.
+
+- Check that ROX-Session is providing the dbus service, don't just assume that
+  it is (Stephen Watson).
+
+settings: *NEW*
+
+- Added settings module (Tony Houghton, based on code from LookAndFeel).
+
+- Don't create bus object until constructor is called.
+
+- rox.settings now uses rox.session to communicate with ROX-Session and
+  the duplicate Options work has been removed from rox.session (Stephen
+  Watson).
+
+su:
+
+- If 'xterm' isn't available, give a sensible error message when using the
+su module (Thomas Leonard; reported by Vincent Lefevre).
+
+xxmlrpc: *NEW*
+
+- Added 'xxmlrpc' module. This allows sending XML-RPC messages to other
+  processes, via the X server.
+
+- Extended XML-RPC code to return response values and faults to caller.
+
+- Better error codes (NoSuchService, UnknownObject, NoSuchMethod).  Cope with 
+  returning None (returns True instead).  Simplified API (no need to subclass
+  ExportedObject, call register, or use invoke).
+
+- If a service property exists but the window it points to doesn't, then
+  report that the service is no longer running.
+
+- XXMLRPC call objects support the Blocker interface (so you can block
+  until the reply is available).
+
+- If an XXMLRPC Call object is destroyed before the response is read then
+  display a warning and destroy the IPC window.
+
 25-May-2006
 ~~~~~~~~~~~
 Updated French translation (Vincent Lefèvre).
