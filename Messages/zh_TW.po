@@ -4,13 +4,31 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 1.9.13\n"
-"POT-Creation-Date: 2005-07-06 12:10+0200\n"
+"POT-Creation-Date: 2006-05-28 14:04+BST\n"
 "PO-Revision-Date: 2005-07-07 16:40+0200\n"
 "Last-Translator: Babyfai Cheung <babyfai1@yahoo.com.hk>\n"
 "Language-Team: none\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: ../../AppRun:13
+msgid ""
+"ROX-Lib2 contains code that is useful to newer ROX applications. You should "
+"place this directory somewhere where other programs can find it, such as ~/"
+"lib or /usr/local/lib.\n"
+"\n"
+"ROX-Lib version: %s\n"
+"PyGTK version: %s\n"
+"GTK version: %s\n"
+"\n"
+"PyGTK location:\n"
+"%s"
+msgstr ""
+
+#: OptionsBox.py:121
+msgid "%s options"
+msgstr ""
 
 #: OptionsBox.py:124
 msgid "_Revert"
@@ -21,30 +39,35 @@ msgid "Restore all options to how they were when the window was opened"
 msgstr "當打開窗口後，載入已儲存的設置"
 
 #: __init__.py:72
+#, fuzzy
 msgid ""
 "The pygtk2 package (2.0.0 or later) must be installed to use this program:\n"
-"http://rox.sourceforge.net/rox_lib.html\n"
+"http://rox.sourceforge.net/desktop/ROX-Lib\n"
 msgstr ""
 "pygtk2 (2.0.0 或以上版本) 必須安裝，請參閱：\n"
 "http://rox.sourceforge.net/rox_lib.php3\n"
 
-#: __init__.py:112
+#: __init__.py:80
+msgid "Broken pygtk installation: found pygtk (%s), but not gtk!\n"
+msgstr ""
+
+#: __init__.py:116
 msgid "Operation aborted at user's request"
 msgstr "操作被用戶終結"
 
-#: __init__.py:119 debug.py:44
+#: __init__.py:123 debug.py:44
 msgid "Error"
 msgstr "錯誤"
 
-#: __init__.py:145
+#: __init__.py:149
 msgid "Information"
 msgstr "訊息"
 
-#: __init__.py:167
+#: __init__.py:171
 msgid "Confirm:"
 msgstr "確定："
 
-#: __init__.py:371
+#: __init__.py:414
 msgid ""
 "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "
@@ -65,11 +88,11 @@ msgstr "錯誤回報(_B)"
 msgid "Forced Quit"
 msgstr "強制登出"
 
-#: debug.py:111
+#: debug.py:112
 msgid "Stack trace (innermost last)"
 msgstr "堆疊追蹤 (最後及最深層)"
 
-#: debug.py:196
+#: debug.py:207
 msgid "Local variables in selected frame:"
 msgstr "本機變數在已選的框架為："
 
@@ -94,6 +117,14 @@ msgstr "未能創建目錄 `%s' 目標早已存在.\n"
 msgid "Could not create directory `%s'.\n"
 msgstr "未能創建目錄 `%s'.\n"
 
+#: launch.py:11
+msgid ""
+"The program '%s' cannot be run, as the 0launch command is not available. It "
+"can be downloaded from here:\n"
+"\n"
+"http://0install.net/injector.html"
+msgstr ""
+
 #: loading.py:28
 msgid ""
 "Cannot load files from a remote machine (multiple files, or target "
@@ -110,7 +141,31 @@ msgstr ""
 "請確定您已安裝 freedesktop.org 的 MIME 套件：\n"
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 
-#: mime_handler.py:260
+#: mime_handler.py:52
+msgid "Install %s"
+msgstr ""
+
+#: mime_handler.py:85
+msgid "Type"
+msgstr ""
+
+#: mime_handler.py:90
+msgid "Name"
+msgstr ""
+
+#: mime_handler.py:96
+msgid "Current"
+msgstr ""
+
+#: mime_handler.py:103
+msgid "Install?"
+msgstr ""
+
+#: mime_handler.py:109
+msgid "Uninstall?"
+msgstr ""
+
+#: mime_handler.py:293
 msgid ""
 "Run actions can be changed by selecting a file of the appropriate type in "
 "the Filer and selecting the menu option 'Set Run Action...'"
@@ -118,15 +173,15 @@ msgstr ""
 "執行的動作可被改變為另一更合適的應用程式，請在 ROX-Filer 的選單內 '設定執行"
 "檔...' 中更改."
 
-#: mime_handler.py:268
+#: mime_handler.py:301
 msgid "run action"
 msgstr "執行動作"
 
-#: mime_handler.py:278
+#: mime_handler.py:312
 msgid "thumbnail handler"
 msgstr "縮圖處理員"
 
-#: mime_handler.py:279
+#: mime_handler.py:313
 msgid ""
 "Thumbnail handlers provide support for creating thumbnail images of types of "
 "file.  The filer can generate thumbnails for most types of image (JPEG, PNG, "
@@ -135,11 +190,11 @@ msgstr ""
 "縮圖處理員提供影像檔的縮圖顯生功能，影像檔包括所有 (JPEG, PNG, 等等.) 的檔"
 "案，但某些類型或會依賴相關程式的安裝."
 
-#: mime_handler.py:295
+#: mime_handler.py:330
 msgid "type handler"
 msgstr "類型處理員"
 
-#: mime_handler.py:296
+#: mime_handler.py:331
 msgid ""
 "The application can handle files of these types.  Click on OK to add it to "
 "the SendTo menu for the type of file, and also the customized File menu."
@@ -147,11 +202,11 @@ msgstr ""
 "此功能可幫助處理檔案的類型，點擊 '確定' 並將其加進到選單的 '傳送至' 以設定檔"
 "案的類型，亦可在自定選單內進行."
 
-#: saving.py:151
+#: saving.py:162
 msgid "Delete temporary file '%s'?"
 msgstr "刪除暫存檔案 '%s'?"
 
-#: saving.py:327
+#: saving.py:338
 msgid ""
 "Drag the icon to a directory viewer\n"
 "(or enter a full pathname)"
@@ -159,38 +214,38 @@ msgstr ""
 "將圖示拖放到目錄內\n"
 "(或鍵入完整的路徑)"
 
-#: saving.py:353
+#: saving.py:364
 msgid "Unnamed"
 msgstr "取消命名"
 
-#: saving.py:435
+#: saving.py:446
 msgid "'%s' already exists as a directory."
 msgstr "檔案 '%s' 已存在並且為一個目錄"
 
-#: saving.py:444
+#: saving.py:455
 msgid "Permissions changed from %o to %o."
 msgstr "權限改變從 %o 變為 %o."
 
-#: saving.py:447
+#: saving.py:458
 msgid "Size was %d bytes; now %d bytes."
 msgstr "大小原是 %d bytes；現在是 %d bytes."
 
-#: saving.py:450
+#: saving.py:461
 msgid "Modification time changed."
 msgstr "修改時間已變更."
 
-#: saving.py:456
+#: saving.py:467
 msgid "File '%s' already exists -- overwrite it?"
 msgstr "檔案 '%s' 已存在 -- 覆蓋？"
 
-#: saving.py:457
+#: saving.py:468
 msgid "_Overwrite"
 msgstr "覆蓋(_O)"
 
-#: saving.py:497
+#: saving.py:508
 msgid "_Discard"
 msgstr "丟棄(_D)"
 
-#: saving.py:507
+#: saving.py:518
 msgid "Save As:"
 msgstr "儲存為："

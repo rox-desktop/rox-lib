@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 2.0.0\n"
-"POT-Creation-Date: 2006-05-18 00:23+UTC\n"
+"POT-Creation-Date: 2006-05-28 14:04+BST\n"
 "PO-Revision-Date: 2005-03-18 19:48+0100\n"
 "Last-Translator: Guido Schimmels <__guido__@web.de>\n"
 "Language-Team: ROX Mailing List <rox-devel@lists.sourceforge.net>\n"
@@ -29,9 +29,9 @@ msgid ""
 "PyGTK location:\n"
 "%s"
 msgstr ""
-"ROX-Lib2 enthält Code für aktuelle ROX-Programme. Sie sollten "
-"das Verzeichnis platzieren, wo andere Programme es finden können, wie ~/"
-"lib oder /usr/local/lib.\n"
+"ROX-Lib2 enthält Code für aktuelle ROX-Programme. Sie sollten das "
+"Verzeichnis platzieren, wo andere Programme es finden können, wie ~/lib "
+"oder /usr/local/lib.\n"
 "\n"
 "ROX-Lib Version: %s\n"
 "PyGTK Version: %s\n"
@@ -65,7 +65,8 @@ msgstr ""
 
 #: __init__.py:80
 msgid "Broken pygtk installation: found pygtk (%s), but not gtk!\n"
-msgstr "PyGTK nicht korrekt installiert: pygtk (%s) gefunden, nicht aber gtk!\n"
+msgstr ""
+"PyGTK nicht korrekt installiert: pygtk (%s) gefunden, nicht aber gtk!\n"
 
 #: __init__.py:116
 msgid "Operation aborted at user's request"
@@ -129,7 +130,8 @@ msgstr "Fehler:"
 msgid ""
 "Could not create directory `%s' because a file already exists at that path.\n"
 msgstr ""
-"Konnte Verzeichnis `%s' nicht anlegen, da eine gleichnamige Datei bereits existiert.\n"
+"Konnte Verzeichnis `%s' nicht anlegen, da eine gleichnamige Datei bereits "
+"existiert.\n"
 
 #: fileutils.py:65
 msgid "Could not create directory `%s'.\n"
@@ -142,19 +144,18 @@ msgid ""
 "\n"
 "http://0install.net/injector.html"
 msgstr ""
-"Das Programm '%s' kann nicht ausgeführt werden, da der 0launch-Befehl nicht verfügbar ist. Er"
-"kann von hier runtergeladen werden:\n"
+"Das Programm '%s' kann nicht ausgeführt werden, da der 0launch-Befehl nicht "
+"verfügbar ist. Erkann von hier runtergeladen werden:\n"
 "\n"
 "http://0install.net/injector.html"
-
 
 #: loading.py:28
 msgid ""
 "Cannot load files from a remote machine (multiple files, or target "
 "application/octet-stream not provided)"
 msgstr ""
-"Kann Netzwerkdateien nicht laden (laden mehrere Dateien auf einmal oder Dateityp "
-"application/octet-stream nicht unterstützt)"
+"Kann Netzwerkdateien nicht laden (laden mehrere Dateien auf einmal oder "
+"Dateityp application/octet-stream nicht unterstützt)"
 
 #: mime.py:483
 msgid ""
@@ -278,4 +279,3 @@ msgstr "_Verwerfen:"
 #: saving.py:518
 msgid "Save As:"
 msgstr "Speichern Als:"
-

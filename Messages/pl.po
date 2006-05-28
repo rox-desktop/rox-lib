@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 2.0.3\n"
-"POT-Creation-Date: 2006-05-15 19:42+CEST\n"
+"POT-Creation-Date: 2006-05-28 14:04+BST\n"
 "PO-Revision-Date: 2006-05-15 19:42+CEST\n"
 "Last-Translator: Bart Kreska <bart-rpm % silesianet.pl>\n"
 "Language-Team: Polish <>\n"
@@ -16,9 +16,9 @@ msgstr ""
 
 #: ../../AppRun:13
 msgid ""
-"ROX-Lib2 contains code that is useful to newer ROX applications. You "
-"should place this directory somewhere where other programs can find "
-"it, such as ~/lib or /usr/local/lib.\n"
+"ROX-Lib2 contains code that is useful to newer ROX applications. You should "
+"place this directory somewhere where other programs can find it, such as ~/"
+"lib or /usr/local/lib.\n"
 "\n"
 "ROX-Lib version: %s\n"
 "PyGTK version: %s\n"
@@ -27,9 +27,9 @@ msgid ""
 "PyGTK location:\n"
 "%s"
 msgstr ""
-"ROX-Lib2 zawiera kod używany przez nowsze aplikacje ROX Filera. Ten "
-"katalog powinien zostać umieszczony w miejscu, gdzie inne programy "
-"będą mogły go odnaleźć. Na przykład w ~/lib lub /usr/local/lib.\n"
+"ROX-Lib2 zawiera kod używany przez nowsze aplikacje ROX Filera. Ten katalog "
+"powinien zostać umieszczony w miejscu, gdzie inne programy będą mogły go "
+"odnaleźć. Na przykład w ~/lib lub /usr/local/lib.\n"
 "\n"
 "Wersja ROX-Lib: %s\n"
 "Wersja PyGTK: %s\n"
@@ -52,8 +52,7 @@ msgstr "Przywróć poprzednie wartości opcji"
 
 #: __init__.py:72
 msgid ""
-"The pygtk2 package (2.0.0 or later) must be installed to use this "
-"program:\n"
+"The pygtk2 package (2.0.0 or later) must be installed to use this program:\n"
 "http://rox.sourceforge.net/desktop/ROX-Lib\n"
 msgstr ""
 "Aby użyć tego programu, pakiet pygtk2 (2.0.0 lub nowszy) musi być "
@@ -62,8 +61,8 @@ msgstr ""
 
 #: __init__.py:80
 msgid "Broken pygtk installation: found pygtk (%s), but not gtk!\n"
-msgstr "Uszkodzona instalacja pygtk: znaleziono pygtk (%s), lecz "
-"brakuje gtk!\n"
+msgstr ""
+"Uszkodzona instalacja pygtk: znaleziono pygtk (%s), lecz brakuje gtk!\n"
 
 #: __init__.py:116
 msgid "Operation aborted at user's request"
@@ -83,13 +82,12 @@ msgstr "Potwierdź:"
 
 #: __init__.py:414
 msgid ""
-"You do not have the Python 'xml' module installed, which ROX-Lib2 "
-"requires. You need to install python-xmlbase (this is a small "
-"package; the full PyXML package is not required)."
+"You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
+"You need to install python-xmlbase (this is a small package; the full PyXML "
+"package is not required)."
 msgstr ""
-"Nie masz modułu Pythona 'xml' wymaganego przez ROX-Lib2. Musisz "
-"zainstalować python-xmlbase (to mały pakiet; pełny PyXML nie jest "
-"potrzebny)."
+"Nie masz modułu Pythona 'xml' wymaganego przez ROX-Lib2. Musisz zainstalować "
+"python-xmlbase (to mały pakiet; pełny PyXML nie jest potrzebny)."
 
 #: debug.py:34
 msgid "_Details"
@@ -99,13 +97,13 @@ msgstr "_Szczegóły"
 msgid "_Bug Report"
 msgstr "Raport o _błędzie"
 
-#: debug.py:92
 # Skracam bo tam jest mało miejsca
+#: debug.py:92
 msgid "Forced Quit"
 msgstr "_Wyjście"
 
-#: debug.py:112
 # Zrzut => Ślad?/Wydruk?
+#: debug.py:112
 msgid "Stack trace (innermost last)"
 msgstr "Zrzut stosu (wewnętrzne są ostatnie)"
 
@@ -127,8 +125,7 @@ msgstr "Błąd:"
 
 #: fileutils.py:59
 msgid ""
-"Could not create directory `%s' because a file already exists at that "
-"path.\n"
+"Could not create directory `%s' because a file already exists at that path.\n"
 msgstr ""
 "Nie można utworzyć katalogu '%s' ponieważ istnieje już plik w tej "
 "lokalizacji.\n"
@@ -139,18 +136,18 @@ msgstr "Nie można utworzyć katalogu '%s'.\n"
 
 #: launch.py:11
 msgid ""
-"The program '%s' cannot be run, as the 0launch command is not "
-"available. It can be downloaded from here:\n"
+"The program '%s' cannot be run, as the 0launch command is not available. It "
+"can be downloaded from here:\n"
 "\n"
 "http://0install.net/injector.html"
 msgstr ""
-"Nie można uruchomić programu '%s' ponieważ komenda 0launch jest "
-"niedostępna. Możesz ją pobrać stąd:\n"
+"Nie można uruchomić programu '%s' ponieważ komenda 0launch jest niedostępna. "
+"Możesz ją pobrać stąd:\n"
 "\n"
 "http://0install.net/injector.html"
 
-#: loading.py:28
 # zbyt wiele plików?
+#: loading.py:28
 msgid ""
 "Cannot load files from a remote machine (multiple files, or target "
 "application/octet-stream not provided)"
@@ -195,11 +192,11 @@ msgstr "Odinstalować?"
 
 #: mime_handler.py:293
 msgid ""
-"Run actions can be changed by selecting a file of the appropriate "
-"type in the Filer and selecting the menu option 'Set Run Action...'"
+"Run actions can be changed by selecting a file of the appropriate type in "
+"the Filer and selecting the menu option 'Set Run Action...'"
 msgstr ""
-"Akcje mogą być zmieniane poprzez wybranie pliku właściwego typu w "
-"oknie Filera i użycie opcji menu 'Określ akcję...'"
+"Akcje mogą być zmieniane poprzez wybranie pliku właściwego typu w oknie "
+"Filera i użycie opcji menu 'Określ akcję...'"
 
 #: mime_handler.py:301
 msgid "run action"
@@ -211,14 +208,13 @@ msgstr "aplikacja generująca miniaturki"
 
 #: mime_handler.py:313
 msgid ""
-"Thumbnail handlers provide support for creating thumbnail images of "
-"types of file.  The filer can generate thumbnails for most types of "
-"image (JPEG, PNG, etc.) but relies on helper applications for the "
-"others."
+"Thumbnail handlers provide support for creating thumbnail images of types of "
+"file.  The filer can generate thumbnails for most types of image (JPEG, PNG, "
+"etc.) but relies on helper applications for the others."
 msgstr ""
 "Filer potrafi samodzielnie tworzyć miniaturki obrazów w popularnych "
-"formatach (JPEG, PNG, itd.) lecz używa aplikacji generującej "
-"miniaturki dla pozostałych."
+"formatach (JPEG, PNG, itd.) lecz używa aplikacji generującej miniaturki dla "
+"pozostałych."
 
 #: mime_handler.py:330
 msgid "type handler"
@@ -226,12 +222,11 @@ msgstr "aplikacja obsługująca typ"
 
 #: mime_handler.py:331
 msgid ""
-"The application can handle files of these types.  Click on OK to add "
-"it to the SendTo menu for the type of file, and also the customized "
-"File menu."
+"The application can handle files of these types.  Click on OK to add it to "
+"the SendTo menu for the type of file, and also the customized File menu."
 msgstr ""
-"Aplikacja obsługująca pliki danych typów. Kliknij w OK aby dodać "
-"aplikację dla danego typu pliku do menu 'Wyślij do...' oraz 'Plik'."
+"Aplikacja obsługująca pliki danych typów. Kliknij w OK aby dodać aplikację "
+"dla danego typu pliku do menu 'Wyślij do...' oraz 'Plik'."
 
 #: saving.py:162
 msgid "Delete temporary file '%s'?"

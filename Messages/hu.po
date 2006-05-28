@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 2.0.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-11 16:34+CET\n"
+"POT-Creation-Date: 2006-05-28 14:04+BST\n"
 "PO-Revision-Date: 2006-03-12 17:30+0100\n"
 "Last-Translator: Andras Mohari <mayday@mailpont.hu>\n"
 "Language-Team: Hungarian\n"
@@ -18,7 +18,9 @@ msgstr ""
 
 #: ../../AppRun:13
 msgid ""
-"ROX-Lib2 contains code that is useful to newer ROX applications. You should place this directory somewhere where other programs can find it, such as ~/lib or /usr/local/lib.\n"
+"ROX-Lib2 contains code that is useful to newer ROX applications. You should "
+"place this directory somewhere where other programs can find it, such as ~/"
+"lib or /usr/local/lib.\n"
 "\n"
 "ROX-Lib version: %s\n"
 "PyGTK version: %s\n"
@@ -27,7 +29,9 @@ msgid ""
 "PyGTK location:\n"
 "%s"
 msgstr ""
-"A ROX-Lib2 az újabb ROX alkalmazások számára hasznos kódot tartalmaz. Olyan helyre másold ezt a könyvtárat, ahol a programok meg fogják találni. Például: ~/lib vagy /usr/local/lib.\n"
+"A ROX-Lib2 az újabb ROX alkalmazások számára hasznos kódot tartalmaz. Olyan "
+"helyre másold ezt a könyvtárat, ahol a programok meg fogják találni. "
+"Például: ~/lib vagy /usr/local/lib.\n"
 "\n"
 "ROX-Lib verzió: %s\n"
 "PyGTK verzió: %s\n"
@@ -53,7 +57,8 @@ msgid ""
 "The pygtk2 package (2.0.0 or later) must be installed to use this program:\n"
 "http://rox.sourceforge.net/desktop/ROX-Lib\n"
 msgstr ""
-"Ehhez a programhoz telepíteni kell a pygtk2 csomagot (2.0.0-t vagy újabbat):\n"
+"Ehhez a programhoz telepíteni kell a pygtk2 csomagot (2.0.0-t vagy "
+"újabbat):\n"
 "http://rox.sourceforge.net/desktop/ROX-Lib\n"
 
 #: __init__.py:80
@@ -64,8 +69,7 @@ msgstr "Hibás a pygtk telepítése: van pygtk (%s), de nincs gtk!\n"
 msgid "Operation aborted at user's request"
 msgstr "Művelet megszakítva a felhasználó kérésére"
 
-#: __init__.py:123
-#: debug.py:44
+#: __init__.py:123 debug.py:44
 msgid "Error"
 msgstr "Hiba"
 
@@ -78,8 +82,14 @@ msgid "Confirm:"
 msgstr "Megerősítés:"
 
 #: __init__.py:414
-msgid "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. You need to install python-xmlbase (this is a small package; the full PyXML package is not required)."
-msgstr "Nincs telepítve a ROX-Lib2 működéséhez szükséges \"xml\" Python modul. Telepíteni kell a python-xmlbase csomagot (ez csak egy kis csomag; a teljes PyXML csomagra nincs szükség)."
+msgid ""
+"You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
+"You need to install python-xmlbase (this is a small package; the full PyXML "
+"package is not required)."
+msgstr ""
+"Nincs telepítve a ROX-Lib2 működéséhez szükséges \"xml\" Python modul. "
+"Telepíteni kell a python-xmlbase csomagot (ez csak egy kis csomag; a teljes "
+"PyXML csomagra nincs szükség)."
 
 #: debug.py:34
 msgid "_Details"
@@ -115,8 +125,11 @@ msgid "Error:"
 msgstr "Hiba:"
 
 #: fileutils.py:59
-msgid "Could not create directory `%s' because a file already exists at that path.\n"
-msgstr "Nem sikerült létrehozni a könyvtárat (%s), mert már létezik ilyen nevű fájl.\n"
+msgid ""
+"Could not create directory `%s' because a file already exists at that path.\n"
+msgstr ""
+"Nem sikerült létrehozni a könyvtárat (%s), mert már létezik ilyen nevű "
+"fájl.\n"
 
 #: fileutils.py:65
 msgid "Could not create directory `%s'.\n"
@@ -124,17 +137,23 @@ msgstr "Nem sikerült létrehozni a könyvtárat: \"%s\".\n"
 
 #: launch.py:11
 msgid ""
-"The program '%s' cannot be run, as the 0launch command is not available. It can be downloaded from here:\n"
+"The program '%s' cannot be run, as the 0launch command is not available. It "
+"can be downloaded from here:\n"
 "\n"
 "http://0install.net/injector.html"
 msgstr ""
-"Nem lehet futtatni a programot (%s), mert a 0launch parancs nem található. Innen tölthető le:\n"
+"Nem lehet futtatni a programot (%s), mert a 0launch parancs nem található. "
+"Innen tölthető le:\n"
 "\n"
 "http://0install.net/injector.html"
 
 #: loading.py:28
-msgid "Cannot load files from a remote machine (multiple files, or target application/octet-stream not provided)"
-msgstr "Nem tudom betölteni másik gépről a fájlokat (vagy több fájl van, vagy nincs megadva az application/octet-stream)"
+msgid ""
+"Cannot load files from a remote machine (multiple files, or target "
+"application/octet-stream not provided)"
+msgstr ""
+"Nem tudom betölteni másik gépről a fájlokat (vagy több fájl van, vagy nincs "
+"megadva az application/octet-stream)"
 
 #: mime.py:483
 msgid ""
@@ -171,8 +190,13 @@ msgid "Uninstall?"
 msgstr "Eltávolítás?"
 
 #: mime_handler.py:293
-msgid "Run actions can be changed by selecting a file of the appropriate type in the Filer and selecting the menu option 'Set Run Action...'"
-msgstr "A programok hozzárendelését a fájlkezelőben lehet megváltoztatni. Jelölj ki egy megfelelő típusú fájlt, majd használd a \"Program hozzárendelése...\" menüpontot."
+msgid ""
+"Run actions can be changed by selecting a file of the appropriate type in "
+"the Filer and selecting the menu option 'Set Run Action...'"
+msgstr ""
+"A programok hozzárendelését a fájlkezelőben lehet megváltoztatni. Jelölj ki "
+"egy megfelelő típusú fájlt, majd használd a \"Program hozzárendelése...\" "
+"menüpontot."
 
 #: mime_handler.py:301
 msgid "run action"
@@ -183,8 +207,14 @@ msgid "thumbnail handler"
 msgstr "bélyegképkezelő"
 
 #: mime_handler.py:313
-msgid "Thumbnail handlers provide support for creating thumbnail images of types of file.  The filer can generate thumbnails for most types of image (JPEG, PNG, etc.) but relies on helper applications for the others."
-msgstr "A bélyegképkezelők különféle típusú fájlokhoz hoznak létre bélyegképeket. A fájlkezelő a gyakoribb képtípusokhoz (JPEG, PNG stb.) tud bélyegképeket készíteni, más típusokhoz azonban segédprogramokat használ."
+msgid ""
+"Thumbnail handlers provide support for creating thumbnail images of types of "
+"file.  The filer can generate thumbnails for most types of image (JPEG, PNG, "
+"etc.) but relies on helper applications for the others."
+msgstr ""
+"A bélyegképkezelők különféle típusú fájlokhoz hoznak létre bélyegképeket. A "
+"fájlkezelő a gyakoribb képtípusokhoz (JPEG, PNG stb.) tud bélyegképeket "
+"készíteni, más típusokhoz azonban segédprogramokat használ."
 
 #: mime_handler.py:330
 msgid "type handler"
@@ -192,8 +222,13 @@ msgstr "típuskezelő"
 
 # XXX
 #: mime_handler.py:331
-msgid "The application can handle files of these types.  Click on OK to add it to the SendTo menu for the type of file, and also the customized File menu."
-msgstr "Ezeket a fájltípusokat képes kezelni az alkalmazás. Az OK gombra kattintva lehet felvenni az alkalmazást a típushoz tartozó Küldés menübe, valamint a Fájl menübe."
+msgid ""
+"The application can handle files of these types.  Click on OK to add it to "
+"the SendTo menu for the type of file, and also the customized File menu."
+msgstr ""
+"Ezeket a fájltípusokat képes kezelni az alkalmazás. Az OK gombra kattintva "
+"lehet felvenni az alkalmazást a típushoz tartozó Küldés menübe, valamint a "
+"Fájl menübe."
 
 #: saving.py:162
 msgid "Delete temporary file '%s'?"
@@ -242,4 +277,3 @@ msgstr "El_vetés"
 #: saving.py:518
 msgid "Save As:"
 msgstr "Mentés másként:"
-

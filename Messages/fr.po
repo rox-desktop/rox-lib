@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 2.0.2-20060525\n"
-"POT-Creation-Date: 2006-05-25 17:37+CEST\n"
+"POT-Creation-Date: 2006-05-28 14:04+BST\n"
 "PO-Revision-Date: 2006-05-25 17:37+0200\n"
 "Last-Translator: Vincent Lefevre <vincent@vinc17.org>\n"
 "Language-Team: ROX Mailing List <rox-devel@lists.sourceforge.net>\n"
