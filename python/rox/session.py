@@ -14,10 +14,7 @@ but has two important differences: it is not saved to the options file and
 it is synchronized with a value of the same name in the ROX-Session settings.
 """
 
-import os, sys
 import rox
-from rox.options import OptionGroup, Option
-from rox import OptionsBox, g
 import rox.xxmlrpc
 # import gobject
 

@@ -21,7 +21,7 @@ See rox.suchild for a list of operations available on the 'root' object.
 
 import os, sys
 import rox
-from rox import g, _, master_proxy, tasks
+from rox import master_proxy, tasks
 import traceback
 import fcntl
 

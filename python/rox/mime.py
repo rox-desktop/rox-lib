@@ -19,7 +19,7 @@ import rox
 import rox.choices
 from rox import i18n, _, basedir
 
-from xml.dom import Node, minidom, XML_NAMESPACE
+from xml.dom import minidom, XML_NAMESPACE
 
 FREE_NS = 'http://www.freedesktop.org/standards/shared-mime-info'
 

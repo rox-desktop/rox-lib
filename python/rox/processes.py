@@ -24,7 +24,7 @@ pipes, wildcards and so on. Be very careful of escaping in this case (think
 about filenames containing spaces, quotes, apostrophes, etc).
 """
 
-from rox import g, saving
+from rox import g
 import gobject
 
 import os, sys, fcntl

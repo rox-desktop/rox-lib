@@ -37,7 +37,7 @@ callbacks. See the Task class (below) for more information.
 from __future__ import generators
 
 import rox, gobject
-from rox import g, _
+from rox import g
 
 # The list of Blockers whose event has happened, in the order they were
 # triggered

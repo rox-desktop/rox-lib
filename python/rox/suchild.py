@@ -1,7 +1,5 @@
 """This is the child program run by the su module. Do not import this module."""
 import os, sys
-import cPickle as pickle
-import time
 import shutil
 
 import proxy

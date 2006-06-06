@@ -9,9 +9,7 @@ EXPERIMENTAL.
 
 from __future__ import generators
 # Note: do not import rox or gtk. Needs to work without DISPLAY.
-import os, sys, pwd
-import traceback
-import fcntl
+import os, sys
 from select import select
 import cPickle as pickle
 

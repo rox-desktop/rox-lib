@@ -7,7 +7,7 @@ the purpose and pass that to the SaveBox."""
 
 import os, sys
 import rox
-from rox import alert, info, g, _, filer, escape
+from rox import alert, g, _, filer, escape
 from rox import choices, get_local_path
 
 gdk = g.gdk
