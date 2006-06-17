@@ -10,6 +10,7 @@ rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
 sys.path.insert(0, join(rox_lib, 'python'))
 
 from rox import processes, g
+import gobject
 
 def pipe_through_command(command, src, dst):
 	processes.PipeThroughCommand(command, src, dst).wait()
@@ -99,7 +100,7 @@ class TestProcesses(unittest.TestCase):
 		ptc = processes.PipeThroughCommand('sleep 100; exit 1', None, None)
 		def stop():
 			ptc.kill()
-		g.timeout_add(2000, stop)
+		gobject.timeout_add(2000, stop)
 		try:
 			ptc.wait()
 			assert 0
