@@ -4,8 +4,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 1.9.13\n"
-"POT-Creation-Date: 2006-05-28 14:04+BST\n"
-"PO-Revision-Date: 2005-05-07 16:40+0200\n"
+"POT-Creation-Date: 2006-06-25 21:08+HKT\n"
+"PO-Revision-Date: 2006-06-25 16:40+0200\n"
 "Last-Translator: Babyfai Cheung <babyfai1@yahoo.com.hk>\n"
 "Language-Team: none\n"
 "MIME-Version: 1.0\n"
@@ -25,10 +25,19 @@ msgid ""
 "PyGTK location:\n"
 "%s"
 msgstr ""
+"ROX-Lib2 包含了 ROX 应用程式所必需的函式码。您应将此目录放到应用程式可找到的"
+"地方，例如 ~/lib 或  /usr/local/lib.\n"
+"\n"
+"ROX-Lib 版本：%s\n"
+"PyGTK 版本：%s\n"
+"GTK 版本：%s\n"
+"\n"
+"PyGTK 位置：\n"
+"%s"
 
 #: OptionsBox.py:121
 msgid "%s options"
-msgstr ""
+msgstr "%s 选项"
 
 #: OptionsBox.py:124
 msgid "_Revert"
@@ -39,17 +48,16 @@ msgid "Restore all options to how they were when the window was opened"
 msgstr "当打开窗口后，载入已储存的设置"
 
 #: __init__.py:72
-#, fuzzy
 msgid ""
 "The pygtk2 package (2.0.0 or later) must be installed to use this program:\n"
 "http://rox.sourceforge.net/desktop/ROX-Lib\n"
 msgstr ""
-"pygtk2 (2.0.0 或以上版本) 必须安装，请参阅：\n"
-"http://rox.sourceforge.net/rox_lib.php3\n"
+"pygtk2 套件 (2.0.0 或以上版本) 必须安装，请参阅：\n"
+"http://rox.sourceforge.net/desktop/ROX-Lib\n"
 
 #: __init__.py:80
 msgid "Broken pygtk installation: found pygtk (%s), but not gtk!\n"
-msgstr ""
+msgstr "已损毁的 pygtk 安装：找到 pygtk (%s)，但没有 gtk！\n"
 
 #: __init__.py:116
 msgid "Operation aborted at user's request"
@@ -124,6 +132,9 @@ msgid ""
 "\n"
 "http://0install.net/injector.html"
 msgstr ""
+"程式 '%s' 不能执行，而 0launch 这指令也不存在。请到以下地方下载：\n"
+"\n"
+"http://0install.net/injector.html"
 
 #: loading.py:28
 msgid ""
@@ -143,27 +154,27 @@ msgstr ""
 
 #: mime_handler.py:52
 msgid "Install %s"
-msgstr ""
+msgstr "安装 %s"
 
 #: mime_handler.py:85
 msgid "Type"
-msgstr ""
+msgstr "类型"
 
 #: mime_handler.py:90
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 #: mime_handler.py:96
 msgid "Current"
-msgstr ""
+msgstr "当前的"
 
 #: mime_handler.py:103
 msgid "Install?"
-msgstr ""
+msgstr "安装？"
 
 #: mime_handler.py:109
 msgid "Uninstall?"
-msgstr ""
+msgstr "反安装？"
 
 #: mime_handler.py:293
 msgid ""
