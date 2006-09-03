@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.2
+#!/usr/bin/env python2.3
 import unittest, os, sys
 
 my_dir = os.path.dirname(sys.argv[0])
