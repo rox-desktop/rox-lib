@@ -9,7 +9,7 @@
 
   <feed-for interface='http://rox.sourceforge.net/2005/interfaces/ROX-Lib'/>
 
-  <group main='AppRun'>
-    <implementation version="2.0.3" id="." stability='testing'/>
+  <group main='ROX-Lib2/AppRun'>
+    <implementation version="2.0.3.0" id=".." stability='testing'/>
   </group>
 </interface>
