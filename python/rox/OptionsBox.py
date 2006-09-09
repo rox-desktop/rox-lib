@@ -138,19 +138,21 @@ class OptionsBox(g.Dialog):
 		self.size_groups = {}	# Name -> GtkSizeGroup
 		self.current_size_group = None
 		
-		self.build_window_frame()
-
-		# Add each section
-		n = 0
+		sections = []
 		for section in doc.documentElement.childNodes:
 			if section.nodeType != Node.ELEMENT_NODE:
 				continue
 			if section.localName != 'section':
 				print "Unknown section", section
 				continue
+			sections.append(section)
+
+		self.build_window_frame(add_frame = len(sections) > 1)
+
+		# Add each section
+		for section in sections:
 			self.build_section(section, None)
-			n += 1
-		if n > 1:
+		if len(sections) > 1:
 			self.tree_view.expand_all()
 		else:
 			self.sections_swin.hide()
@@ -215,7 +217,7 @@ class OptionsBox(g.Dialog):
 		finally:
 			self.updating = 0
 	
-	def build_window_frame(self):
+	def build_window_frame(self, add_frame = True):
 		"Create the main structure of the window."
 		hbox = g.HBox(False, 4)
 		self.vbox.pack_start(hbox, True, True, 0)
@@ -245,15 +247,18 @@ class OptionsBox(g.Dialog):
 		sw.add(tv)
 
 		# main options area
-		frame = g.Frame()
-		frame.set_shadow_type(g.SHADOW_IN)
-		hbox.pack_start(frame, True, True, 0)
-
 		notebook = g.Notebook()
 		notebook.set_show_tabs(False)
 		notebook.set_show_border(False)
-		frame.add(notebook)
 		self.notebook = notebook
+
+		if add_frame:
+			frame = g.Frame()
+			frame.set_shadow_type(g.SHADOW_IN)
+			hbox.pack_start(frame, True, True, 0)
+			frame.add(notebook)
+		else:
+			hbox.pack_start(notebook, True, True, 0)
 
 		# Flip pages
 		# (sel = sel; pygtk bug?)
