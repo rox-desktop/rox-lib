@@ -38,6 +38,7 @@ from __future__ import generators
 
 import rox, gobject
 from rox import g
+import gobject
 
 # The list of Blockers whose event has happened, in the order they were
 # triggered
@@ -118,7 +119,7 @@ class TimeoutBlocker(Blocker):
 		"""Trigger after 'timeout' seconds (may be a fraction)."""
 		Blocker.__init__(self)
 		rox.toplevel_ref()
-		g.timeout_add(long(timeout * 1000), self._timeout)
+		gobject.timeout_add(long(timeout * 1000), self._timeout)
 	
 	def _timeout(self):
 		rox.toplevel_unref()
@@ -135,13 +136,13 @@ class InputBlocker(Blocker):
 	def add_task(self, task):
 		Blocker.add_task(self, task)
 		if self._tag is None:
-			self._tag = g.input_add(self._stream, g.gdk.INPUT_READ,
+			self._tag = gobject.io_add_watch(self._stream, gobject.IO_IN,
 				lambda src, cond: self.trigger())
 	
 	def remove_task(self, task):
 		Blocker.remove_task(self, task)
 		if not self._rox_lib_tasks:
-			g.input_remove(self._tag)
+			gobject.source_remove(self._tag)
 			self._tag = None
 
 class OutputBlocker(Blocker):
@@ -155,14 +156,13 @@ class OutputBlocker(Blocker):
 	def add_task(self, task):
 		Blocker.add_task(self, task)
 		if self._tag is None:
-			INPUT_WRITE = 0x14 # g.gdk.INPUT_WRITE sometimes wrong!!
-			self._tag = g.input_add(self._stream, INPUT_WRITE,
+			self._tag = gobject.io_add_watch(self._stream, gobject.IO_OUT,
 				lambda src, cond: self.trigger())
 	
 	def remove_task(self, task):
 		Blocker.remove_task(self, task)
 		if not self._rox_lib_tasks:
-			g.input_remove(self._tag)
+			gobject.source_remove(self._tag)
 			self._tag = None
 
 _idle_blocker = IdleBlocker()
