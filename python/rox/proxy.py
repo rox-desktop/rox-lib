@@ -12,6 +12,7 @@ from __future__ import generators
 import os, sys
 from select import select
 import cPickle as pickle
+import gobject
 
 class Proxy:
 	def __init__(self, to_peer, from_peer, slave_object = None):
@@ -27,14 +28,11 @@ class Proxy:
 		self.enable_read_watch()
 	
 	def enable_read_watch(self):
-		from rox import g
-		g.input_add(self.from_peer, g.gdk.INPUT_READ,
+		gobject.io_add_watch(self.from_peer, gobject.IO_IN,
 			lambda src, cond: self.read_ready())
 
 	def enable_write_watch(self):
-		from rox import g
-		INPUT_WRITE = 0x14 # g.gdk.INPUT_WRITE sometimes wrong!!
-		g.input_add(self.to_peer.fileno(), INPUT_WRITE,
+		gobject.io_add_watch(self.to_peer.fileno(), gobject.IO_OUT,
 			lambda src, cond: self.write_ready())
 
 	def write_object(self, object):
