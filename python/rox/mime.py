@@ -17,7 +17,7 @@ import fnmatch
 
 import rox
 import rox.choices
-from rox import i18n, _, basedir
+from rox import i18n, _, basedir, xattr
 
 from xml.dom import minidom, XML_NAMESPACE
 
@@ -420,6 +420,15 @@ def get_type(path, follow=1, name_pri=100):
 	except:
 		t = get_type_by_name(path)
 		return t or text
+
+	try:
+		if xattr.present(path):
+			name = xattr.get(path, xattr.USER_MIME_TYPE)
+			if name and '/' in name:
+				media, subtype=name.split('/')
+				return lookup(media, subtype)
+	except:
+		pass
 
 	if stat.S_ISREG(st.st_mode):
 		t = get_type_by_contents(path, min_pri=name_pri)
