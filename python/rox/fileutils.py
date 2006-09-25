@@ -34,12 +34,12 @@ def report_patherror(message, path):
 	box.set_default_response(g.RESPONSE_APPLY)
 	while 1:
 		resp = box.run()
-		if resp != g.RESPONSE_APPLY: break
+		if resp != int(g.RESPONSE_APPLY): break
 		filerpath = os.path.normpath(path)
 		filer.show_file(filerpath)
 	box.destroy()
 	toplevel_unref()
-	if resp != g.RESPONSE_OK:
+	if resp != int(g.RESPONSE_OK):
 		raise OSError, message
 
 def _makedirs_recursive(path, mode):

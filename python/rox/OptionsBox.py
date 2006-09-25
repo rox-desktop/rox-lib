@@ -169,7 +169,7 @@ class OptionsBox(g.Dialog):
 		self.connect('destroy', destroyed)
 
 		def got_response(widget, response):
-			if response == g.RESPONSE_OK:
+			if response == int(g.RESPONSE_OK):
 				self.destroy()
 			elif response == REVERT:
 				for o in self.options:
@@ -931,7 +931,7 @@ class FontButton(g.Button):
 			self.dialog = None
 
 		def response(dialog, resp):
-			if resp != g.RESPONSE_OK:
+			if resp != int(g.RESPONSE_OK):
 				dialog.destroy()
 				return
 			self.label.set_text(dialog.get_font_name())
@@ -986,7 +986,7 @@ class ColourButton(g.Button):
 			self.dialog = None
 
 		def response(dialog, resp):
-			if resp != g.RESPONSE_OK:
+			if resp != int(g.RESPONSE_OK):
 				dialog.destroy()
 				return
 			self.set(dialog.colorsel.get_current_color())

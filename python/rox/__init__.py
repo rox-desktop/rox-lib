@@ -173,7 +173,7 @@ def confirm(message, stock_icon, action = None):
 	resp = box.run()
 	box.destroy()
 	toplevel_unref()
-	return resp == g.RESPONSE_OK
+	return resp == int(g.RESPONSE_OK)
 
 def report_exception():
 	"""Display the current python exception in an error box, returning

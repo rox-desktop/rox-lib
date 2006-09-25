@@ -556,11 +556,11 @@ class SaveBox(g.Dialog):
 				except:
 					rox.report_exception()
 				return
-			if response == g.RESPONSE_CANCEL:
+			if response == int(g.RESPONSE_CANCEL):
 				self.destroy()
-			elif response == g.RESPONSE_OK:
+			elif response == int(g.RESPONSE_OK):
 				self.save_area.save_to_file_in_entry()
-			elif response == g.RESPONSE_DELETE_EVENT:
+			elif response == int(g.RESPONSE_DELETE_EVENT):
 				pass
 			else:
 				raise Exception('Unknown response!')

@@ -265,7 +265,7 @@ def _install_type_handler(types, dir, desc, application=None, overwrite=True,
 		
     win=InstallList(application, desc, dir, types, info)
 
-    if win.run()!=rox.g.RESPONSE_ACCEPT:
+    if win.run()!=int(rox.g.RESPONSE_ACCEPT):
 	    win.destroy()
 	    return
 
@@ -331,7 +331,7 @@ def install_send_to_types(types, application=None, injint=None):
 			_("""The application can handle files of these types.  Click on OK to add it to the SendTo menu for the type of file, and also the customized File menu."""),
 			check=False)
 
-	if win.run()!=rox.g.RESPONSE_ACCEPT:
+	if win.run()!=int(rox.g.RESPONSE_ACCEPT):
 		win.destroy()
 		return
 	

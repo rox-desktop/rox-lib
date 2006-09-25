@@ -61,7 +61,7 @@ def show_exception(type, value, tb, auto_details = False):
 		else:
 			g.main()
 			resp = reply.pop()
-		if resp == g.RESPONSE_OK or resp == g.RESPONSE_DELETE_EVENT:
+		if resp == int(g.RESPONSE_OK) or resp == int(g.RESPONSE_DELETE_EVENT):
 			break
 		if resp == SAVE:
 			global savebox
@@ -77,7 +77,7 @@ def show_exception(type, value, tb, auto_details = False):
 			continue
 		if resp == QUIT:
 			sys.exit(1)
-		elif resp == g.RESPONSE_HELP:
+		elif resp == int(g.RESPONSE_HELP):
 			_show_debug_help()
 			continue
 		assert resp == DETAILS
