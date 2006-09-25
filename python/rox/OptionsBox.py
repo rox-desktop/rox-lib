@@ -779,9 +779,9 @@ class OptionsBox(g.Dialog):
 
 		def get():
 			mode=view.get_selection().get_mode()
-			if mode==g.SELECTION_NONE:
+			if mode==int(g.SELECTION_NONE):
 				return []
-			elif mode==g.SELECTION_SINGLE:
+			elif mode==int(g.SELECTION_SINGLE):
 				model, iter=view.get_selection().get_selected()
 				return [str(model.get_value(iter, 0))]
         
