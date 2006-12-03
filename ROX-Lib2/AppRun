@@ -23,7 +23,7 @@ box.set_title('ROX-Lib')
 box.set_position(g.WIN_POS_CENTER)
 box.set_default_response(g.RESPONSE_OK)
 
-if box.run() == g.RESPONSE_HELP:
+if box.run() == int(g.RESPONSE_HELP):
 	from rox import filer
 	import os.path
 	filer.open_dir(os.path.join(app_dir, "Help"))

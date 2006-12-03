@@ -17,6 +17,9 @@ You can then create such a button in Options.xml with:
 
   <button label='...'>Tooltip</button>
 
+Any element may have a 'size-group' attribute. Certain widgets (labels in
+particular) in the same size group all have the same size.
+
 For widgets that have options, your build function will be called with
 the option as a third parameter. You should register get and set methods,
 and arrange for box.check_widget to be called when the user changes the

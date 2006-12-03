@@ -188,3 +188,6 @@ if __name__=='__main__':
 	print '%s = %s' % (v, setobj.GetSetting(v))
 	v='Net/ThemeName'
 	print '%s = %s' % (v, setobj.GetSetting(v))
+
+	print 'All: ', setobj.Enumerate()
+	print 'ROX: ', setobj.Enumerate('ROX/*')

@@ -47,9 +47,11 @@ class Templates:
         """Load the glade file.  If name is an absolute path name then load
         it, if a relative path name load that from the appdir or if None
         the load $APP_DIR/Templates.glade."""
-        fname=_get_templates_file_name(name)
+        self.fname=_get_templates_file_name(name)
 
-        self.xml=file(fname, 'r').read()
+        # Ideally we should cache the file then generate the widgets
+        # using glade.xml_new_from_buffer(), but that is too buggy
+        #self.xml=file(self.fname, 'r').read()
         self.connect_to=None
         self.signals={}
 
@@ -75,7 +77,7 @@ class Templates:
         connected at this point.
         """
         
-        widgets=WidgetSet(self.xml, root)
+        widgets=WidgetSet(fname=self.fname, root)
         if self.connect_to:
             widgets.autoConnect(self.connect_to)
         for name in self.signals:
@@ -85,14 +87,21 @@ class Templates:
 class WidgetSet:
     """A set of widget instances created from a glade file."""
     
-    def __init__(self, xml, root=''):
+    def __init__(self, xml=None, fname=None, root=''):
         """A set of widget instances created from the glade file.
         xml - the contents of the glade file.
+        fname - file name to load the glade file from
         root - top level widget to create (and all is contained widgets), or
         '' to create all.
+        NOTE: one of xml or fname must be specified
         """
-    
-        self.widgets=glade.xml_new_from_buffer(xml, len(xml), root)
+
+        assert xml or fname
+
+        if fname:
+            self.widgets=glade.XML(fname, root)
+        else:
+            self.widgets=glade.xml_new_from_buffer(xml, len(xml), root)
 
     def autoConnect(self, dict_or_instance):
         """Specify what to use to connect the signals.

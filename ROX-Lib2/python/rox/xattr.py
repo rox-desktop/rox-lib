@@ -299,7 +299,7 @@ elif libc and hasattr(libc, 'getxattr'):
         """Check that name is a valid name for an extended attibute.
         False is returned if the name should not be used."""
         
-        if '.' not in name or name[0]=='.':
+        if not name.startswith('user.'):
             return False
         return name_invalid_chars not in name
     

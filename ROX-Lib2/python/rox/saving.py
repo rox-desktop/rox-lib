@@ -8,7 +8,7 @@ the purpose and pass that to the SaveBox."""
 import os, sys
 import rox
 from rox import alert, g, _, filer, escape
-from rox import choices, get_local_path
+from rox import choices, get_local_path, basedir
 
 gdk = g.gdk
 
@@ -49,7 +49,11 @@ def image_for_type(type, size=48, flags=0):
 	
 	media, subtype = type.split('/', 1)
 
-	path = choices.load('MIME-icons', media + '_' + subtype + '.png')
+	path=basedir.load_first_config('rox.sourceforge.net', 'MIME-icons',
+				       media + '_' + subtype + '.png')
+	if not path:
+		path = choices.load('MIME-icons',
+				    media + '_' + subtype + '.png')
 	icon=None
 	if not path:
 		icon_name = 'mime-%s:%s' % (media, subtype)
@@ -63,6 +67,9 @@ def image_for_type(type, size=48, flags=0):
 		except:
 			print "Error loading MIME icon"
 
+	if not path:
+		path = basedir.load_first_config('rox.sourceforge.net',
+						 'MIME-icons', media + '.png')
 	if not path:
 		path = choices.load('MIME-icons', media + '.png')
 	if path:
