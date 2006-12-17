@@ -297,7 +297,7 @@ def our_host_name():
 def escape(uri):
 	"Convert each space to %20, etc"
 	import re
-	return re.sub('[^:-_./a-zA-Z0-9]',
+	return re.sub('[^-:_./a-zA-Z0-9]',
 		lambda match: '%%%02x' % ord(match.group(0)),
 		_to_utf8(uri)[0])
 
