@@ -580,6 +580,27 @@ class OptionsBox(g.Dialog):
 
 		return [hbox]
 
+	def build_filechooser(self, node, label, option):
+		"""<filechooser name='...' label='...'/>Tooltip</filechooser>.
+		Lets the user choose a file (using a GtkFileChooser or by drag-and-drop).
+		Note: requires GTK >= 2.6
+		"""
+		filebutton = g.FileChooserButton(label)
+		eb = g.EventBox()
+		eb.add(filebutton)
+		self.may_add_tip(eb, node)
+		if label:
+			hbox = g.HBox(False, 4)
+			hbox.pack_start(g.Label(label + ":"), False, True, 0)
+			hbox.pack_start(eb, True, True, 0)
+		else:
+			hbox = None
+		self.handlers[option] = (
+			lambda: filebutton.get_filename(),
+			lambda: filebutton.set_filename(option.value))
+		filebutton.connect('selection-changed', lambda w: self.check_widget(option))
+		return [hbox or eb]
+
 	def build_menu(self, node, label, option):
 		"""Build an OptionMenu widget, only one item of which may be selected.
 		<menu name='...' label='...'>
