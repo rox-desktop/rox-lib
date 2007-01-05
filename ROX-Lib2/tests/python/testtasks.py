@@ -43,6 +43,12 @@ class TestTasks(unittest.TestCase):
 			assert ib.happened
 			assert not tb.happened
 
+			assert os.read(readable, 1) == '!'
+			os.close(writeable)
+			ib = tasks.InputBlocker(readable)
+			yield ib
+			assert ib.happened
+
 			g.main_quit()
 		tasks.Task(run())
 		g.main()

@@ -136,7 +136,7 @@ class InputBlocker(Blocker):
 	def add_task(self, task):
 		Blocker.add_task(self, task)
 		if self._tag is None:
-			self._tag = gobject.io_add_watch(self._stream, gobject.IO_IN,
+			self._tag = gobject.io_add_watch(self._stream, gobject.IO_IN | gobject.IO_HUP,
 				lambda src, cond: self.trigger())
 	
 	def remove_task(self, task):
@@ -156,7 +156,7 @@ class OutputBlocker(Blocker):
 	def add_task(self, task):
 		Blocker.add_task(self, task)
 		if self._tag is None:
-			self._tag = gobject.io_add_watch(self._stream, gobject.IO_OUT,
+			self._tag = gobject.io_add_watch(self._stream, gobject.IO_OUT | gobject.IO_HUP,
 				lambda src, cond: self.trigger())
 	
 	def remove_task(self, task):
