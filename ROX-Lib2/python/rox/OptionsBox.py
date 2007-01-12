@@ -589,16 +589,24 @@ class OptionsBox(g.Dialog):
 		eb = g.EventBox()
 		eb.add(filebutton)
 		self.may_add_tip(eb, node)
+
+		clearbutton = g.Button(stock = g.STOCK_CLEAR)
+		hbox = g.HBox(False, 4)
 		if label:
-			hbox = g.HBox(False, 4)
 			hbox.pack_start(g.Label(label + ":"), False, True, 0)
-			hbox.pack_start(eb, True, True, 0)
-		else:
-			hbox = None
+		hbox.pack_start(eb, True, True, 0)
+		hbox.pack_start(clearbutton, False, True, 0)
+
 		self.handlers[option] = (
 			lambda: filebutton.get_filename(),
 			lambda: filebutton.set_filename(option.value))
 		filebutton.connect('selection-changed', lambda w: self.check_widget(option))
+
+		def clear(w):
+			filebutton.set_filename("")
+			self.check_widget(option)
+		clearbutton.connect('clicked', clear)
+
 		return [hbox or eb]
 
 	def build_menu(self, node, label, option):
