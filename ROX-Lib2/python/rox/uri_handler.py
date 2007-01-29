@@ -23,8 +23,8 @@ from rox import basedir
 def get(scheme):
     """Return the handler for URI's of the named scheme (e.g. http, file, ftp,
     etc.)  The handler for file is always rox, otherwise it obtained from
-    ROX-Session.  None is returned if no handler is defined or ROX-Session
-    could not be contacted.
+    the configuration directory rox.sourceforge.net/URI.  None is returned if
+    no handler is defined.
 
     The returned string may contain %s in which case it should be replaced
     with the URI, otherwise append the URI (after a space).
