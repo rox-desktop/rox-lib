@@ -408,6 +408,48 @@ def isappdir(path):
 
 	return spath.st_uid==srun.st_uid
 
+def get_icon(path):
+	"""Looks up an icon for the file named by path, in the order below, using the first 
+	found:
+	1. The Filer's globicons file (not implemented)
+	2. A directory's .DirIcon file
+	3. A file in ~/.thumbnails whose name is the md5 hash of os.path.abspath(path), suffixed with '.png' 
+	4. A file in $XDG_CONFIG_HOME/rox.sourceforge.net/MIME-Icons for the full type of the file.
+	5. An icon of the form 'gnome-mime-media-subtype' in the current GTK icon theme.
+	6. A file in $XDG_CONFIG_HOME/rox.sourceforge.net/MIME-Icons for the 'media' part of the file's type (eg, 'text')
+	7. An icon of the form 'gnome-mime-media' in the current icon theme.
+	
+	Returns a gtk.gdk.Pixbuf instance for the chosen icon.
+	"""
+
+	# Load globicons and examine here...
+
+	if os.path.isdir(path):
+		dir_icon=os.path.join(path, '.DirIcon')
+		if os.access(dir_icon, os.R_OK):
+			# Check it is safe
+			import stat
+			
+			d=os.stat(path)
+			i=os.stat(dir_icon)
+
+			if d.st_uid==i.st_uid and not (stat.IWOTH & d.st_mode) and not (stat.IWOTH & i.st_mode):
+				return g.gdk.pixbuf_new_from_file(dir_icon)
+		
+	try:
+		from hashlib import md5
+		digest = md5(os.path.abspath(path)).hexdigest()
+		tpath = "%s/.thumbnails/%s.png" % (os.envrion.get("HOME"), digest)
+		if os.path.isfile(tpath):
+			return g.gdk.pixbuf_new_from_file(tpath)
+	except ImportError:
+		pass
+
+	import mime
+	mimetype = mime.get_type(path)
+	if mimetype:
+		return mimetype.get_icon()
+
 try:
 	import xml
 except:
