@@ -9,6 +9,7 @@ rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
 sys.path.insert(0, join(rox_lib, 'python'))
 
 from rox import tasks, g
+import rox
 
 class TestTasks(unittest.TestCase):
 	def testIdleBlocker(self):
@@ -21,7 +22,7 @@ class TestTasks(unittest.TestCase):
 	def testTimeoutBlocker(self):
 		def run():
 			start = time.time()
-			yield tasks.TimeoutBlocker(0.5)
+			yield tasks.TimeoutBlocker(0.6)
 			end = time.time()
 			assert end > start + 0.5
 			g.main_quit()
@@ -84,6 +85,38 @@ class TestTasks(unittest.TestCase):
 			g.main_quit()
 		tasks.Task(run())
 		g.main()
+
+	def testFinished(self):
+		readable, writeable = os.pipe()
+		got = []
+
+		def run(fail = False):
+			for x in range(3):
+				got.append(x)
+				yield None
+			if fail:
+				raise Exception("Fail")
+
+		def wait_for(t1, expected):
+			yield t1.finished
+			assert got == expected
+			g.main_quit()
+
+		t1 = tasks.Task(run())
+		tasks.Task(wait_for(t1, [0, 1, 2]))
+		assert not t1.finished.happened
+		g.main()
+		assert t1.finished.happened
+
+		old = rox.report_exception
+		try:
+			rox.report_exception = lambda: (got.append(False), g.main_quit())
+			got = []
+			t2 = tasks.Task(run(fail = True))
+			tasks.Task(wait_for(t2, [0, 1, 2, False]))
+			g.main()
+		finally:
+			rox.report_exception = old
 
 suite = unittest.makeSuite(TestTasks)
 if __name__ == '__main__':

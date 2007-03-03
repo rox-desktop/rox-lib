@@ -34,11 +34,10 @@ Tasks use python's generator API to provide a more pleasant interface to
 callbacks. See the Task class (below) for more information.
 """
 
-from __future__ import generators
-
 import rox, gobject
 from rox import g
 import gobject
+from sets import Set, ImmutableSet
 
 # The list of Blockers whose event has happened, in the order they were
 # triggered
@@ -77,8 +76,8 @@ class Blocker:
 	"""
 
 	def __init__(self):
-		self.happened = False	# False until event triggered
-		self._rox_lib_tasks = {}	# Tasks waiting on this blocker
+		self.happened = False		# False until event triggered
+		self._rox_lib_tasks = Set()	# Tasks waiting on this blocker
 
 	def trigger(self):
 		"""The event has happened. Note that this cannot be undone;
@@ -95,12 +94,12 @@ class Blocker:
 		"""Called by the schedular when a Task yields this
 		Blocker. If you override this method, be sure to still
 		call this method with Blocker.add_task(self)!"""
-		self._rox_lib_tasks[task] = True
+		self._rox_lib_tasks.add(task)
 	
 	def remove_task(self, task):
 		"""Called by the schedular when a Task that was waiting for
 		this blocker is resumed."""
-		del self._rox_lib_tasks[task]
+		self._rox_lib_tasks.remove(task)
 
 class IdleBlocker(Blocker):
 	"""An IdleBlocker blocks until a task starts waiting on it, then
@@ -170,10 +169,8 @@ _idle_blocker = IdleBlocker()
 class Task:
 	"""Create a new Task when you have some long running function to
 	run in the background, but which needs to do work in 'chunks'.
-	Example (the first line is needed to enable the 'yield' keyword in
-	python 2.2):
+	Example:
 
-	from __future__ import generators
 	from rox import tasks
 	def my_task(start):
 		for x in range(start, start + 5):
@@ -198,6 +195,7 @@ class Task:
 		assert iterator.next, "Object passed is not an iterator!"
 		self.next = iterator.next
 		self.name = name
+		self.finished = Blocker()
 		# Block new task on the idle handler...
 		_idle_blocker.add_task(self)
 		self._rox_blockers = (_idle_blocker,)
@@ -211,10 +209,12 @@ class Task:
 			new_blockers = self.next()
 		except StopIteration:
 			# Task ended
+			self.finished.trigger()
 			return
 		except Exception:
 			# Task crashed
 			rox.report_exception()
+			self.finished.trigger()
 			return
 		if new_blockers is None:
 			# Just give up control briefly
@@ -256,7 +256,7 @@ def _handle_run_queue():
 		# new one for future idling.
 		_idle_blocker = IdleBlocker()
 	
-	tasks = next._rox_lib_tasks.keys()
+	tasks = ImmutableSet(next._rox_lib_tasks)
 	#print "Resume", tasks
 	for task in tasks:
 		# Run 'task'.
