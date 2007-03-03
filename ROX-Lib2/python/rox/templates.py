@@ -77,7 +77,7 @@ class Templates:
         connected at this point.
         """
         
-        widgets=WidgetSet(fname=self.fname, root)
+        widgets=WidgetSet(fname=self.fname, root=root)
         if self.connect_to:
             widgets.autoConnect(self.connect_to)
         for name in self.signals:
