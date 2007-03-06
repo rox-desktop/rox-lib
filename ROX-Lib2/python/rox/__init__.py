@@ -435,15 +435,11 @@ def get_icon(path):
 
 			if d.st_uid==i.st_uid and not (stat.IWOTH & d.st_mode) and not (stat.IWOTH & i.st_mode):
 				return g.gdk.pixbuf_new_from_file(dir_icon)
-		
-	try:
-		from hashlib import md5
-		digest = md5(os.path.abspath(path)).hexdigest()
-		tpath = "%s/.thumbnails/%s.png" % (os.envrion.get("HOME"), digest)
-		if os.path.isfile(tpath):
-			return g.gdk.pixbuf_new_from_file(tpath)
-	except ImportError:
-		pass
+
+	import thumbnail
+	pixbuf=thumbnail.get_image(path)
+	if pixbuf:
+		return pixbuf
 
 	import mime
 	mimetype = mime.get_type(path)
