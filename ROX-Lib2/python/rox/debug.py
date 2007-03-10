@@ -49,10 +49,13 @@ def show_exception(type, value, tb, auto_details = False):
 	box.connect('response', response)
 	box.show()
 
-	bug_report = 'Traceback (most recent call last):\n' + \
-		     ''.join(traceback.format_stack(tb.tb_frame.f_back) +
-			     traceback.format_tb(tb) +
-			     traceback.format_exception_only(type, value))
+	if tb:
+		bug_report = 'Traceback (most recent call last):\n' + \
+			     ''.join(traceback.format_stack(tb.tb_frame.f_back) +
+				     traceback.format_tb(tb) +
+				     traceback.format_exception_only(type, value))
+	else:
+		bug_report = 'No stack trace.'
 
 	while 1:
 		if auto_details:
@@ -95,9 +98,14 @@ def show_exception(type, value, tb, auto_details = False):
 		box.add_action_widget(button, QUIT)
 		box.action_area.set_child_secondary(button, True)
 
-		ee = ExceptionExplorer(tb)
-		box.vbox.pack_start(ee)
-		ee.show()
+		if tb:
+			ee = ExceptionExplorer(tb)
+			box.vbox.pack_start(ee)
+			ee.show()
+		else:
+			no_trace = g.Label('No traceback object!')
+			box.vbox.pack_start(no_trace)
+			no_trace.show()
 	box.destroy()
 	toplevel_unref()
 

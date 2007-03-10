@@ -182,11 +182,11 @@ def report_exception():
 	type, value, tb = sys.exc_info()
 	_excepthook(type, value, tb)
 
-def _excepthook(type, value, tb):
-	_old_excepthook(type, value, tb)
-	if issubclass(type, KeyboardInterrupt): return
+def _excepthook(ex_type, value, tb):
+	_old_excepthook(ex_type, value, tb)
+	if type(ex_type) == type and issubclass(ex_type, KeyboardInterrupt): return
 	import debug
-	debug.show_exception(type, value, tb)
+	debug.show_exception(ex_type, value, tb)
 
 _old_excepthook = sys.excepthook
 sys.excepthook = _excepthook
