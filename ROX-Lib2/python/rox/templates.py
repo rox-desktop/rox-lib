@@ -33,13 +33,6 @@ def _get_templates_file_name(fname):
         fname=os.path.join(rox.app_dir, fname)
     return fname
 
-def _wrap_window(win):
-    if not win.get_data('rox_toplevel_ref'):
-        rox.toplevel_ref()
-        win.connect('destroy', rox.toplevel_unref)
-        win.set_data('rox_toplevel_ref', True)
-    return win
-
 class Templates:
     """Class holding a loaded glade file."""
     
@@ -125,7 +118,7 @@ class WidgetSet:
         """Return the named widget, which should be a gtk.Window.  The
         window is tracked by the window counting system, see
         rox.toplevel_ref()."""
-        return _wrap_window(self.getWidget(name))
+        return ProxyWindow(self.getWidget(name))
 
     def __getitem__(self, key):
         """Return the named widget."""
@@ -134,6 +127,34 @@ class WidgetSet:
         if not widget:
             raise KeyError, key
         return widget
+
+class ProxyWindow:
+	"""This acts as a proxy for a GtkWindow or GtkDialog, except that
+	it calls the toplevel_(un)ref functions for you automatically.
+        It is designed to wrap a window loaded from a Glade template.  You
+        can sub-class this to create your own classes."""
+        
+	def __init__(self, window):
+            """Act as a proxy for window.  Call toplevel_ref() and arrange
+            for toplevel_unref to be called on destruction."""
+            
+            self._window=window
+            assert self._window
+            
+            rox.toplevel_ref()
+            self._window.connect('destroy', rox.toplevel_unref)
+
+        def __getattr__(self, name):
+            """Get unrecognized attributes from the window we are proxying
+            for."""
+            try:
+                win=self.__dict__['_window']
+            except:
+                raise  AttributeError, '_window'
+            
+            if hasattr(win, name):
+                return getattr(win, name)
+            raise AttributeError, name
 
 def load(fname=None, root='', dict_or_instance=None):
     """Load the templates file and return the set of widgets.
