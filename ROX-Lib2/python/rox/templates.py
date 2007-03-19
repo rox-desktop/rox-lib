@@ -2,9 +2,9 @@
 
 The simplest interface will be templates.load() which will return a set
 of widgets loaded from $APP_DIR/Templates.glade, e.g.
+      widgets=templates.load()
       class MyWindow:
           def __init__(self):
-              widgets=templates.load()
               self.window=widgets.getWindow('main')
               self.entry=widgets['text_entry']
               widgets.autoConnect(self)
@@ -18,6 +18,16 @@ If you wish to re-use a window then you should use the Templates class:
         # ... connect signal handlers
         window=set.getWindow('main')
         windows.append(window)
+
+To use a template as part of a class, derive a class from ProxyWindow
+    
+    class MyWindow(templates.ProxyWindow):
+        def __init__(self):
+            self.widgets=rox.templates.load(None, 'main_window', self)
+            templates.ProxyWindow.__init__(self, self.widgets['main_window'])
+            # ...
+            
+            
 """
 
 import os, sys
