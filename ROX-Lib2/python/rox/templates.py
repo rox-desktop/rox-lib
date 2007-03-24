@@ -10,22 +10,18 @@ of widgets loaded from $APP_DIR/Templates.glade, e.g.
               widgets.autoConnect(self)
               self.window.show_all()
 
-If you wish to re-use a window then you should use the Templates class:
-    widgets=templates.Templates()
-    windows=[]
-    for i in range(10):
-        set=widgets.getWidgetSet('main')
-        # ... connect signal handlers
-        window=set.getWindow('main')
-        windows.append(window)
 
 To use a template as part of a class, derive a class from ProxyWindow
     
     class MyWindow(templates.ProxyWindow):
-        def __init__(self):
-            self.widgets=rox.templates.load(None, 'main_window', self)
-            templates.ProxyWindow.__init__(self, self.widgets['main_window'])
+        def __init__(self, window, widgets):
+            templates.ProxyWindow.__init__(self, window, widgets)
+
+            self.cancel_button=widgets['cancel']
             # ...
+
+    widgets=templates.load()
+    window=widgets.getWindow('main', MyWindow)
             
             
 """
@@ -43,68 +39,60 @@ def _get_templates_file_name(fname):
         fname=os.path.join(rox.app_dir, fname)
     return fname
 
+class ProxyWindow:
+	"""This acts as a proxy for a GtkWindow or GtkDialog, except that
+	it calls the toplevel_(un)ref functions for you automatically.
+        It is designed to wrap a window loaded from a Glade template.  You
+        can sub-class this to create your own classes."""
+        
+	def __init__(self, window, widgets):
+            """Act as a proxy for window.  Call toplevel_ref() and arrange
+            for toplevel_unref to be called on destruction.  The signal
+            handlers are connected to this object."""
+            
+            self._window=window
+            assert self._window
+            
+            rox.toplevel_ref()
+            self._window.connect('destroy', rox.toplevel_unref)
+
+            widgets.autoConnect(self)
+
+        def __getattr__(self, name):
+            """Get unrecognized attributes from the window we are proxying
+            for."""
+            try:
+                win=self.__dict__['_window']
+            except:
+                raise  AttributeError, '_window'
+            
+            if hasattr(win, name):
+                return getattr(win, name)
+            raise AttributeError, name
+
 class Templates:
-    """Class holding a loaded glade file."""
-    
-    def __init__(self, name=None):
-        """Load the glade file.  If name is an absolute path name then load
-        it, if a relative path name load that from the appdir or if None
-        the load $APP_DIR/Templates.glade."""
-        self.fname=_get_templates_file_name(name)
-
-        # Ideally we should cache the file then generate the widgets
-        # using glade.xml_new_from_buffer(), but that is too buggy
-        #self.xml=file(self.fname, 'r').read()
-        self.connect_to=None
-        self.signals={}
-
-    def autoConnect(self, dict_or_instance):
-        """Specify what to use to connect the signals when an instance of the
-        widgets is created.  dict_or_instance is either a dictionary where the
-        signal handlers are indexed by the name of the handler in the glade
-        file, or an instance of a class where the methods have the same
-        names as given in the glade file."""
-        
-        self.connect_to=dict_or_instance
-
-    def connect(self, handler_name, func):
-        """Manually specify the handler function for a signal.  These are
-        not set until getWidgetSet is called."""
-        
-        self.signals[handler_name]=func
-
-    def getWidgetSet(self, root=''):
-        """Return a WidgetSet instance containing the widgets defined by
-        the glade file.  If root is given it is the top level widget to return.
-        The signal handlers specified in connect() or autoConnect() are
-        connected at this point.
-        """
-        
-        widgets=WidgetSet(fname=self.fname, root=root)
-        if self.connect_to:
-            widgets.autoConnect(self.connect_to)
-        for name in self.signals:
-            widgets.connect(name, self.signals[name])
-        return widgets
-
-class WidgetSet:
     """A set of widget instances created from a glade file."""
     
-    def __init__(self, xml=None, fname=None, root=''):
+    def __init__(self, root, fname=None, dict_or_instance=None):
         """A set of widget instances created from the glade file.
-        xml - the contents of the glade file.
+        root - top level widget to create (and all its contained widgets), 
         fname - file name to load the glade file from
-        root - top level widget to create (and all is contained widgets), or
-        '' to create all.
-        NOTE: one of xml or fname must be specified
+        dict_or_instance - either a dictionary where the
+        signal handlers are indexed by the name of the handler in the glade
+        file, or an instance of a class where the methods have the same
+        names as given in the glade file.
+        
+        NOTE: if fname is None the glade file
+        is loaded from Templates.glade in the app dir.
         """
 
-        assert xml or fname
+        if not fname:
+            fname=_get_templates_file_name(None)
 
-        if fname:
-            self.widgets=glade.XML(fname, root)
-        else:
-            self.widgets=glade.xml_new_from_buffer(xml, len(xml), root)
+        self.widgets=glade.XML(fname, root)
+
+        if self.widgets and dict_or_instance:
+            self.autoConnect(dict_or_instance)
 
     def autoConnect(self, dict_or_instance):
         """Specify what to use to connect the signals.
@@ -124,11 +112,17 @@ class WidgetSet:
         """Return the named widget."""
         return self.widgets.get_widget(name)
 
-    def getWindow(self, name):
+    def getWindow(self, name, klass=ProxyWindow, *args, **kwargs):
         """Return the named widget, which should be a gtk.Window.  The
         window is tracked by the window counting system, see
-        rox.toplevel_ref()."""
-        return ProxyWindow(self.getWidget(name))
+        rox.toplevel_ref().
+
+        name - name of the widget
+        klass - Python class to wrap the widget in
+        args - arguments to pass to the constructor for klass after the
+        widget
+        kwargs - keyword arguments to pass to the constructor for klass"""
+        return klass(self.getWidget(name), self, *args, **kwargs)
 
     def __getitem__(self, key):
         """Return the named widget."""
@@ -138,47 +132,16 @@ class WidgetSet:
             raise KeyError, key
         return widget
 
-class ProxyWindow:
-	"""This acts as a proxy for a GtkWindow or GtkDialog, except that
-	it calls the toplevel_(un)ref functions for you automatically.
-        It is designed to wrap a window loaded from a Glade template.  You
-        can sub-class this to create your own classes."""
-        
-	def __init__(self, window):
-            """Act as a proxy for window.  Call toplevel_ref() and arrange
-            for toplevel_unref to be called on destruction."""
-            
-            self._window=window
-            assert self._window
-            
-            rox.toplevel_ref()
-            self._window.connect('destroy', rox.toplevel_unref)
-
-        def __getattr__(self, name):
-            """Get unrecognized attributes from the window we are proxying
-            for."""
-            try:
-                win=self.__dict__['_window']
-            except:
-                raise  AttributeError, '_window'
-            
-            if hasattr(win, name):
-                return getattr(win, name)
-            raise AttributeError, name
-
-def load(fname=None, root='', dict_or_instance=None):
+def load(root, fname=None, dict_or_instance=None):
     """Load the templates file and return the set of widgets.
+    root - name of top level widget (and all child widgets) to create
     fname - path to templates file: If it is an absolute path name then load
         it, if a relative path name load that from the appdir or if None
         the load $APP_DIR/Templates.glade.
-    root - name of top level widget (and all child widgets) to create
     dict_or_instance - what to use to connect the signals.
         It is either a dictionary where the
         signal handlers are indexed by the name of the handler in the glade
         file, or an instance of a class where the methods have the same
         names as given in the glade file.
         """
-    template=Templates(fname)
-    if dict_or_instance:
-        template.autoConnect(dict_or_instance)
-    return template.getWidgetSet(root)
+    return Templates(root, fname, dict_or_instance)
