@@ -28,6 +28,7 @@ To use a template as part of a class, derive a class from ProxyWindow
 
 import os, sys
 import errno
+import UserDict
 
 import rox
 import gtk.glade as glade
@@ -56,7 +57,7 @@ class ProxyWindow:
             rox.toplevel_ref()
             self._window.connect('destroy', rox.toplevel_unref)
 
-            widgets.autoConnect(self)
+            widgets.signal_autoconnect(self)
 
         def __getattr__(self, name):
             """Get unrecognized attributes from the window we are proxying
@@ -70,7 +71,7 @@ class ProxyWindow:
                 return getattr(win, name)
             raise AttributeError, name
 
-class Templates:
+class Templates(glade.XML, UserDict.DictMixin):
     """A set of widget instances created from a glade file."""
     
     def __init__(self, root, fname=None, dict_or_instance=None):
@@ -89,30 +90,12 @@ class Templates:
         if not fname:
             fname=_get_templates_file_name(None)
 
-        self.widgets=glade.XML(fname, root)
+        glade.XML.__init__(self, fname, root)
 
-        if self.widgets and dict_or_instance:
-            self.autoConnect(dict_or_instance)
+        if dict_or_instance:
+            self.signal_autoconnect(dict_or_instance)
 
-    def autoConnect(self, dict_or_instance):
-        """Specify what to use to connect the signals.
-        dict_or_instance is either a dictionary where the
-        signal handlers are indexed by the name of the handler in the glade
-        file, or an instance of a class where the methods have the same
-        names as given in the glade file."""
-        
-        self.widgets.signal_autoconnect(dict_or_instance)
-
-    def connect(self, name, func):
-        """Manually specify the handler function for a signal."""
-        
-        self.widgets.signal_connect(name, func)
-
-    def getWidget(self, name):
-        """Return the named widget."""
-        return self.widgets.get_widget(name)
-
-    def getWindow(self, name, klass=ProxyWindow, *args, **kwargs):
+    def get_window(self, name, klass=ProxyWindow, *args, **kwargs):
         """Return the named widget, which should be a gtk.Window.  The
         window is tracked by the window counting system, see
         rox.toplevel_ref().
@@ -122,15 +105,42 @@ class Templates:
         args - arguments to pass to the constructor for klass after the
         widget
         kwargs - keyword arguments to pass to the constructor for klass"""
-        return klass(self.getWidget(name), self, *args, **kwargs)
+        return klass(self.get_widget(name), self, *args, **kwargs)
 
+    # The next 4 methods let UserDict.DictMixin turn this class into
+    # something that behaves like a dict.
     def __getitem__(self, key):
         """Return the named widget."""
         
-        widget=self.widgets.get_widget(key)
+        widget=self.get_widget(str(key))
         if not widget:
             raise KeyError, key
         return widget
+
+    def __setitem__(self, key, value):
+        """Set a widget.  Raises an exception."""
+        raise TypeError, 'read-only, cannot set '+key
+
+    def __delitem__(self, key):
+        """Delete a widget.  Raises an exception."""
+        raise TypeError, 'read-only, cannot delete '+key
+
+    def keys(self):
+        """Return list of all named widgets."""
+        ws=self.get_widget_prefix("")
+        k=[]
+        for w in ws:
+            k.append(w.get_name())
+        return k
+
+    # More efficient implementations than UserDict.DictMixin
+    def values(self):
+        return self.get_widget_prefix("")
+    
+    def itervalues(self):
+        ws=self.get_widget_prefix("")
+        for w in ws:
+            yield w
 
 def load(root, fname=None, dict_or_instance=None):
     """Load the templates file and return the set of widgets.
