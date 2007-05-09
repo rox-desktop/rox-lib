@@ -7,6 +7,104 @@ Note: for a detailed changelog, do:
 			
   svn log -v https://svn.sourceforge.net/svnroot/rox/trunk/ROX-Lib2
 
+Release 2.0.4:
+
+General:
+
+- Fix unit tests to use correct path (Thomas Leonard).
+
+- Removed a load of unused imports spotted by PyFlakes (Thomas Leonard).
+
+- ROX base platform is now Python 2.3, so run unit tests against that by
+  default (Thomas Leonard).
+
+- Bugfix: Must use '..' in interface for backwards compat (Thomas Leonard).
+
+- Removed some more deprecation warnings. Do not run testsu as part of testall
+  as it is interactive (Thomas Leonard).
+
+- Ensure window response codes are treated as int(), required for python 2.5 
+  and pygtk 2.6 (Stephen Watson).
+
+- Drag-and-drop didn't work if the hostname contained '-', due to an error in
+  a regular expression (Thomas Leonard, reported by Lennon Cook).
+
+- Function to fetch an appropriate icon for a file (Lennon Cook).  Changed to
+  return a Pixbuf instead of an Image, to use the existing icon theme lookup
+  and to first check for a .DirIcon for directories (Stephen Watson).  
+
+Translations:
+
+- Update Chinese Translations (Babyfai Cheung).
+
+debug:
+
+- Exception handler now copes with old-style non-class exceptions and
+  with missing tracebacks (Thomas Leonard).
+
+mime:
+
+- Added xattr support including test for user set MIME types (Stephen Watson).
+
+OptionsBox:
+
+- When there is only one section in the options box, don't show a frame (Thomas
+  Leonard).
+
+- Added note about size-groups(Thomas Leonard).
+
+- Added <filechooser> widget to OptionsBox, which lets the user choose a file
+  using a GtkFileChooser or by drag-and-drop (Jim Ramsay). Requires GTK >= 2.6.
+
+- Added Clear button to filename options (Jim Ramsay and Thomas Leonard).
+
+saving:
+
+- Lookup icons from /rox.sourceforge.net/MIME-icons before /MIME-ICONS 
+ (Stephen Watson)
+
+session:
+
+- Prefered launcher for a URL scheme now part of uri_handler (Stephen Watson).
+
+settings:
+
+- Prefered launcher for a URL scheme now part of uri_handler (Stephen Watson).
+
+tasks:
+
+- Fixed some deprecation warnings (Thomas Leonard).
+
+- Bugfix: InputBlocker and OutputBlocker now trigger on IO_HUP too (Thomas 
+  Leonard).
+
+- Added Task.finished blocker, which is triggered when the task finishes,
+  successfully or by throwing an exception (Thomas Leonard; suggested by Ken
+  Hayber).
+
+templates: *NEW*
+
+- Added templates module as an interface to glade (Stephen Watson).
+
+- Templates now has full dict behaviour and derives from glade.XML.  Method
+  names have therefore changed to be the same used by glade.XML (Stephen 
+  Watson).
+
+
+thumbnail: *NEW*
+
+- Added thumbnail module to access thumbnail images of files and also to 
+  generate them (Stephen Watson).
+
+uri_handler: *NEW*
+
+- Suppor shared configuration for launching URIs (Stephen Watson).
+
+xattr: *NEW*
+
+- Added xattr support including test for user set MIME types (Stephen Watson).
+
+
 Release 2.0.3:
 
 General:
