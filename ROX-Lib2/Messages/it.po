@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 2.0.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-28 14:04+BST\n"
+"POT-Creation-Date: 2007-05-09 18:25+BST\n"
 "PO-Revision-Date: 2006-02-07 22:21+0100\n"
 "Last-Translator:  <>\n"
 "Language-Team: \n"
@@ -40,15 +40,15 @@ msgstr ""
 "Posizione PyGTK:\n"
 "%s"
 
-#: OptionsBox.py:121
+#: OptionsBox.py:124
 msgid "%s options"
 msgstr "Opzioni di %s"
 
-#: OptionsBox.py:124
+#: OptionsBox.py:127
 msgid "_Revert"
 msgstr "_Ripristina"
 
-#: OptionsBox.py:126
+#: OptionsBox.py:129
 msgid "Restore all options to how they were when the window was opened"
 msgstr "Rimette tutte le opzioni come erano prima dell'apertura della finestra"
 
@@ -82,7 +82,7 @@ msgstr "Informazione"
 msgid "Confirm:"
 msgstr "Conferma:"
 
-#: __init__.py:414
+#: __init__.py:452
 msgid ""
 "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "
@@ -96,19 +96,19 @@ msgstr ""
 msgid "_Details"
 msgstr "_Dettagli"
 
-#: debug.py:86
+#: debug.py:89
 msgid "_Bug Report"
 msgstr "Segnala _bug"
 
-#: debug.py:92
+#: debug.py:95
 msgid "Forced Quit"
 msgstr "Esci subito"
 
-#: debug.py:112
+#: debug.py:120
 msgid "Stack trace (innermost last)"
 msgstr "Stack trace (il più interno è l'ultimo)"
 
-#: debug.py:207
+#: debug.py:215
 msgid "Local variables in selected frame:"
 msgstr "Variabili locali nel frame selezionato:"
 
@@ -153,7 +153,7 @@ msgstr ""
 "Impossibile caricare i file dalla macchina remota (file multipli o target "
 "application/octet-stream non forniti)"
 
-#: mime.py:483
+#: mime.py:492
 msgid ""
 "The '%s' command returned an error code!\n"
 "Make sure you have the freedesktop.org shared MIME package:\n"
@@ -226,11 +226,11 @@ msgstr ""
 "L'applicazione può gestire i file di questo tipo. Fare clic su «Ok» per "
 "aggiungerla nei menù «File» e «Invia a...»."
 
-#: saving.py:162
+#: saving.py:169
 msgid "Delete temporary file '%s'?"
 msgstr "Eliminare il file temporaneo «%s»?"
 
-#: saving.py:338
+#: saving.py:345
 msgid ""
 "Drag the icon to a directory viewer\n"
 "(or enter a full pathname)"
@@ -238,38 +238,42 @@ msgstr ""
 "Trascinare l'icona su un visualizzatore di directory\n"
 "(o inserire un percorso completo)"
 
-#: saving.py:364
+#: saving.py:371
 msgid "Unnamed"
 msgstr "SenzaNome"
 
-#: saving.py:446
+#: saving.py:453
 msgid "'%s' already exists as a directory."
 msgstr "«%s» esiste già ed è una directory."
 
-#: saving.py:455
+#: saving.py:462
 msgid "Permissions changed from %o to %o."
 msgstr "Permessi cambiati da %o a %o."
 
-#: saving.py:458
+#: saving.py:465
 msgid "Size was %d bytes; now %d bytes."
 msgstr "La dimensione era %d byte, ora è di %d byte."
 
-#: saving.py:461
+#: saving.py:468
 msgid "Modification time changed."
 msgstr "La data dell'ultima modifica è cambiata."
 
-#: saving.py:467
+#: saving.py:474
 msgid "File '%s' already exists -- overwrite it?"
 msgstr "Il file «%s» esiste già: sovrascrivere?"
 
-#: saving.py:468
+#: saving.py:475
 msgid "_Overwrite"
 msgstr "S_ovrascrivi"
 
-#: saving.py:508
+#: saving.py:515
 msgid "_Discard"
 msgstr "Abban_dona"
 
-#: saving.py:518
+#: saving.py:525
 msgid "Save As:"
 msgstr "Salva come:"
+
+#: thumbnail.py:194
+msgid "Thumbnail not implemented"
+msgstr ""

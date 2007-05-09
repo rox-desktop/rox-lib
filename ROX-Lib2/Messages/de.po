@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 2.0.0\n"
-"POT-Creation-Date: 2006-05-28 14:04+BST\n"
+"POT-Creation-Date: 2007-05-09 18:25+BST\n"
 "PO-Revision-Date: 2005-03-18 19:48+0100\n"
 "Last-Translator: Guido Schimmels <__guido__@web.de>\n"
 "Language-Team: ROX Mailing List <rox-devel@lists.sourceforge.net>\n"
@@ -40,15 +40,15 @@ msgstr ""
 "PyGTK Ort:\n"
 "%s"
 
-#: OptionsBox.py:121
+#: OptionsBox.py:124
 msgid "%s options"
 msgstr ""
 
-#: OptionsBox.py:124
+#: OptionsBox.py:127
 msgid "_Revert"
 msgstr "_Rückgängig"
 
-#: OptionsBox.py:126
+#: OptionsBox.py:129
 msgid "Restore all options to how they were when the window was opened"
 msgstr ""
 "Alle Einstellungen auf ihren Ausgangswert beim Öffnen des Fensters setzen"
@@ -84,7 +84,7 @@ msgstr "Hinweis"
 msgid "Confirm:"
 msgstr "Bestätigen:"
 
-#: __init__.py:414
+#: __init__.py:452
 msgid ""
 "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "
@@ -98,19 +98,19 @@ msgstr ""
 msgid "_Details"
 msgstr "_Details"
 
-#: debug.py:86
+#: debug.py:89
 msgid "_Bug Report"
 msgstr "Fehler_bericht"
 
-#: debug.py:92
+#: debug.py:95
 msgid "Forced Quit"
 msgstr "Erzwungener Programmabbruch"
 
-#: debug.py:112
+#: debug.py:120
 msgid "Stack trace (innermost last)"
 msgstr "Stackrückverfolgung (von aussen nach innen)"
 
-#: debug.py:207
+#: debug.py:215
 msgid "Local variables in selected frame:"
 msgstr "Lokale Variablen in gewähltem Rahmen:"
 
@@ -157,7 +157,7 @@ msgstr ""
 "Kann Netzwerkdateien nicht laden (laden mehrere Dateien auf einmal oder "
 "Dateityp application/octet-stream nicht unterstützt)"
 
-#: mime.py:483
+#: mime.py:492
 msgid ""
 "The '%s' command returned an error code!\n"
 "Make sure you have the freedesktop.org shared MIME package:\n"
@@ -232,11 +232,11 @@ msgstr ""
 "\"Öffnen mit...\"-Menü für diesen Dateityp hinzuzufügen, als auch zum "
 "benutzerspezifischen Dateimenü."
 
-#: saving.py:162
+#: saving.py:169
 msgid "Delete temporary file '%s'?"
 msgstr "Die temporäre Datei '%s' löschen?"
 
-#: saving.py:338
+#: saving.py:345
 msgid ""
 "Drag the icon to a directory viewer\n"
 "(or enter a full pathname)"
@@ -244,38 +244,42 @@ msgstr ""
 "Ziehe das Symbol auf ein Dateienfenster\n"
 "(oder den vollen Dateipfad eingeben)"
 
-#: saving.py:364
+#: saving.py:371
 msgid "Unnamed"
 msgstr "Unbenannt"
 
-#: saving.py:446
+#: saving.py:453
 msgid "'%s' already exists as a directory."
 msgstr "'%s' bereits als Verzeichnis vorhanden."
 
-#: saving.py:455
+#: saving.py:462
 msgid "Permissions changed from %o to %o."
 msgstr "Zugriffsrechte geändert von %o zu %o."
 
-#: saving.py:458
+#: saving.py:465
 msgid "Size was %d bytes; now %d bytes."
 msgstr "Größe war %d Bytes; jetzt %d Bytes."
 
-#: saving.py:461
+#: saving.py:468
 msgid "Modification time changed."
 msgstr "Änderungszeit geändert."
 
-#: saving.py:467
+#: saving.py:474
 msgid "File '%s' already exists -- overwrite it?"
 msgstr "Datei mit Namen '%s' bereits vorhanden -- diese überschreiben?"
 
-#: saving.py:468
+#: saving.py:475
 msgid "_Overwrite"
 msgstr "_Überschreiben"
 
-#: saving.py:508
+#: saving.py:515
 msgid "_Discard"
 msgstr "_Verwerfen:"
 
-#: saving.py:518
+#: saving.py:525
 msgid "Save As:"
 msgstr "Speichern Als:"
+
+#: thumbnail.py:194
+msgid "Thumbnail not implemented"
+msgstr ""

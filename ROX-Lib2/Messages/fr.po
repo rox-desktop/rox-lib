@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 2.0.2-20060525\n"
-"POT-Creation-Date: 2006-05-28 14:04+BST\n"
+"POT-Creation-Date: 2007-05-09 18:25+BST\n"
 "PO-Revision-Date: 2006-05-25 17:37+0200\n"
 "Last-Translator: Vincent Lefevre <vincent@vinc17.org>\n"
 "Language-Team: ROX Mailing List <rox-devel@lists.sourceforge.net>\n"
@@ -36,15 +36,15 @@ msgstr ""
 "Chemin vers PyGTK :\n"
 "%s"
 
-#: OptionsBox.py:121
+#: OptionsBox.py:124
 msgid "%s options"
 msgstr "%s options"
 
-#: OptionsBox.py:124
+#: OptionsBox.py:127
 msgid "_Revert"
 msgstr "_Revenir"
 
-#: OptionsBox.py:126
+#: OptionsBox.py:129
 msgid "Restore all options to how they were when the window was opened"
 msgstr ""
 "Restaurer toutes les options aux valeurs qu'elles avaient lorsque la fenêtre "
@@ -80,7 +80,7 @@ msgstr "Information"
 msgid "Confirm:"
 msgstr "Confirmer :"
 
-#: __init__.py:414
+#: __init__.py:452
 msgid ""
 "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "
@@ -94,19 +94,19 @@ msgstr ""
 msgid "_Details"
 msgstr "_Détails"
 
-#: debug.py:86
+#: debug.py:89
 msgid "_Bug Report"
 msgstr "_Rapport de bug"
 
-#: debug.py:92
+#: debug.py:95
 msgid "Forced Quit"
 msgstr "Terminaison forcée"
 
-#: debug.py:112
+#: debug.py:120
 msgid "Stack trace (innermost last)"
 msgstr "Trace de la pile (extérieur vers intérieur)"
 
-#: debug.py:207
+#: debug.py:215
 msgid "Local variables in selected frame:"
 msgstr "Variables locales dans la « frame » sélectionnée :"
 
@@ -153,7 +153,7 @@ msgstr ""
 "Impossible de charger les fichiers depuis une machine distante (fichiers "
 "multiples, ou cible application/octet-stream non fournie)"
 
-#: mime.py:483
+#: mime.py:492
 msgid ""
 "The '%s' command returned an error code!\n"
 "Make sure you have the freedesktop.org shared MIME package:\n"
@@ -228,11 +228,11 @@ msgstr ""
 "l'ajouter au menu SendTo (« envoyer à ») pour le type de fichier, et aussi "
 "au menu Fichier personnalisé."
 
-#: saving.py:162
+#: saving.py:169
 msgid "Delete temporary file '%s'?"
 msgstr "Supprimer le fichier temporaire '%s' ?"
 
-#: saving.py:338
+#: saving.py:345
 msgid ""
 "Drag the icon to a directory viewer\n"
 "(or enter a full pathname)"
@@ -240,38 +240,42 @@ msgstr ""
 "Faites glisser l'icône sur un visualiseur de répertoire\n"
 "(ou entrez un chemin complet)"
 
-#: saving.py:364
+#: saving.py:371
 msgid "Unnamed"
 msgstr "Sans_nom"
 
-#: saving.py:446
+#: saving.py:453
 msgid "'%s' already exists as a directory."
 msgstr "« %s » existe déjà comme répertoire."
 
-#: saving.py:455
+#: saving.py:462
 msgid "Permissions changed from %o to %o."
 msgstr "Les permissions ont changé de %o à %o."
 
-#: saving.py:458
+#: saving.py:465
 msgid "Size was %d bytes; now %d bytes."
 msgstr "La taille était de %d octets; elle est maintenant de %d octets."
 
-#: saving.py:461
+#: saving.py:468
 msgid "Modification time changed."
 msgstr "La date de modification a changé."
 
-#: saving.py:467
+#: saving.py:474
 msgid "File '%s' already exists -- overwrite it?"
 msgstr "Le fichier « %s » existe déjà -- le remplacer ?"
 
-#: saving.py:468
+#: saving.py:475
 msgid "_Overwrite"
 msgstr "_Remplacer"
 
-#: saving.py:508
+#: saving.py:515
 msgid "_Discard"
 msgstr "_Annuler"
 
-#: saving.py:518
+#: saving.py:525
 msgid "Save As:"
 msgstr "Sauver sous :"
+
+#: thumbnail.py:194
+msgid "Thumbnail not implemented"
+msgstr ""

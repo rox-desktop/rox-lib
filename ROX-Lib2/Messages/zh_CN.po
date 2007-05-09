@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 1.9.13\n"
-"POT-Creation-Date: 2006-06-25 21:08+HKT\n"
+"POT-Creation-Date: 2007-05-09 18:25+BST\n"
 "PO-Revision-Date: 2006-06-25 16:40+0200\n"
 "Last-Translator: Babyfai Cheung <babyfai1@yahoo.com.hk>\n"
 "Language-Team: none\n"
@@ -35,15 +35,15 @@ msgstr ""
 "PyGTK 位置：\n"
 "%s"
 
-#: OptionsBox.py:121
+#: OptionsBox.py:124
 msgid "%s options"
 msgstr "%s 选项"
 
-#: OptionsBox.py:124
+#: OptionsBox.py:127
 msgid "_Revert"
 msgstr "复原(_R)"
 
-#: OptionsBox.py:126
+#: OptionsBox.py:129
 msgid "Restore all options to how they were when the window was opened"
 msgstr "当打开窗口后，载入已储存的设置"
 
@@ -75,7 +75,7 @@ msgstr "讯息"
 msgid "Confirm:"
 msgstr "确定："
 
-#: __init__.py:414
+#: __init__.py:452
 msgid ""
 "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "
@@ -88,19 +88,19 @@ msgstr ""
 msgid "_Details"
 msgstr "细节(_D)"
 
-#: debug.py:86
+#: debug.py:89
 msgid "_Bug Report"
 msgstr "错误回报(_B)"
 
-#: debug.py:92
+#: debug.py:95
 msgid "Forced Quit"
 msgstr "强制登出"
 
-#: debug.py:112
+#: debug.py:120
 msgid "Stack trace (innermost last)"
 msgstr "堆叠追踪 (最后及最深层)"
 
-#: debug.py:207
+#: debug.py:215
 msgid "Local variables in selected frame:"
 msgstr "本机变数在已选的框架为："
 
@@ -142,7 +142,7 @@ msgid ""
 "application/octet-stream not provided)"
 msgstr "未能载入远端主机文件 (文件复杂，或目标未有提供程式资讯)"
 
-#: mime.py:483
+#: mime.py:492
 msgid ""
 "The '%s' command returned an error code!\n"
 "Make sure you have the freedesktop.org shared MIME package:\n"
@@ -213,11 +213,11 @@ msgstr ""
 "此功能可帮助处理文件的类型，点击 '确定' 并将其加进到菜单的 '传送至' 以设定文"
 "件的类型，亦可在自定菜单内进行."
 
-#: saving.py:162
+#: saving.py:169
 msgid "Delete temporary file '%s'?"
 msgstr "删除暂存文件 '%s'?"
 
-#: saving.py:338
+#: saving.py:345
 msgid ""
 "Drag the icon to a directory viewer\n"
 "(or enter a full pathname)"
@@ -225,38 +225,42 @@ msgstr ""
 "将图标拖放到目录内\n"
 "(或键入完整的路径)"
 
-#: saving.py:364
+#: saving.py:371
 msgid "Unnamed"
 msgstr "取消命名"
 
-#: saving.py:446
+#: saving.py:453
 msgid "'%s' already exists as a directory."
 msgstr "文件 '%s' 已存在并且为一个目录"
 
-#: saving.py:455
+#: saving.py:462
 msgid "Permissions changed from %o to %o."
 msgstr "权限改变从 %o 变为 %o."
 
-#: saving.py:458
+#: saving.py:465
 msgid "Size was %d bytes; now %d bytes."
 msgstr "大小原是 %d bytes；现在是 %d bytes."
 
-#: saving.py:461
+#: saving.py:468
 msgid "Modification time changed."
 msgstr "修改时间已变更."
 
-#: saving.py:467
+#: saving.py:474
 msgid "File '%s' already exists -- overwrite it?"
 msgstr "文件 '%s' 已存在 -- 覆盖？"
 
-#: saving.py:468
+#: saving.py:475
 msgid "_Overwrite"
 msgstr "覆盖(_O)"
 
-#: saving.py:508
+#: saving.py:515
 msgid "_Discard"
 msgstr "丢弃(_D)"
 
-#: saving.py:518
+#: saving.py:525
 msgid "Save As:"
 msgstr "储存为："
+
+#: thumbnail.py:194
+msgid "Thumbnail not implemented"
+msgstr ""

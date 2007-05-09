@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 2.0.3\n"
-"POT-Creation-Date: 2006-05-28 14:04+BST\n"
+"POT-Creation-Date: 2007-05-09 18:25+BST\n"
 "PO-Revision-Date: 2006-05-15 19:42+CEST\n"
 "Last-Translator: Bart Kreska <bart-rpm % silesianet.pl>\n"
 "Language-Team: Polish <>\n"
@@ -38,15 +38,15 @@ msgstr ""
 "Położenie PyGTK:\n"
 "%s"
 
-#: OptionsBox.py:121
+#: OptionsBox.py:124
 msgid "%s options"
 msgstr "%s opcje"
 
-#: OptionsBox.py:124
+#: OptionsBox.py:127
 msgid "_Revert"
 msgstr "_Przywróć"
 
-#: OptionsBox.py:126
+#: OptionsBox.py:129
 msgid "Restore all options to how they were when the window was opened"
 msgstr "Przywróć poprzednie wartości opcji"
 
@@ -80,7 +80,7 @@ msgstr "Informacja"
 msgid "Confirm:"
 msgstr "Potwierdź:"
 
-#: __init__.py:414
+#: __init__.py:452
 msgid ""
 "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "
@@ -93,21 +93,21 @@ msgstr ""
 msgid "_Details"
 msgstr "_Szczegóły"
 
-#: debug.py:86
+#: debug.py:89
 msgid "_Bug Report"
 msgstr "Raport o _błędzie"
 
 # Skracam bo tam jest mało miejsca
-#: debug.py:92
+#: debug.py:95
 msgid "Forced Quit"
 msgstr "_Wyjście"
 
 # Zrzut => Ślad?/Wydruk?
-#: debug.py:112
+#: debug.py:120
 msgid "Stack trace (innermost last)"
 msgstr "Zrzut stosu (wewnętrzne są ostatnie)"
 
-#: debug.py:207
+#: debug.py:215
 msgid "Local variables in selected frame:"
 msgstr "Zmienne lokalne w zaznaczonej ramce:"
 
@@ -155,7 +155,7 @@ msgstr ""
 "Nie można załadować plików ze zdalnego hosta (zbyt wiele plików lub "
 "aplikacja obsługująca typ application/octet-stream nie ustawiona)"
 
-#: mime.py:483
+#: mime.py:492
 msgid ""
 "The '%s' command returned an error code!\n"
 "Make sure you have the freedesktop.org shared MIME package:\n"
@@ -228,11 +228,11 @@ msgstr ""
 "Aplikacja obsługująca pliki danych typów. Kliknij w OK aby dodać aplikację "
 "dla danego typu pliku do menu 'Wyślij do...' oraz 'Plik'."
 
-#: saving.py:162
+#: saving.py:169
 msgid "Delete temporary file '%s'?"
 msgstr "Usunąć tymczasowy plik '%s'?"
 
-#: saving.py:338
+#: saving.py:345
 msgid ""
 "Drag the icon to a directory viewer\n"
 "(or enter a full pathname)"
@@ -240,38 +240,42 @@ msgstr ""
 "Przeciągnij ikonę do przeglądarki katalogów\n"
 "(lub wprowadź pełną ścieżkę)"
 
-#: saving.py:364
+#: saving.py:371
 msgid "Unnamed"
 msgstr "Bez nazwy"
 
-#: saving.py:446
+#: saving.py:453
 msgid "'%s' already exists as a directory."
 msgstr "'%s' już istnieje w tym katalogu."
 
-#: saving.py:455
+#: saving.py:462
 msgid "Permissions changed from %o to %o."
 msgstr "Uprawnienia zmienione z %o na %o."
 
-#: saving.py:458
+#: saving.py:465
 msgid "Size was %d bytes; now %d bytes."
 msgstr "Poprzedni rozmiar: %d bajtów; obecny %d bajtów."
 
-#: saving.py:461
+#: saving.py:468
 msgid "Modification time changed."
 msgstr "Data modyfikacji zmieniona."
 
-#: saving.py:467
+#: saving.py:474
 msgid "File '%s' already exists -- overwrite it?"
 msgstr "Plik '%s' już istnieje -- nadpisać?"
 
-#: saving.py:468
+#: saving.py:475
 msgid "_Overwrite"
 msgstr "_Nadpisz"
 
-#: saving.py:508
+#: saving.py:515
 msgid "_Discard"
 msgstr "_Porzuć"
 
-#: saving.py:518
+#: saving.py:525
 msgid "Save As:"
 msgstr "Zapisz jako:"
+
+#: thumbnail.py:194
+msgid "Thumbnail not implemented"
+msgstr ""
