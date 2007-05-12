@@ -124,6 +124,10 @@ class TimeoutBlocker(Blocker):
 		rox.toplevel_unref()
 		self.trigger()
 
+def _io_callback(src, cond, blocker):
+	blocker.trigger()
+	return False
+
 class InputBlocker(Blocker):
 	"""Triggers when os.read(stream) would not block."""
 	_tag = None
@@ -136,7 +140,7 @@ class InputBlocker(Blocker):
 		Blocker.add_task(self, task)
 		if self._tag is None:
 			self._tag = gobject.io_add_watch(self._stream, gobject.IO_IN | gobject.IO_HUP,
-				lambda src, cond: self.trigger())
+				_io_callback, self)
 	
 	def remove_task(self, task):
 		Blocker.remove_task(self, task)
@@ -156,7 +160,7 @@ class OutputBlocker(Blocker):
 		Blocker.add_task(self, task)
 		if self._tag is None:
 			self._tag = gobject.io_add_watch(self._stream, gobject.IO_OUT | gobject.IO_HUP,
-				lambda src, cond: self.trigger())
+				_io_callback, self)
 	
 	def remove_task(self, task):
 		Blocker.remove_task(self, task)
