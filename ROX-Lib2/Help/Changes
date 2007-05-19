@@ -84,6 +84,9 @@ tasks:
   successfully or by throwing an exception (Thomas Leonard; suggested by Ken
   Hayber).
 
+- Ensure that IO blocker callbacks return False, not None, or we get a
+  warning from PyGTK (Thomas Leonard).
+
 templates: *NEW*
 
 - Added templates module as an interface to glade (Stephen Watson).
