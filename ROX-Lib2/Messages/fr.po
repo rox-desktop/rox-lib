@@ -1,11 +1,11 @@
 # French messages for ROX-Lib2
-# Copyright (C) 2004, 2005, 2006 Vincent Lefèvre <vincent@vinc17.org>
+# Copyright (C) 2004, 2005, 2006, 2007 Vincent Lefèvre <vincent@vinc17.org>
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ROX-Lib2 2.0.2-20060525\n"
+"Project-Id-Version: ROX-Lib2 2.0.3-20070519\n"
 "POT-Creation-Date: 2007-05-09 18:25+BST\n"
-"PO-Revision-Date: 2006-05-25 17:37+0200\n"
+"PO-Revision-Date: 2007-05-19 13:06+0200\n"
 "Last-Translator: Vincent Lefevre <vincent@vinc17.org>\n"
 "Language-Team: ROX Mailing List <rox-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -278,4 +278,4 @@ msgstr "Sauver sous :"
 
 #: thumbnail.py:194
 msgid "Thumbnail not implemented"
-msgstr ""
+msgstr "Vignettes non implémentées"

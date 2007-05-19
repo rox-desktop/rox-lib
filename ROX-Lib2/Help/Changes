@@ -37,6 +37,8 @@ Translations:
 
 - Update Chinese Translations (Babyfai Cheung).
 
+- Update French translations (Vincent Lefèvre).
+
 debug:
 
 - Exception handler now copes with old-style non-class exceptions and
