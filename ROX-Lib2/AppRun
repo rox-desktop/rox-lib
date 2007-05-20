@@ -30,5 +30,5 @@ if rox.g.gdk.get_display() is not None:
 		filer.open_dir(os.path.join(app_dir, "Help"))
 		
 else:
-	print >>stderr, message
+	stderr.write(message+'\n')
 

@@ -80,8 +80,9 @@ except ImportError:
 	sys.stderr.write(_('Broken pygtk installation: found pygtk (%s), but not gtk!\n') % pygtk.__file__)
 	raise
 assert g.Window		# Ensure not 1.2 bindings
-if not g.gdk.get_display():
-	print >>sys.stderr, _("WARNING from ROX-Lib: This does not appear to be a valid X environment (DISPLAY is not set), many functions will not work and may cause a segmentation fault.")
+have_display=g.gdk.get_display() is not None
+if not have_display:
+	sys.stderr.write(_("WARNING from ROX-Lib: This does not appear to be a valid X environment (DISPLAY is not set), many functions will not work and may cause a segmentation fault.")+"\n")
 
 # Put argv back the way it was, now that Gtk has initialised
 sys.argv[0] = _path
@@ -187,8 +188,9 @@ def report_exception():
 def _excepthook(ex_type, value, tb):
 	_old_excepthook(ex_type, value, tb)
 	if type(ex_type) == type and issubclass(ex_type, KeyboardInterrupt): return
-	import debug
-	debug.show_exception(ex_type, value, tb)
+	if have_display:
+		import debug
+		debug.show_exception(ex_type, value, tb)
 
 _old_excepthook = sys.excepthook
 sys.excepthook = _excepthook
