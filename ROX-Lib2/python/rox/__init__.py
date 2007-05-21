@@ -80,7 +80,7 @@ except ImportError:
 	sys.stderr.write(_('Broken pygtk installation: found pygtk (%s), but not gtk!\n') % pygtk.__file__)
 	raise
 assert g.Window		# Ensure not 1.2 bindings
-have_display=g.gdk.get_display() is not None
+have_display=g.gdk.display_get_default() is not None
 if not have_display:
 	sys.stderr.write(_("WARNING from ROX-Lib: This does not appear to be a valid X environment (DISPLAY is not set), many functions will not work and may cause a segmentation fault.")+"\n")
 

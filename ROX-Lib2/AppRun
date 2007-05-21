@@ -17,7 +17,7 @@ PyGTK version: %s\n\
 GTK version: %s\n\n\
 PyGTK location:\n%s") % (rox.roxlib_version, g.pygtk_version, g.gtk_version, dirname(g.__file__))
 
-if rox.g.gdk.get_display() is not None:
+if rox.g.gdk.display_get_default() is not None:
 	box = g.MessageDialog(None, g.MESSAGE_QUESTION, 0, g.BUTTONS_OK, message)
 	box.add_button(g.STOCK_HELP, g.RESPONSE_HELP)
 	box.set_title('ROX-Lib')
