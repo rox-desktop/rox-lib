@@ -2,7 +2,7 @@
 
 The simplest interface will be templates.load() which will return a set
 of widgets loaded from $APP_DIR/Templates.glade, e.g.
-      widgets=templates.load()
+      widgets=templates.load('main')
       class MyWindow:
           def __init__(self):
               self.window=widgets.getWindow('main')
@@ -20,7 +20,7 @@ To use a template as part of a class, derive a class from ProxyWindow
             self.cancel_button=widgets['cancel']
             # ...
 
-    widgets=templates.load()
+    widgets=templates.load('main')
     window=widgets.getWindow('main', MyWindow)
             
             
