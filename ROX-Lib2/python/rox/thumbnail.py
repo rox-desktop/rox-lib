@@ -4,6 +4,8 @@ image for a type of file.
 """
 
 import os, sys
+import tempfile
+import shutil
 
 try:
     import hashlib
@@ -50,10 +52,10 @@ def get_image(fname):
             return None
 
     # Check validity
-    tsize=pbuf.get_option('tEXt::Thumb::Size')
-    tmtime=pbuf.get_option('tEXt::Thumb::MTime')
+    tsize=int(pbuf.get_option('tEXt::Thumb::Size'))
+    tmtime=float(pbuf.get_option('tEXt::Thumb::MTime'))
     s=os.stat(fname)
-    if int(tsize)!=int(s.st_size) or int(tmtime)!=int(s.st_mtime):
+    if tsize!=int(s.st_size) or int(tmtime)!=int(s.st_mtime):
         return None
 
     return pbuf
@@ -93,13 +95,10 @@ def get_method(path=None, mtype=None):
 
     return False
 
-def generate(path, wait=True):
+def generate(path):
     """Generate the thumbnail for a file.  If a generator for the type of
-    path is not available then None is returned, otherwise an integer.
-    If wait is True then this does not return until the thumbnail is generated
-    and the integer is the exit code of the generation process (0 for success).
-    If wait is False then the function returns immediately with the process
-    ID of the thumbnail process."""
+    path is not available then None is returned, otherwise an integer
+    which is the exit code of the generation process (0 for success)."""
     
     method=get_method(path)
     if not method:
@@ -108,21 +107,14 @@ def generate(path, wait=True):
     if method is True:
         th=GdkPixbufThumbnailler()
         
-        if wait:
-            th.run(path)
+        th.run(path)
 
-            return 0
-
-        return th.background(path)
+        return 0
 
     outname=get_path_save(path)
     size=96
-    if wait:
-        mode=os.P_WAIT
-    else:
-        mode=os.P_NOWAIT
 
-    return os.spawnl(mode, method, method, path, outname, str(size))
+    return os.spawnl(os.P_WAIT, method, method, path, outname, str(size))
 
 # Class for thumbnail programs
 class Thumbnailler:
@@ -178,17 +170,6 @@ class Thumbnailler:
         if self.use_wdir:
             self.remove_working_dir()
 
-    def background(self, inname, outname=None, rsize=96):
-        """Fork the process and call the run() method in the child with
-        the given arguments.  The parent returns the process ID of the
-        child."""
-
-        pid=os.fork()
-        if pid:
-            return pid
-
-        self.run(inname, outname, rsize)
-
     def get_image(self, inname, rsize):
         """Method you must define for your thumbnailler to do anything"""
         raise _("Thumbnail not implemented")
@@ -237,11 +218,8 @@ class Thumbnailler:
         
     def make_working_dir(self):
         """Create the temporary directory and change into it."""
-        self.work_dir=os.path.join('/tmp',
-                                       '%s.%d' % (self.fname, os.getpid()))
-        #print work_dir
         try:
-            os.makedirs(self.work_dir)
+            self.work_dir=tempfile.mkdtemp()
         except:
             self.report_exception()
             self.work_dir=None
@@ -258,25 +236,16 @@ class Thumbnailler:
         
         os.chdir(self.old_dir)
 
-        for f in os.listdir(self.work_dir):
-            path=os.path.join(self.work_dir, f)
-
-            try:
-                os.remove(path)
-            except:
-                self.report_exception()
-
         try:
-            os.rmdir(self.work_dir)
+            shutil.rmtree(self.work_dir)
         except:
             self.report_exception()
+        self.work_dir=None
         
     def report_exception(self):
-        """Report an exception (if debug enabled)"""
+        """Report an exception if debug enabled, otherwise ignore it"""
         if self.debug<1:
             return
-        #exc=sys.exc_info()[:2]
-        #sys.stderr.write('%s: %s %s\n' % (sys.argv[0], exc[0], exc[1]))
         rox.report_exception()
 
 class GdkPixbufThumbnailler(Thumbnailler):
@@ -295,17 +264,3 @@ class GdkPixbufThumbnailler(Thumbnailler):
 
         return img
 
-class ExternalThumbnailler(Thumbnailler):
-    """Run an external process to generate the thumbnail."""
-
-    def __init__(self, path):
-        """Path is the path of the program to execute"""
-        
-        Thumbnailler.__init__(self, 'ExternalThumbnailler', 'external',
-                              True, False)
-
-        self.to_execute=path
-
-    def get_image(self, inname, rsize):
-        tfile=os.path.join(self.work_dir, 'temp.png')
-        
