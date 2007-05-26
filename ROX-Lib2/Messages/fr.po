@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 2.0.3-20070519\n"
-"POT-Creation-Date: 2007-05-19 14:35+CEST\n"
+"POT-Creation-Date: 2007-05-26 11:10+BST\n"
 "PO-Revision-Date: 2007-05-19 14:35+0200\n"
 "Last-Translator: Vincent Lefevre <vincent@vinc17.org>\n"
 "Language-Team: ROX Mailing List <rox-devel@lists.sourceforge.net>\n"
@@ -64,7 +64,7 @@ msgid "Broken pygtk installation: found pygtk (%s), but not gtk!\n"
 msgstr ""
 "Mauvaise installation de pygtk : pygtk (%s) a été trouvé, mais pas gtk !\n"
 
-#: __init__.py:84
+#: __init__.py:85
 msgid ""
 "WARNING from ROX-Lib: This does not appear to be a valid X environment "
 "(DISPLAY is not set), many functions will not work and may cause a "
@@ -74,7 +74,7 @@ msgstr ""
 "(DISPLAY non positionné), de nombreuses fonctions ne marcheront pas et "
 "peuvent causer un plantage (segmentation fault)."
 
-#: __init__.py:97
+#: __init__.py:98
 msgid ""
 "WARNING from ROX-Lib: the version of findrox.py used by this application (%"
 "s) is very old and may cause problems."
@@ -82,23 +82,23 @@ msgstr ""
 "ATTENTION (ROX-Lib) : la version de findrox.py utilisée par cette "
 "application (%s) est très ancienne et peut causer des problèmes."
 
-#: __init__.py:118
+#: __init__.py:119
 msgid "Operation aborted at user's request"
 msgstr "Opération annulée à la demande de l'utilisateur"
 
-#: __init__.py:125 debug.py:44
+#: __init__.py:126 debug.py:44
 msgid "Error"
 msgstr "Erreur"
 
-#: __init__.py:151
+#: __init__.py:152
 msgid "Information"
 msgstr "Information"
 
-#: __init__.py:173
+#: __init__.py:174
 msgid "Confirm:"
 msgstr "Confirmer :"
 
-#: __init__.py:454
+#: __init__.py:456
 msgid ""
 "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "

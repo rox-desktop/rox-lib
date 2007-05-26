@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 1.9.13\n"
-"POT-Creation-Date: 2007-05-09 18:25+BST\n"
+"POT-Creation-Date: 2007-05-26 11:10+BST\n"
 "PO-Revision-Date: 2006-06-25 16:40+0200\n"
 "Last-Translator: Babyfai Cheung <babyfai1@yahoo.com.hk>\n"
 "Language-Team: none\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../../AppRun:13
+#: ../../AppRun:12
 msgid ""
 "ROX-Lib2 contains code that is useful to newer ROX applications. You should "
 "place this directory somewhere where other programs can find it, such as ~/"
@@ -59,23 +59,36 @@ msgstr ""
 msgid "Broken pygtk installation: found pygtk (%s), but not gtk!\n"
 msgstr "已損毀的 pygtk 安裝：找到 pygtk (%s)，但沒有 gtk！\n"
 
-#: __init__.py:116
+#: __init__.py:85
+msgid ""
+"WARNING from ROX-Lib: This does not appear to be a valid X environment "
+"(DISPLAY is not set), many functions will not work and may cause a "
+"segmentation fault."
+msgstr ""
+
+#: __init__.py:98
+msgid ""
+"WARNING from ROX-Lib: the version of findrox.py used by this application (%"
+"s) is very old and may cause problems."
+msgstr ""
+
+#: __init__.py:119
 msgid "Operation aborted at user's request"
 msgstr "操作被用戶終結"
 
-#: __init__.py:123 debug.py:44
+#: __init__.py:126 debug.py:44
 msgid "Error"
 msgstr "錯誤"
 
-#: __init__.py:149
+#: __init__.py:152
 msgid "Information"
 msgstr "訊息"
 
-#: __init__.py:171
+#: __init__.py:174
 msgid "Confirm:"
 msgstr "確定："
 
-#: __init__.py:452
+#: __init__.py:456
 msgid ""
 "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 2.0.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-09 18:25+BST\n"
+"POT-Creation-Date: 2007-05-26 11:10+BST\n"
 "PO-Revision-Date: 2006-03-12 17:30+0100\n"
 "Last-Translator: Andras Mohari <mayday@mailpont.hu>\n"
 "Language-Team: Hungarian\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 "X-Poedit-Language: Hungarian\n"
 
-#: ../../AppRun:13
+#: ../../AppRun:12
 msgid ""
 "ROX-Lib2 contains code that is useful to newer ROX applications. You should "
 "place this directory somewhere where other programs can find it, such as ~/"
@@ -65,23 +65,36 @@ msgstr ""
 msgid "Broken pygtk installation: found pygtk (%s), but not gtk!\n"
 msgstr "Hibás a pygtk telepítése: van pygtk (%s), de nincs gtk!\n"
 
-#: __init__.py:116
+#: __init__.py:85
+msgid ""
+"WARNING from ROX-Lib: This does not appear to be a valid X environment "
+"(DISPLAY is not set), many functions will not work and may cause a "
+"segmentation fault."
+msgstr ""
+
+#: __init__.py:98
+msgid ""
+"WARNING from ROX-Lib: the version of findrox.py used by this application (%"
+"s) is very old and may cause problems."
+msgstr ""
+
+#: __init__.py:119
 msgid "Operation aborted at user's request"
 msgstr "Művelet megszakítva a felhasználó kérésére"
 
-#: __init__.py:123 debug.py:44
+#: __init__.py:126 debug.py:44
 msgid "Error"
 msgstr "Hiba"
 
-#: __init__.py:149
+#: __init__.py:152
 msgid "Information"
 msgstr "Információ"
 
-#: __init__.py:171
+#: __init__.py:174
 msgid "Confirm:"
 msgstr "Megerősítés:"
 
-#: __init__.py:452
+#: __init__.py:456
 msgid ""
 "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "
