@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ROX-Lib2 1.9.13\n"
-"POT-Creation-Date: 2007-05-26 11:10+BST\n"
+"POT-Creation-Date: 2007-05-27 11:47+BST\n"
 "PO-Revision-Date: 2006-06-25 16:40+0200\n"
 "Last-Translator: Babyfai Cheung <babyfai1@yahoo.com.hk>\n"
 "Language-Team: none\n"
@@ -59,36 +59,29 @@ msgstr ""
 msgid "Broken pygtk installation: found pygtk (%s), but not gtk!\n"
 msgstr "已损毁的 pygtk 安装：找到 pygtk (%s)，但没有 gtk！\n"
 
-#: __init__.py:85
-msgid ""
-"WARNING from ROX-Lib: This does not appear to be a valid X environment "
-"(DISPLAY is not set), many functions will not work and may cause a "
-"segmentation fault."
-msgstr ""
-
-#: __init__.py:98
+#: __init__.py:96
 msgid ""
 "WARNING from ROX-Lib: the version of findrox.py used by this application (%"
 "s) is very old and may cause problems."
 msgstr ""
 
-#: __init__.py:119
+#: __init__.py:117
 msgid "Operation aborted at user's request"
 msgstr "操作被用户终结"
 
-#: __init__.py:126 debug.py:44
+#: __init__.py:124 debug.py:44
 msgid "Error"
 msgstr "错误"
 
-#: __init__.py:152
+#: __init__.py:150
 msgid "Information"
 msgstr "讯息"
 
-#: __init__.py:174
+#: __init__.py:172
 msgid "Confirm:"
 msgstr "确定："
 
-#: __init__.py:456
+#: __init__.py:454
 msgid ""
 "You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "
@@ -274,6 +267,6 @@ msgstr "丢弃(_D)"
 msgid "Save As:"
 msgstr "储存为："
 
-#: thumbnail.py:194
+#: thumbnail.py:175
 msgid "Thumbnail not implemented"
 msgstr ""

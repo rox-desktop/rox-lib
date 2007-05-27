@@ -105,7 +105,7 @@ def generate(path):
         return None
 
     if method is True:
-        th=GdkPixbufThumbnailler()
+        th=GdkPixbufThumbnailer()
         
         th.run(path)
 
@@ -117,7 +117,7 @@ def generate(path):
     return os.spawnl(os.P_WAIT, method, method, path, outname, str(size))
 
 # Class for thumbnail programs
-class Thumbnailler:
+class Thumbnailer:
     """Base class for programs which generate thumbnails.
 
     The method run() creates the thumbnail for a source file.  This
@@ -131,7 +131,7 @@ class Thumbnailler:
     image."""
     
     def __init__(self, name, fname, use_wdir=False, debug=False):
-        """Initialise the thumbnailler.
+        """Initialise the thumbnailer.
         name - name of the program
         fname - a string to use in generated temp file names
         use_wdir - if true then use a temp directory to store files
@@ -171,7 +171,7 @@ class Thumbnailler:
             self.remove_working_dir()
 
     def get_image(self, inname, rsize):
-        """Method you must define for your thumbnailler to do anything"""
+        """Method you must define for your thumbnailer to do anything"""
         raise _("Thumbnail not implemented")
 
     def process_image(self, img, rsize):
@@ -248,12 +248,12 @@ class Thumbnailler:
             return
         rox.report_exception()
 
-class GdkPixbufThumbnailler(Thumbnailler):
-    """An example implementation of a Thumbnailler class.  It uses GdkPixbuf
+class GdkPixbufThumbnailer(Thumbnailer):
+    """An example implementation of a Thumbnailer class.  It uses GdkPixbuf
     to generate thumbnails of image files."""
 
     def __init__(self):
-        Thumbnailler.__init__(self, 'GdkPixbufThumbnailler', 'pixbuf',
+        Thumbnailer.__init__(self, 'GdkPixbufThumbnailer', 'pixbuf',
                               False, False)
 
     def get_image(self, inname, rsize):

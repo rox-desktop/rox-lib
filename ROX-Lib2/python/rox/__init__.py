@@ -81,8 +81,6 @@ except ImportError:
 	raise
 assert g.Window		# Ensure not 1.2 bindings
 have_display=g.gdk.display_get_default() is not None
-if not have_display:
-	sys.stderr.write(_("WARNING from ROX-Lib: This does not appear to be a valid X environment (DISPLAY is not set), many functions will not work and may cause a segmentation fault.")+"\n")
 
 # Put argv back the way it was, now that Gtk has initialised
 sys.argv[0] = _path

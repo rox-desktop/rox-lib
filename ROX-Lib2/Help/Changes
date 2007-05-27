@@ -33,9 +33,6 @@ General:
   return a Pixbuf instead of an Image, to use the existing icon theme lookup
   and to first check for a .DirIcon for directories (Stephen Watson).  
 
-- Added warning for when $DISPLAY is not set (gtk may segfault) (Stephen
-  Watson).
-
 Translations:
 
 - Update Chinese Translations (Babyfai Cheung).
