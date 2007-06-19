@@ -352,7 +352,11 @@ class OptionsBox(g.Dialog):
 		else:
 			widgets = fn(node, label)
 		for w in widgets:
-			box.pack_start(w, False, True, 0)
+			if hasattr(w, '_rox_lib_expand'):
+				expand=w._rox_lib_expand
+			else:
+				expand=False
+			box.pack_start(w, expand, True, 0)
 
 		self.current_size_group = old_size_group
 		
@@ -764,6 +768,7 @@ class OptionsBox(g.Dialog):
 		select=str_attr(node, 'selection', 'single')
     
 		cont=g.VBox(False, 4)
+		cont._rox_lib_expand=True
     
 		if label:
 			label_wid = g.Label(label)
@@ -774,7 +779,7 @@ class OptionsBox(g.Dialog):
 		swin.set_border_width(4)
 		swin.set_policy(g.POLICY_NEVER, g.POLICY_ALWAYS)
 		swin.set_shadow_type(g.SHADOW_IN)
-		swin.set_size_request(-1, 128)
+		#swin.set_size_request(-1, 128)
 		cont.pack_start(swin, True, True, 0)
     
 		model = g.ListStore(str)
@@ -846,6 +851,7 @@ class OptionsBox(g.Dialog):
 		select=str_attr(node, 'selection', 'single')
 		
 		cont=rox.g.VBox(False, 4)
+		cont._rox_lib_expand=True
     
 		if label:
 			label_wid = rox.g.Label(label)
@@ -856,7 +862,7 @@ class OptionsBox(g.Dialog):
 		swin.set_border_width(4)
 		swin.set_policy(g.POLICY_NEVER, g.POLICY_ALWAYS)
 		swin.set_shadow_type(g.SHADOW_IN)
-		swin.set_size_request(-1, 128)
+		#swin.set_size_request(-1, 128)
 		cont.pack_start(swin, True, True, 0)
     
 		model = g.ListStore(str, str)

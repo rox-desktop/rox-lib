@@ -25,8 +25,8 @@ menu = Menu('main', [
 	  Separator(),
 	  Action('Process...',	        'process'),
 	])),
-	Action('Options',		'show_options'),
-	Action('Quit',		        'show_options', 'F1', stock=g.STOCK_HELP),
+	Action('Options',		'show_options', 'F1', stock=g.STOCK_HELP)),
+	Action('Quit',		        'quit', stock=g.STOCK_QUIT),
 	])
 
 There is also an older syntax, where you pass tuples of strings 
