@@ -194,6 +194,7 @@ class ClientCall(tasks.Blocker):
 			raise Exception('No response to XML-RPC call')
 		else:
 			self.invisible.xmlrpc_response = val[2]
+			assert self.invisible.xmlrpc_response is not None, `val`
 			self.trigger()
 			if self.waiting:
 				g.main_quit()
