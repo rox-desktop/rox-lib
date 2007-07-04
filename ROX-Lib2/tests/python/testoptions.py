@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.3
+#!/usr/bin/env python2.4
 import unittest
 import os, sys, shutil
 from os.path import dirname, abspath, join
