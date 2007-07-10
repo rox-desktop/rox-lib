@@ -496,10 +496,10 @@ class SaveBox(g.Dialog):
 	"""
 	save_area = None
 
-	def __init__(self, document, uri, type = 'text/plain', discard = False):
+	def __init__(self, document, uri, type = 'text/plain', discard = False, parent = None):
 		"""See SaveArea.__init__.
 		If discard is True then an extra discard button is added to the dialog."""
-		g.Dialog.__init__(self)
+		g.Dialog.__init__(self, parent = parent)
 		self.set_has_separator(False)
 
 		self.add_button(g.STOCK_CANCEL, g.RESPONSE_CANCEL)
