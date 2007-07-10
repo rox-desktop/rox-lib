@@ -498,6 +498,7 @@ class SaveBox(g.Dialog):
 
 	def __init__(self, document, uri, type = 'text/plain', discard = False, parent = None):
 		"""See SaveArea.__init__.
+		parent was added in version 2.0.5. To support older versions, use set_transient_for.
 		If discard is True then an extra discard button is added to the dialog."""
 		g.Dialog.__init__(self, parent = parent)
 		self.set_has_separator(False)
