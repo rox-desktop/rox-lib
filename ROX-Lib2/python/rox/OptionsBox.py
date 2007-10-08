@@ -264,16 +264,15 @@ class OptionsBox(g.Dialog):
 			hbox.pack_start(notebook, True, True, 0)
 
 		# Flip pages
-		# (sel = sel; pygtk bug?)
-		def change_page(tv, sel = sel, notebook = notebook):
+		def change_page(sel, notebook):
 			selected = sel.get_selected()
 			if not selected:
 				return
 			model, titer = selected
 			page = model.get_value(titer, 1)
-
 			notebook.set_current_page(page)
-		sel.connect('changed', change_page)
+
+		sel.connect('changed', change_page, notebook)
 
 		self.vbox.show_all()
 	
