@@ -102,7 +102,7 @@ class MIMEtype:
 		if not base or not size:
 			return base
 
-		h=int(base.get_width()*float(size)/base.get_height())
+		h=int(base.get_height()*float(size)/base.get_width())
 		return base.scale_simple(size, h, rox.g.gdk.INTERP_BILINEAR)
 
 class MagicRule:
