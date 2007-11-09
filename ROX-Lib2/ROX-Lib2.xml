@@ -10,6 +10,6 @@
   <feed-for interface='http://rox.sourceforge.net/2005/interfaces/ROX-Lib'/>
 
   <group main='ROX-Lib2/AppRun'>
-    <implementation version="2.0.4" id=".." version-modifier='-post'/>
+    <implementation version="2.0.5" id=".." version-modifier='-post'/>
   </group>
 </interface>

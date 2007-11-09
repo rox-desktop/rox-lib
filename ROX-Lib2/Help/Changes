@@ -7,6 +7,29 @@ Note: for a detailed changelog, do:
 			
   svn log -v https://svn.sourceforge.net/svnroot/rox/trunk/ROX-Lib2
 
+Release 2.0.5:
+
+General:
+
+- Added a 'parent' argument to the SaveBox constructor (Thomas Leonard).
+
+- Python 2.4 is now the base version, so test against that.
+
+- Fix example Menu definition. Allow option widgets to expand vertically by
+  setting the _rox_lib_expand property to True (Stephen Watson, suggested by
+  Thomas Leonard).
+
+Bugfixs:
+
+- Fix scaling of MIME icons (Stephen Watson)
+
+- Work-around possible PyGTK bug (Lars Hansson and Tony Houghton, reported by
+  Peter): "assertion `GTK_IS_TREE_SELECTION (selection)' failed"
+
+- Added an assertion to detect a mysterious error (Thomas Leonard; reported by
+  Carl Bolduc).
+
+
 Release 2.0.4:
 
 General:
