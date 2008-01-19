@@ -223,6 +223,103 @@ class Dialog(g.Dialog):
 		toplevel_ref()
 		args[0].connect('destroy', toplevel_unref)
 
+if hasattr(g, 'StatusIcon'):
+	# Introduced in PyGTK 2.10
+
+	class StatusIcon(g.StatusIcon):
+		"""Wrap GtkStatusIcon to call toplevel_(un)ref functions for
+		you.  Calling toplevel_unref isn't automatic, because a
+		GtkStatusIcon is not a GtkWidget.
+
+		GtkStatusIcon was added in GTK+ 2.10, so you will need
+		pygtk 2.10 or later to use this class.  Check by using
+
+		import rox
+		if hasattr(rox, 'StatusIcon'):
+		    ....
+		"""
+		def __init__(self, add_ref=True, menu=None,
+			     show=True,
+			     icon_pixbuf=None, icon_name=None,
+			     icon_stock=None, icon_file=None):
+			"""Initialise the StatusIcon.
+
+			add_ref - if True (the default) call toplevel_ref() for
+			this icon and toplevel_unref() when removed.  Set to
+			False if you want the main loop to finish if only the
+			icon is present and no other windows
+			menu - if not None then this is the menu to show when
+			the popup-menu signal is received.  Alternatively
+			add a handler for then popup-menu signal yourself for
+			more sophisticated menus
+			show - True to show them icon initially, False to start
+			with the icon hidden.
+			icon_pixbuf - image (a gdk.pixbuf) to use as an icon
+			icon_name - name of the icon from the current icon
+			theme to use as an icon
+			icon_stock - name of stock icon to use as an icon
+			icon_file - file name of the image to use as an icon
+
+			The icon used is selected is the first of
+			(icon_pixbuf, icon_name, icon_stock, icon_file) not
+			to be None.  If no icon is given, it is taken from
+			$APP_DIR/.DirIcon, scaled to 22 pixels.
+
+			NOTE: even if show is set to True, the icon may not
+			be visible if no system tray application is running.
+			"""
+			
+			g.StatusIcon.__init__(self)
+
+			if icon_pixbuf:
+				self.set_from_pixbuf(icon_pixbuf)
+
+			elif icon_name:
+				self.set_from_icon_name(icon_name)
+
+			elif icon_stock:
+				self.set_from_stock(icon_stock)
+
+			elif icon_file:
+				self.set_from_file(icon_file)
+
+			else:
+				icon_path=os.path.join(app_dir, '.DirIcon')
+				if os.path.exists(icon_path):
+					pbuf=g.gdk.pixbuf_new_from_file_at_size(icon_path, 22, 22)
+					self.set_from_pixbuf(pbuf)
+
+			self.add_ref=add_ref
+			self.icon_menu=menu
+
+			if show:
+				self.set_visible(True)
+
+			if self.add_ref:
+				toplevel_ref()
+
+			if self.icon_menu:
+				self.connect('popup-menu', self.popup_menu)
+
+		def popup_menu(self, icon, button, act_time):
+			"""Show the default menu, if one was specified
+			in the constructor."""
+			def pos_menu(menu):
+				return g.status_icon_position_menu(menu, self)
+			if self.icon_menu:
+				self.icon_menu.popup(self, None, pos_menu)
+
+		def remove_icon(self):
+			"""Hides the icon and drops the top level reference,
+			if it was holding one.  This may cause the main loop
+			to exit."""
+			# Does not seem to be a way of removing it...
+			self.set_visible(False)
+			if self.add_ref:
+				toplevel_unref()
+				self.add_ref=False
+			
+			
 class ButtonMixed(g.Button):
 	"""A button with a standard stock icon, but any label. This is useful
 	when you want to express a concept similar to one of the stock ones."""
