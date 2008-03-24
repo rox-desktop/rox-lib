@@ -95,15 +95,63 @@ class MIMEtype:
 		at the correct aspect ratio.  The constants
 		ICON_SIZE_{HUGE,LARGE,SMALL} match the sizes used by the
 		filer."""
-		# I suppose it would make more sense to move the code
-		# from saving to here...
-		import saving
-		base=saving.image_for_type(self.media + '/' + self.subtype)
+		base=image_for_type(self.media + '/' + self.subtype)
 		if not base or not size:
 			return base
 
 		h=int(base.get_height()*float(size)/base.get_width())
 		return base.scale_simple(size, h, rox.g.gdk.INTERP_BILINEAR)
+
+def image_for_type(type, size=48, flags=0):
+	'''Search XDG_CONFIG or icon theme for a suitable icon. Returns a
+	pixbuf, or None.'''
+	from icon_theme import users_theme
+	
+	media, subtype = type.split('/', 1)
+
+	path=basedir.load_first_config('rox.sourceforge.net', 'MIME-icons',
+				       media + '_' + subtype + '.png')
+	icon=None
+	if not path:
+		icon_name = '%s-%s' % (media, subtype)
+
+		try:
+			path=users_theme.lookup_icon(icon_name, size, flags)
+		except:
+			print "Error loading MIME icon"
+
+	if not path:
+		icon_name = 'mime-%s:%s' % (media, subtype)
+
+		try:
+			path=users_theme.lookup_icon(icon_name, size, flags)
+			if not path:
+				icon_name = 'mime-%s' % media
+				path = users_theme.lookup_icon(icon_name, size)
+
+		except:
+			print "Error loading MIME icon"
+
+	if not path:
+		path = basedir.load_first_config('rox.sourceforge.net',
+						 'MIME-icons', media + '.png')
+	if not path:
+		icon_name = '%s-x-generic' % media
+
+		try:
+			path=users_theme.lookup_icon(icon_name, size, flags)
+		except:
+			print "Error loading MIME icon"
+
+	if path:
+		if hasattr(rox.g.gdk, 'pixbuf_new_from_file_at_size'):
+			return rox.g.gdk.pixbuf_new_from_file_at_size(path,
+								      size,
+								      size)
+		else:
+			return rox.g.gdk.pixbuf_new_from_file(path)
+	else:
+		return None
 
 class MagicRule:
 	def __init__(self, f):

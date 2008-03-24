@@ -42,43 +42,11 @@ def _read_xds_property(context, delete):
 	if retval:
 		return retval[2]
 	return None
-	
+
 def image_for_type(type, size=48, flags=0):
-	'Search <Choices> for a suitable icon. Returns a pixbuf, or None.'
-	from icon_theme import users_theme
-	
-	media, subtype = type.split('/', 1)
-
-	path=basedir.load_first_config('rox.sourceforge.net', 'MIME-icons',
-				       media + '_' + subtype + '.png')
-	if not path:
-		path = choices.load('MIME-icons',
-				    media + '_' + subtype + '.png')
-	icon=None
-	if not path:
-		icon_name = 'mime-%s:%s' % (media, subtype)
-
-		try:
-			path=users_theme.lookup_icon(icon_name, size, flags)
-			if not path:
-				icon_name = 'mime-%s' % media
-				path = users_theme.lookup_icon(icon_name, size)
-
-		except:
-			print "Error loading MIME icon"
-
-	if not path:
-		path = basedir.load_first_config('rox.sourceforge.net',
-						 'MIME-icons', media + '.png')
-	if not path:
-		path = choices.load('MIME-icons', media + '.png')
-	if path:
-		if hasattr(gdk, 'pixbuf_new_from_file_at_size'):
-			return gdk.pixbuf_new_from_file_at_size(path, size, size)
-		else:
-			return gdk.pixbuf_new_from_file(path)
-	else:
-		return None
+	"""See mime.image_for_type"""
+	import mime
+	return mime(type, size, flags)
 
 def _report_save_error():
 	"Report a AbortSave nicely, otherwise use report_exception()"
