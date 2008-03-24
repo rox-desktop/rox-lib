@@ -8,7 +8,7 @@ the purpose and pass that to the SaveBox."""
 import os, sys
 import rox
 from rox import alert, g, _, filer, escape
-from rox import choices, get_local_path, basedir
+from rox import choices, get_local_path, basedir, mime
 
 gdk = g.gdk
 
@@ -45,8 +45,7 @@ def _read_xds_property(context, delete):
 
 def image_for_type(type, size=48, flags=0):
 	"""See mime.image_for_type"""
-	import mime
-	return mime(type, size, flags)
+	return mime.image_for_type(type, size, flags)
 
 def _report_save_error():
 	"Report a AbortSave nicely, otherwise use report_exception()"
@@ -238,7 +237,7 @@ class SaveArea(g.VBox):
 		entry.set_text(uri)
 	
 	def _set_icon(self, type):
-		pixbuf = image_for_type(type)
+		pixbuf = mime.image_for_type(type)
 		if pixbuf:
 			self.icon.set_from_pixbuf(pixbuf)
 		else:
