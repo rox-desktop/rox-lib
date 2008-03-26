@@ -9,6 +9,13 @@
 
   <feed-for interface='http://rox.sourceforge.net/2005/interfaces/ROX-Lib'/>
 
+  <release:management xmlns:release="http://zero-install.sourceforge.net/2007/namespaces/0release">
+    <release:action phase="commit-release">sed -i &quot;s/&lt;Version&gt;.*&lt;\/Version&gt;$/&lt;Version&gt;$RELEASE_VERSION&lt;\/Version&gt;/&quot; ROX-Lib2/AppInfo.xml</release:action>
+    <release:action phase="commit-release">sed -i &quot;s/^roxlib_version = .*$/roxlib_version = (`echo $RELEASE_VERSION|sed 's/\./, /g'`)/&quot; ROX-Lib2/python/rox/__init__.py</release:action>
+    <release:action phase="generate-archive">cd ROX-Lib2/python &amp;&amp; ./make_docs.py &amp;&amp; rm -f rox/*.pyc</release:action>
+    <release:action phase="generate-archive">cd ROX-Lib2/Messages &amp;&amp; ./dist</release:action>
+  </release:management>
+
   <group main='ROX-Lib2/AppRun'>
     <implementation version="2.0.5" id=".." version-modifier='-post'/>
   </group>
