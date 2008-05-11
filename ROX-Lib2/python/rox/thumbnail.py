@@ -45,11 +45,13 @@ def get_image(fname):
     """Given a file name return a GdkPixbuf of the thumbnail for that file.
     If no thumbnail image exists return None."""
     path=get_path(fname)
-    if path:
-        try:
-            pbuf=rox.g.gdk.pixbuf_new_from_file(path)
-        except:
-            return None
+    if not path:
+	return None
+
+    try:
+        pbuf=rox.g.gdk.pixbuf_new_from_file(path)
+    except:
+        return None
 
     # Check validity
     tsize=int(pbuf.get_option('tEXt::Thumb::Size'))

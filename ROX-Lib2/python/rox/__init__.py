@@ -532,7 +532,7 @@ def get_icon(path):
 			d=os.stat(path)
 			i=os.stat(dir_icon)
 
-			if d.st_uid==i.st_uid and not (stat.IWOTH & d.st_mode) and not (stat.IWOTH & i.st_mode):
+			if d.st_uid==i.st_uid and not (stat.S_IWOTH & d.st_mode) and not (stat.S_IWOTH & i.st_mode):
 				return g.gdk.pixbuf_new_from_file(dir_icon)
 
 	import thumbnail
