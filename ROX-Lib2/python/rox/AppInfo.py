@@ -64,6 +64,7 @@ class AppInfo:
         """Recursivly parse the <AppMenu>s"""
         for item in node.getElementsByTagName('Item'):
             opt=item.getAttribute('option')
+            icon=item.getAttribute('icon')
             labels={}
             for label in item.getElementsByTagName('Label'):
                 lang=label.getAttributeNS(XML_NAMESPACE, 'lang')
@@ -72,7 +73,8 @@ class AppInfo:
             for sub in item.getElementsByTagName('AppMenu'):
                 self._parseAppMenu(sub_menus, sub)
             menus.append({'option': opt, 'label':
-                          labels, 'sub-menus': sub_menus})
+                          labels, 'icon' : icon,
+                          'sub-menus': sub_menus})
 
     def getAbout(self, elname, langs=None):
         """Return an entry from the <About> section.
@@ -168,7 +170,7 @@ class AppInfo:
         return self._doc.getElementsByTagNameNS(ns, elname)
 
     def _getMenu(self, item, langs):
-        ritem={'option': item['option']}
+        ritem={'option': item['option'], 'icon': item['icon']}
 
         labels=item['label']
 
@@ -195,6 +197,7 @@ class AppInfo:
         dictionary with these keys:
         'option': the option to pass to the app for each item
         'label': the label of the item in an appropriate language
+        'icon': the icon of the item
         'sub-menus': list of sub menu items"""
         
         langs = _getlangs(langs)
