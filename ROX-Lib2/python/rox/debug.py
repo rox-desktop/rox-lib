@@ -42,11 +42,6 @@ def show_exception(type, value, tb, auto_details = False):
 
 	box.set_position(g.WIN_POS_CENTER)
 	box.set_title(_('Error'))
-	reply = []
-	def response(box, resp):
-		reply.append(resp)
-		g.main_quit()
-	box.connect('response', response)
 	box.show()
 
 	if tb:
@@ -62,8 +57,7 @@ def show_exception(type, value, tb, auto_details = False):
 			resp = DETAILS
 			auto_details = False
 		else:
-			g.main()
-			resp = reply.pop()
+			resp = box.run()
 		if resp == int(g.RESPONSE_OK) or resp == int(g.RESPONSE_DELETE_EVENT):
 			break
 		if resp == SAVE:
