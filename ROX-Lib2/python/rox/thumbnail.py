@@ -1,9 +1,11 @@
 """Interface to the thumbnail spec.  This provides a functions to look up
 thumbnails for files and a class which you can extend to generate a thumbnail
 image for a type of file.
+
+The thumbnail standard is at http://jens.triq.net/thumbnail-spec/index.html
 """
 
-import os, sys
+import os, sys, errno
 import tempfile
 import shutil
 
@@ -35,11 +37,14 @@ def get_path(fname):
         if os.access(path, os.R_OK):
             return path
 
-def get_path_save(fname):
+def get_path_save(fname, ttype='normal'):
     """Given a file name return the full path of the location to store the
-    thumbnail image."""
+    thumbnail image.
+
+    ttype should be 'normal' or 'large' to specify the size, or 'fail' when
+    thumbnail creation has failed"""
     leaf=_leaf(fname)
-    return os.path.join(os.environ['HOME'], '.thumbnails', 'normal', leaf)
+    return os.path.join(os.environ['HOME'], '.thumbnails', ttype, leaf)
 
 def get_image(fname):
     """Given a file name return a GdkPixbuf of the thumbnail for that file.
@@ -144,6 +149,8 @@ class Thumbnailer:
         self.use_wdir=use_wdir
         self.debug=debug
 
+        self.failed=False
+
     def run(self, inname, outname=None, rsize=96):
         """Generate the thumbnail from the file
         inname - source file
@@ -161,10 +168,15 @@ class Thumbnailer:
 
         try:
             img=self.get_image(inname, rsize)
-            ow=img.get_width()
-            oh=img.get_height()        
-            img=self.process_image(img, rsize)
-            self.store_image(img, inname, outname, ow, oh)
+            if img:
+                ow=img.get_width()
+                oh=img.get_height()        
+                img=self.process_image(img, rsize)
+                self.store_image(img, inname, outname, ow, oh)
+
+            else:
+                # Thumbnail creation has failed.
+                self.creation_failed(inname, outname, rsize)
             
         except:
             self.report_exception()
@@ -243,6 +255,32 @@ class Thumbnailer:
         except:
             self.report_exception()
         self.work_dir=None
+
+    def creation_failed(self, inname, outname, rsize):
+        """Creation of a thumbnail failed.  Stores a dummy file to mark it
+        as per the Thumbnail spec."""
+        self.failed=True
+        s=os.stat(inname)
+
+        dummy=rox.g.gdk.Pixbuf(rox.g.gdk.COLORSPACE_RGB, False,
+                               8, rsize, rsize)
+        outname=get_path_save(inname, ttype=os.path.join('fail',
+                                                         self.fname))
+        d=os.path.dirname(outname)
+        try:
+            os.makedirs(d)
+        except OSError, exc:
+            if exc.errno!=errno.EEXIST:
+                raise
+                                                         
+        dummy.save(outname+self.fname, 'png',
+             {"tEXt::Thumb::Size": str(s.st_size),
+              "tEXt::Thumb::MTime": str(s.st_mtime),
+              'tEXt::Thumb::URI': rox.escape('file://'+inname),
+              'tEXt::Software': self.name})
+        os.rename(outname+self.fname, outname)
+        self.created=outname
+        
         
     def report_exception(self):
         """Report an exception if debug enabled, otherwise ignore it"""
