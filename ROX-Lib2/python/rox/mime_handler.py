@@ -219,13 +219,15 @@ class InstallList(rox.Dialog):
 
         return uninstall
 
-def _run_by_injector():
+def _run_by_injector(app_dir=None):
     """Internal function."""
     try:
         from zeroinstall.injector import basedir
+        if not app_dir:
+            app_dir=rox.app_dir
         for d in basedir.xdg_cache_dirs:
-            if rox.app_dir.find(d)==0:
-                # Applicaion is in a cache dir
+            if app_dir.find(d)==0:
+                # Application is in a cache dir
                 return True
             elif rox._roxlib_dir.find(d)==0:
                 # ROX-Lib is in a cache dir, we are probably being run by the
@@ -357,7 +359,7 @@ def install_send_to_types(types, application=None, injint=None):
 	
 	win.destroy()
 	
-def install_from_appinfo(appdir = rox.app_dir, injint=None):
+def install_from_appinfo(appdir = rox.app_dir, injint=None, overwrite=True):
 	"""Read the AppInfo file from the AppDir and perform the installations
 	indicated. The elements to use are <CanThumbnail> and <CanRun>, each containing
 	a number of <MimeType type='...'/> elements.
@@ -372,8 +374,8 @@ def install_from_appinfo(appdir = rox.app_dir, injint=None):
 	can_run = ainfo.getCanRun()
 	can_thumbnail = ainfo.getCanThumbnail()
 	if can_run or can_thumbnail:
-		install_run_action(can_run, appdir, injint)
-		install_thumbnailer(can_thumbnail, appdir, injint)
+		install_run_action(can_run, appdir, overwrite, injint)
+		install_thumbnailer(can_thumbnail, appdir, overwrite, injint)
                 install_send_to_types(can_run, appdir, injint)
 	else:
 		raise Exception('Internal error: No actions found in %s. '
