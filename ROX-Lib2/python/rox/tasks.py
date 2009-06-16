@@ -37,7 +37,6 @@ callbacks. See the Task class (below) for more information.
 import rox, gobject
 from rox import g
 import gobject
-from sets import Set, ImmutableSet
 
 # The list of Blockers whose event has happened, in the order they were
 # triggered
@@ -77,7 +76,7 @@ class Blocker:
 
 	def __init__(self):
 		self.happened = False		# False until event triggered
-		self._rox_lib_tasks = Set()	# Tasks waiting on this blocker
+		self._rox_lib_tasks = set()	# Tasks waiting on this blocker
 
 	def trigger(self):
 		"""The event has happened. Note that this cannot be undone;
@@ -260,7 +259,7 @@ def _handle_run_queue():
 		# new one for future idling.
 		_idle_blocker = IdleBlocker()
 	
-	tasks = ImmutableSet(next._rox_lib_tasks)
+	tasks = frozenset(next._rox_lib_tasks)
 	#print "Resume", tasks
 	for task in tasks:
 		# Run 'task'.
