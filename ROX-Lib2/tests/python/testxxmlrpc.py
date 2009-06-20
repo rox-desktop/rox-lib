@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.4
+#!/usr/bin/env python2.6
 from __future__ import generators
 import unittest
 import sys, StringIO
