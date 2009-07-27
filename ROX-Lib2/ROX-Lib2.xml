@@ -1,13 +1,14 @@
-<?xml version='1.0'?>
-<interface xmlns='http://zero-install.sourceforge.net/2004/injector/interface'>
+<?xml version="1.0" ?>
+<?xml-stylesheet type='text/xsl' href='interface.xsl'?>
+<interface xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
   <name>ROX-Lib2</name>
   <summary>library for ROX applications</summary>
   <description>
     ROX-Lib contains shared code used by most of the ROX applications.
   </description>
-  <icon type='image/png' href='http://rox.sourceforge.net/Icons/ROX-Lib.png'/>
+  <icon href="http://rox.sourceforge.net/Icons/ROX-Lib.png" type="image/png"/>
 
-  <feed-for interface='http://rox.sourceforge.net/2005/interfaces/ROX-Lib'/>
+  <feed-for interface="http://rox.sourceforge.net/2005/interfaces/ROX-Lib"/>
 
   <release:management xmlns:release="http://zero-install.sourceforge.net/2007/namespaces/0release">
     <release:action phase="commit-release">sed -i &quot;s/&lt;Version&gt;.*&lt;\/Version&gt;$/&lt;Version&gt;$RELEASE_VERSION&lt;\/Version&gt;/&quot; ROX-Lib2/AppInfo.xml</release:action>
@@ -16,7 +17,7 @@
     <release:action phase="generate-archive">cd ROX-Lib2/Messages &amp;&amp; ./dist</release:action>
   </release:management>
 
-  <group main='ROX-Lib2/AppRun'>
-    <implementation version="2.0.5" id=".." version-modifier='-post'/>
+  <group main="ROX-Lib2/AppRun">
+    <implementation id=".." released="2009-07-27" version="2.0.6"/>
   </group>
 </interface>
