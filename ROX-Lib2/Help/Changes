@@ -3,9 +3,53 @@
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
-Note: for a detailed changelog, do:
-			
-  svn log -v https://svn.sourceforge.net/svnroot/rox/trunk/ROX-Lib2
+Note: for a detailed changelog use the GIT history.
+
+
+Release 2.0.6:
+
+New features:
+
+- When parsing AppInfo files, get the menu icons too (Dennis Tomas).
+  The new version of TaskTray needs this to show icons in menu entries
+  for app options.
+
+- Updated the code for loading MIME icons (and moved it into mime.py from
+  saving.py) (Stephen Watson).
+
+- Added interface for gtk.StatusIcon (Stephen Watson). Wrap the
+  StatusIcon class with toplevel_ref/toplevel_unref calls and default to
+  using the scaled .DirIcon
+
+- Added module to aid in writing single instance applications (Stephen
+  Watson).
+
+Bug fixes:
+
+- Fixed deprecation warning with Python 2.6.
+
+- Fix problem installing handlers which are zero-install aware (Stephen
+  Watson) (reported by Mark Williams).
+
+- Handle thumbnail creation failure according to the standard (Stephen
+  Watson).
+
+- Fix hang in exception reporting dialog (Tony Houghton). ROX-Lib's
+  exception dialog often fails to work correctly. It appears, but
+  doesn't respond to any events, and neither does the rest of the
+  application. I don't think it always happens, but I haven't figured
+  out the circumstances of when it works and when it doesn't. Note that
+  this reverses a previous change (8c8822a3), so presumably the code was
+  like this for a reason. However, the reason wasn't documented so let's
+  just try it and see...
+
+- Fixed some icon-loading bugs (Lennon Cook).
+
+- Ensure version is updated when making releases. Added
+  <release-management> section in local feed. Reported by Lucas Hazel.
+
+- Correctly call mime.image_for_type now (Stephen Watson).
+
 
 Release 2.0.5:
 
