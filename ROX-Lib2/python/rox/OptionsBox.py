@@ -117,7 +117,9 @@ class OptionsBox(g.Dialog):
 		self.trans = translation
 
 		g.Dialog.__init__(self)
-		self.tips = g.Tooltips()
+		if (g.pygtk_version < (2, 12, 0)):
+			# gtk.Tooltips deprecated as of pygtk-2.12.0
+			self.tips = g.Tooltips()
 		self.set_has_separator(False)
 
 		self.options = options_group
@@ -126,8 +128,12 @@ class OptionsBox(g.Dialog):
 
 		button = rox.ButtonMixed(g.STOCK_UNDO, _('_Revert'))
 		self.add_action_widget(button, REVERT)
-		self.tips.set_tip(button, _('Restore all options to how they were '
-					    'when the window was opened'))
+		revert_tooltip = _('Restore all options to how they were '
+					    'when the window was opened')
+		if (g.pygtk_version >= (2, 12, 0)):
+			button.set_tooltip_text(revert_tooltip)
+		else:
+			self.tips.set_tip(button, revert_tooltip)
 
 		self.add_button(g.STOCK_OK, g.RESPONSE_OK)
 
@@ -366,7 +372,10 @@ class OptionsBox(g.Dialog):
 		else:
 			data = None
 		if data:
-			self.tips.set_tip(widget, self.trans(data))
+			if (g.pygtk_version >= (2, 12, 0)):
+				widget.set_tooltip_text(self.trans(data))
+			else:
+				self.tips.set_tip(widget, self.trans(data))
 	
 	def get_size_group(self, name):
 		"""Return the GtkSizeGroup for this name, creating one
