@@ -6,6 +6,13 @@
 Note: for a detailed changelog use the GIT history.
 
 
+Release 2.0.7 (unreleased):
+
+New features:
+
+- New module file_monitor to watch files and directories.
+
+
 Release 2.0.6:
 
 New features:
