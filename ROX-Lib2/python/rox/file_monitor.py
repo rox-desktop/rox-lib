@@ -8,20 +8,32 @@ from rox import g
 
 
 try:
-    import gamin
-except ImportError:
+    import gio
     gamin = None
+    _fam = None
+except ImportError:
+    gio = None
     try:
-        import _fam
-    except ImportError:
+        import gamin
         _fam = None
+    except ImportError:
+        gamin = None
+        try:
+            import _fam
+        except ImportError:
+            _fam = None
 
 
 class FileMonitorNotAvailable(Exception):
     """Raised when neither gamin nor fam backends are available."""
 
 
-if gamin:
+if gio:
+    _gio_file_monitors = {}
+    EVENT_CREATED = gio.FILE_MONITOR_EVENT_CREATED
+    EVENT_DELETED = gio.FILE_MONITOR_EVENT_DELETED
+    EVENT_CHANGED = gio.FILE_MONITOR_EVENT_CHANGED
+elif gamin:
     _monitor = gamin.WatchMonitor()
     EVENT_CREATED = gamin.GAMCreated
     EVENT_DELETED = gamin.GAMDeleted
@@ -78,12 +90,21 @@ def _event(filename, event, path):
 
 
 def is_available():
-    """Check if the gamin or fam backend is available."""
-    return bool(gamin or _fam)
+    """Check if the gio, gamin or fam backend is available."""
+    return bool(gio or gamin or _fam)
 
 
 def nop(*args, **kwargs):
     pass
+
+
+def _gio_file_changed(file_monitor, file, other_file, event_type):
+    _event(file.get_path(), event_type, file.get_path())
+    _event(
+        os.path.basename(file.get_path()),
+        event_type,
+        os.path.dirname(file.get_path())
+    )
 
 
 def watch(watched_path, on_file_deleted=nop, on_file_changed=nop,
@@ -102,7 +123,12 @@ def watch(watched_path, on_file_deleted=nop, on_file_changed=nop,
 
     FileMonitorNotAvailable is raised when neither gamin nor fam backends
         are available."""
-    if gamin:
+    if gio:
+        if watched_path not in _gio_file_monitors:
+            file = gio.File(path=watched_path)
+            _gio_file_monitors[watched_path] = file_monitor = file.monitor()
+            file_monitor.connect("changed", _gio_file_changed)
+    elif gamin:
         if os.path.isdir(watched_path):
             _monitor.watch_directory(watched_path, _event, watched_path)
         else:
@@ -132,7 +158,9 @@ def unwatch(handler):
     if handlers:
         return
     del _handlers[handler.watched_path]
-    if gamin:
+    if gio:
+        _gio_file_monitors.pop(handler.watched_path).cancel()
+    elif gamin:
         _monitor.stop_watch(handler.watched_path)
     elif _fam:
         try:
