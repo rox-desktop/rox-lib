@@ -2,7 +2,7 @@
 python-gamin or python-fam must be installed."""
 
 import os
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 
 from rox import g
 
@@ -34,20 +34,47 @@ elif _fam:
     EVENT_CHANGED = _fam.Changed
 
 
-_handlers = defaultdict(set)
+Handler = namedtuple(
+    'Handler', [
+        'watched_path', 'on_file_deleted', 'on_file_changed',
+        'on_child_created', 'on_child_deleted'
+    ]
+)
 
 
-def _event(leaf, event, path):
-    for on_file_created, on_file_deleted, on_file_changed in _handlers[path]:
-        if event == EVENT_CREATED:
-            if on_file_created:
-                on_file_created(path, leaf)
-        elif event == EVENT_DELETED:
-            if on_file_deleted:
-                on_file_deleted(path, leaf)
+def _handlers_method(name):
+    def _method(self, *args):
+        for handler in self.copy():
+            handler_func = getattr(handler, name)
+            if handler_func is not None:
+                handler_func(*args)
+    _method.__name__ = name
+    return _method
+
+
+class Handlers(set):
+
+    on_file_deleted = _handlers_method('on_file_deleted')
+    on_file_changed = _handlers_method('on_file_changed')
+    on_child_created = _handlers_method('on_child_created')
+    on_child_deleted = _handlers_method('on_child_deleted')
+
+
+_handlers = defaultdict(Handlers)
+
+
+def _event(filename, event, path):
+    if os.path.isabs(filename):
+        # Argument is an absolute path, call handlers for the file itself.
+        if event == EVENT_DELETED:
+            _handlers[path].on_file_deleted(path)
         elif event == EVENT_CHANGED:
-            if on_file_changed:
-                on_file_changed(path, leaf)
+            _handlers[path].on_file_changed(path)
+    else:
+        if event == EVENT_CREATED:
+            _handlers[path].on_child_created(path, filename)
+        elif event == EVENT_DELETED:
+            _handlers[path].on_child_deleted(path, filename)
 
 
 def is_available():
@@ -55,18 +82,23 @@ def is_available():
     return bool(gamin or _fam)
 
 
-def watch(watched_path, on_file_created=None, on_file_deleted=None,
-          on_file_changed=None):
+def nop(*args, **kwargs):
+    pass
+
+
+def watch(watched_path, on_file_deleted=nop, on_file_changed=nop,
+          on_child_created=nop, on_child_deleted=nop):
     """Watch a file for changes.
 
-    on_file_created(path, leaf) is called for files created under watched_path,
-        if it is a directory.
+    on_file_deleted(path) is called when watched_path is deleted.
 
-    on_file_deleted(path, leaf) is called when a file under watched_path (if
-        it is a directory) or watched_path itself are deleted.
+    on_file_changed(path) is called when watched_path is changed.
 
-    on_file_changed(path, leaf) is called when a file under watched_path (if
-        if is a directory) or watched_path has changed.
+    on_child_created(path, leaf) is called when a file under watched_path is
+        created.
+
+    on_child_deleted(path, leaf) is called when a file under watched_path is
+        deleted.
 
     FileMonitorNotAvailable is raised when neither gamin nor fam backends
         are available."""
@@ -87,15 +119,21 @@ def watch(watched_path, on_file_created=None, on_file_deleted=None,
             "available. You must install either python-gamin or python-fam "
             "to monitor files."
         )
-    _handlers[watched_path].add(
-        (on_file_created, on_file_deleted, on_file_changed)
-    )
+    handler = Handler(watched_path, on_file_deleted, on_file_changed,
+                      on_child_created, on_child_deleted)
+    _handlers[watched_path].add(handler)
+    return handler
 
 
-def unwatch(watched_path):
+def unwatch(handler):
     """Stop watching a file."""
+    handlers = _handlers[handler.watched_path]
+    handlers.remove(handler)
+    if handlers:
+        return
+    del _handlers[handler.watched_path]
     if gamin:
-        _monitor.stop_watch(watched_path)
+        _monitor.stop_watch(handler.watched_path)
     elif _fam:
         try:
             fam_request = _fam_requests.pop(watched_path)
@@ -104,7 +142,6 @@ def unwatch(watched_path):
         fam_request.cancelMonitor()
     else:
         return
-    del _handlers[watched_path]
 
 
 def _watch():
