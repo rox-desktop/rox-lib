@@ -124,9 +124,9 @@ class _RPC(object):
 				faultcode = fault_elem.find('faultcode').text
 	                        faultstring = fault_elem.find('faultstring').text
 				raise RPCError(
-				"Failed to execute %s with arguments %s: %s\n%s" % (
-					attr, str(kwargs), faultcode, faultstring
-				)
+					"Failed to execute %s with arguments %s: %s\n%s" % (
+						attr, str(kwargs), faultcode, faultstring
+					)
 				)
 		return _proxy
 
@@ -137,5 +137,5 @@ of the rpc object.
 
 Example:
 
-filer.rpc.PinboardAdd(path='/', label='File System')
+filer.rpc.PinboardAdd(Path='/', Label='File System')
 """
