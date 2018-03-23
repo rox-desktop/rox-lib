@@ -1,6 +1,5 @@
 """An easy way to get ROX-Filer to do things."""
 
-import os
 import subprocess
 from xml.sax.saxutils import escape
 import xml.etree.ElementTree as ET

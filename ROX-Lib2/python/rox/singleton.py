@@ -27,7 +27,7 @@ import rox.singleton
 
 class Service(rox.singleton.FileHandler):
     service_name='net.sourceforge.rox.TestSingleton'
-    
+
     def __init__(self, service_name=None, interface_name=None,
                  object_path=None):
         rox.singleton.FileHandler.__init__(self, service_name, interface_name,

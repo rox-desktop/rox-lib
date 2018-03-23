@@ -10,7 +10,7 @@ sys.path.insert(0, join(rox_lib, 'python'))
 os.environ['CHOICESPATH'] = '/tmp/choices:/tmp/choices2'
 os.environ['XDG_CONFIG_HOME'] = '/tmp/config'
 
-from rox import basedir, choices, options
+from rox import options
 
 
 class TestOptions(unittest.TestCase):

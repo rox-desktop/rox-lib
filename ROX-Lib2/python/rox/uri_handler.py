@@ -57,7 +57,7 @@ def launch(uri):
     if '%s' in handler:
         cmd = handler % uri
     else:
-        cmd = handler+' '+uri
+        cmd = handler + ' ' + uri
     # print cmd
 
     return os.spawnlp(os.P_NOWAIT, 'sh', 'sh', '-c', cmd)

@@ -2,7 +2,7 @@
 to do the following:
 
 - Pass all strings that should be translated through the '_' function, eg:
-	print _('Hello World!')
+    print _('Hello World!')
 
 - Create a Messages subdirectory in your application.
 
@@ -13,13 +13,13 @@ to do the following:
 - Use msgfmt to convert the .po files to .gmo files.
 
 - In your application, use the rox.i18n.translation() function to set the _ function:
-	__builtins__._ = rox.i18n.translation(os.path.join(rox.app_dir, 'Messages'))
+    __builtins__._ = rox.i18n.translation(os.path.join(rox.app_dir, 'Messages'))
   (for libraries, just do '_ ='; don't mess up the builtins)
 
 Note that the marked strings must be fixed. If you're using formats, mark up the
 format, eg:
 
-	print _('You have %d lives remaining') % lives
+    print(_('You have %d lives remaining') % lives)
 
 You might like to look at the scripts in ROX-Lib2's Messages directory for
 more help.
@@ -59,7 +59,7 @@ def _expand_lang(locale):
         territory = ''
     language = locale
     ret = []
-    for i in range(mask+1):
+    for i in range(mask + 1):
         if not (i & ~mask):  # if all components for this combo exist ...
             val = language
             if i & COMPONENT_TERRITORY:

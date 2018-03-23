@@ -7,10 +7,10 @@ in ROX-Lib 1.9.13). Return a list of widgets (which are packed into either an
 HBox or a VBox). For example, to add a button widget:
 
 def build_button(box, node, label):
-	button = Gtk.Button(label)
-	box.may_add_tip(button, node)
-	button.connect('clicked', my_button_handler)
-	return [button]
+    button = Gtk.Button(label)
+    box.may_add_tip(button, node)
+    button.connect('clicked', my_button_handler)
+    return [button]
 OptionsBox.widget_registry['button'] = build_button
 
 You can then create such a button in Options.xml with:
@@ -26,16 +26,16 @@ and arrange for box.check_widget to be called when the user changes the
 value:
 
 def build_toggle(box, node, label, option):
-	toggle = Gtk.CheckButton(label)
-	box.may_add_tip(toggle, node)
+    toggle = Gtk.CheckButton(label)
+    box.may_add_tip(toggle, node)
 
-	box.handlers[option] = (
-		lambda: str(toggle.get_active()),
-		lambda: toggle.set_active(option.int_value))
+    box.handlers[option] = (
+        lambda: str(toggle.get_active()),
+        lambda: toggle.set_active(option.int_value))
 
-	toggle.connect('toggled', lambda w: box.check_widget(option))
+    toggle.connect('toggled', lambda w: box.check_widget(option))
 
-	return [toggle]
+    return [toggle]
 OptionsBox.widget_registry['mytoggle'] = build_toggle
 """
 
@@ -118,7 +118,8 @@ class OptionsBox(Gtk.Dialog):
             if hasattr(__main__.__builtins__, '_'):
                 translation = __main__.__builtins__._
             else:
-                def translation(x): return x
+                def translation(x):
+                    return x
         self.trans = translation
 
         Gtk.Dialog.__init__(self)
@@ -234,7 +235,7 @@ class OptionsBox(Gtk.Dialog):
         sw.set_shadow_type(Gtk.ShadowType.IN)
         sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         hbox.pack_start(sw, False, True, 0)
-        self.sections_swin = sw		# Used to hide it...
+        self.sections_swin = sw    	# Used to hide it...
 
         # tree view
         model = Gtk.TreeStore(GObject.TYPE_STRING, GObject.TYPE_INT)
@@ -823,7 +824,7 @@ class OptionsBox(Gtk.Dialog):
 
         def set():
             sel = view.get_selection()
-            mode = sel.get_mode()
+            sel.get_mode()
             sel.unselect_all()
             for v in option.list_value:
                 iter = model.get_iter_first()
@@ -919,7 +920,7 @@ class OptionsBox(Gtk.Dialog):
             while iter:
                 var = model.get_value(iter, 0)
                 val = model.get_value(iter, 1)
-                v.append(var+'='+val)
+                v.append(var + '=' + val)
 
                 iter = model.iter_next(iter)
             return v
@@ -1002,10 +1003,10 @@ class ColourButton(Gtk.Button):
         # Some themes draw images and stuff here, so we have to
         # override it manually.
         # self.c_box.get_window().draw_rectangle(
-        #	self.c_box.style.bg_gc[Gtk.StateType.NORMAL], True,
-        #	0, 0,
-        #	self.c_box.allocation.width,
-        #	self.c_box.allocation.height)
+        #    self.c_box.style.bg_gc[Gtk.StateType.NORMAL], True,
+        #    0, 0,
+        #    self.c_box.allocation.width,
+        #    self.c_box.allocation.height)
 
     def set(self, c=None):
         if c is None:

@@ -3,8 +3,8 @@ opening the ROX filer to examine locations if things go wrong.
 
 Typical usage:
 
-	import rox.fileutils
-	rox.fileutils.makedirs('/path/for/new/directory')
+    import rox.fileutils
+    rox.fileutils.makedirs('/path/for/new/directory')
 """
 
 import os
@@ -20,8 +20,9 @@ def report_patherror(message, path):
     from gi.repository import Gtk
 
     toplevel_ref()
-    box = g.MessageDialog(None, 0, Gtk.MessageType.QUESTION,
-                          Gtk.ButtonsType.CANCEL, message)
+    box = Gtk.MessageDialog(
+        None, 0, Gtk.MessageType.QUESTION, Gtk.ButtonsType.CANCEL, message
+    )
 
     button = ButtonMixed(Gtk.STOCK_REDO, _('Retry'))
     button.set_can_default(True)

@@ -15,16 +15,16 @@ def extract_uris(data):
     """Convert a text/uri-list to a python list of (still escaped) URIs"""
     lines = data.decode('utf-8').split('\r\n')
     out = []
-    for l in lines:
-        if l == chr(0):
+    for line in lines:
+        if line == chr(0):
             continue  # (gmc adds a '\0' line)
-        if l and l[0] != '#':
-            out.append(l)
+        if line and line[0] != '#':
+            out.append(line)
     return out
 
 
-def provides(context, type): return type in list(
-    map(str, context.list_targets()))
+def provides(context, type):
+    return type in list(map(str, context.list_targets()))
 
 
 class RemoteFiles(Exception):

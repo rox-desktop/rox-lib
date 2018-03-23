@@ -2,7 +2,6 @@
 import unittest
 import os
 import sys
-import shutil
 from os.path import dirname, abspath, join
 rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
 sys.path.insert(0, join(rox_lib, 'python'))
@@ -12,10 +11,8 @@ os.environ['XDG_CONFIG_HOME'] = '/tmp/config'
 
 from gi.repository import Gtk
 
-import rox
 from rox.Menu import Menu, set_save_name, SubMenu
 from rox.Menu import Separator, Action, ToggleItem
-from rox import basedir, choices
 
 set_save_name('Foo')
 
@@ -39,12 +36,12 @@ class TestMenu(unittest.TestCase):
 
         self.menu = Menu('main', [
             SubMenu('File', [
-                Action('Save',	'save',	'<Ctrl>S', Gtk.STOCK_SAVE),
-                Action('Parent',	'up',	'', Gtk.STOCK_GO_UP),
-                Action('Close',	'close', '', Gtk.STOCK_CLOSE),
+                Action('Save', 'save', '<Ctrl>S', Gtk.STOCK_SAVE),
+                Action('Parent', 'up', '', Gtk.STOCK_GO_UP),
+                Action('Close', 'close', '', Gtk.STOCK_CLOSE),
                 Separator(),
-                Action('New',	'new',	'', Gtk.STOCK_NEW)]),
-            Action('Help',	'help',	'F1', Gtk.STOCK_HELP),
+                Action('New', 'new', '', Gtk.STOCK_NEW)]),
+            Action('Help', 'help', 'F1', Gtk.STOCK_HELP),
             self.my_t1,
             self.my_t2,
         ])
@@ -57,8 +54,8 @@ class TestMenu(unittest.TestCase):
 
     def testToggles(self):
         self.menu.popup(self, None)
-        assert self.my_t1.my_widget != None
-        assert self.my_t2.my_widget != None
+        assert self.my_t1.my_widget is not None
+        assert self.my_t2.my_widget is not None
 
         assert self.my_t2.my_widget != self.my_t1.my_widget
         assert self.my_t1.my_menu == self.my_t2.my_menu == self.menu

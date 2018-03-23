@@ -12,7 +12,7 @@ from gi.repository import Gtk, Gdk
 
 import rox
 from rox import alert, _, filer, escape
-from rox import choices, get_local_path, basedir, mime
+from rox import get_local_path, mime
 
 TARGET_XDS = 0
 TARGET_RAW = 1
@@ -182,7 +182,7 @@ class Saveable:
         pass
 
     def discard(self):
-        """Discard button clicked, or document safely saved. Only called if a SaveBox 
+        """Discard button clicked, or document safely saved. Only called if a SaveBox
         was created with discard=1.
         The user doesn't want the document any more, even if it's modified and unsaved.
         Delete it."""

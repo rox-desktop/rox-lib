@@ -1,10 +1,10 @@
 """ROX-Session settings with D-Bus and optional Gnome (gconf) setting
 
-	Setting and Settings are derived from ROX-Lib's Option and OptionGroup
-	respectively. A Setting sends a dbus message to ROX-Session when changed.
+    Setting and Settings are derived from ROX-Lib's Option and OptionGroup
+    respectively. A Setting sends a dbus message to ROX-Session when changed.
 
-	Use get_xsettings to get the dbus interface, then create a Settings object
-	with it to pass to each Setting.
+    Use get_xsettings to get the dbus interface, then create a Settings object
+    with it to pass to each Setting.
 """
 import os
 
@@ -148,7 +148,7 @@ class Setting(Option):
                 import gc
                 gc.collect()
 
-            if not self.settings.bus is None:
+            if self.settings.bus is not None:
                 if not self.pre_notify_hook():
                     if type(self.default) is str:
                         self.settings.bus.SetString(self.name, self.value)

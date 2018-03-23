@@ -30,10 +30,10 @@ class MyHtml(pydoc.HTMLDoc):
         name = object.__name__  # ignore the passed-in name
         parts = split(name, '.')
         links = []
-        for i in range(len(parts)-1):
+        for i in range(len(parts) - 1):
             links.append(
                 '<a href="%s.html"><font color="#ffffff">%s</font></a>' %
-                (join(parts[:i+1], '.'), parts[i]))
+                (join(parts[:i + 1], '.'), parts[i]))
         linkedname = join(links + parts[-1:], '.')
         head = '<big><big><strong>%s</strong></big></big>' % linkedname
         info = []
@@ -62,7 +62,7 @@ class MyHtml(pydoc.HTMLDoc):
                 module = sys.modules.get(modname)
                 if modname != name and module and hasattr(module, key):
                     if getattr(module, key) is base:
-                        if not cdict.has_key(key):
+                        if key not in cdict:
                             cdict[key] = cdict[base] = modname + '.html#' + key
         funcs, fdict = [], {}
         for key, value in inspect.getmembers(object, inspect.isroutine):
@@ -95,7 +95,7 @@ class MyHtml(pydoc.HTMLDoc):
                 'Package Contents', '#ffffff', '#aa55cc', contents)
 
         if classes:
-            classlist = map(lambda (key, value): value, classes)
+            classlist = map(lambda item: item[1], classes)
             contents = [
                 self.formattree(inspect.getclasstree(classlist, 1), name)]
             for key, value in classes:

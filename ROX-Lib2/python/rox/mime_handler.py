@@ -247,7 +247,7 @@ def _run_by_injector(app_dir=None):
 
 def _install_at(path, app_dir, injint):
     """Internal function.  Set one type."""
-    tmp = path+'.tmp%d' % os.getpid()
+    tmp = path + '.tmp%d' % os.getpid()
     if injint and _run_by_injector(app_dir):
         f = file(tmp, 'w')
         f.write('#!/bin/sh\n')

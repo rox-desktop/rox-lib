@@ -30,7 +30,7 @@ try:
     except:
         libc = ctypes.cdll.LoadLibrary('libc.so')
 
-except:
+except ImportError:
     # No ctypes or can't find libc
     libc = None
 
@@ -59,12 +59,12 @@ if libc and hasattr(libc, 'attropen'):
 
     try:
         _PC_XATTR_ENABLED = os.pathconf_names['PC_XATTR_ENABLED']
-    except:
+    except KeyError:
         _PC_XATTR_ENABLED = 100  # Solaris 9
 
     try:
         _PC_XATTR_EXISTS = os.pathconf_names['PC_XATTR_EXISTS']
-    except:
+    except KeyError:
         _PC_XATTR_EXISTS = 101  # Solaris 9
 
     def supported(path=None):
@@ -195,7 +195,7 @@ elif libc and hasattr(libc, 'getxattr'):
         libc_errno = ctypes.c_int.from_address(errno_loc)
 
     elif hasattr(libc, 'errno'):
-        libc_errno = ctypes.c_int.in_dll(lib, 'errno')
+        libc_errno = ctypes.c_int.in_dll(libc, 'errno')
 
     else:
         libc_errno = ctypes.c_int(errno.EOPNOTSUP)
@@ -251,7 +251,7 @@ elif libc and hasattr(libc, 'getxattr'):
         if size < 0:
             return
 
-        buf = ctypes.c_buffer(size+1)
+        buf = ctypes.c_buffer(size + 1)
         libc.getxattr(path, attr, ctypes.byref(buf), size)
         return buf.value
 
@@ -269,7 +269,7 @@ elif libc and hasattr(libc, 'getxattr'):
         if size < 1:
             return []
         buf = ctypes.create_string_buffer(size)
-        n = libc.listxattr(path, ctypes.byref(buf), size)
+        libc.listxattr(path, ctypes.byref(buf), size)
         names = buf.raw[:-1].split('\0')
         return names
 

@@ -6,7 +6,6 @@ The thumbnail standard is at http://jens.triq.net/thumbnail-spec/index.html
 """
 
 import os
-import sys
 import errno
 import tempfile
 import shutil
@@ -26,12 +25,13 @@ except ImportError:
 import rox
 import rox.basedir
 import rox.mime
+from rox import _
 
 
 def _leaf(fname):
     path = os.path.abspath(fname)
-    uri = 'file://'+rox.escape(path)
-    return md5hash(uri)+'.png'
+    uri = 'file://' + rox.escape(path)
+    return md5hash(uri) + '.png'
 
 
 def get_path(fname):
@@ -208,11 +208,11 @@ class Thumbnailer:
         ow = img.get_width()
         oh = img.get_height()
         if ow > oh:
-            s = float(rsize)/float(ow)
+            s = float(rsize) / float(ow)
         else:
-            s = float(rsize)/float(oh)
-        w = int(s*ow)
-        h = int(s*oh)
+            s = float(rsize) / float(oh)
+        w = int(s * ow)
+        h = int(s * oh)
 
         if w != ow or h != oh:
             img = img.scale_simple(w, h, rox.g.gdk.INTERP_BILINEAR)
@@ -233,14 +233,14 @@ class Thumbnailer:
         the extra data required by the thumbnail spec."""
         s = os.stat(inname)
 
-        img.save(outname+self.fname, 'png',
+        img.save(outname + self.fname, 'png',
                  {'tEXt::Thumb::Image::Width': str(ow),
                   'tEXt::Thumb::Image::Height': str(oh),
                   "tEXt::Thumb::Size": str(s.st_size),
                   "tEXt::Thumb::MTime": str(s.st_mtime),
-                  'tEXt::Thumb::URI': rox.escape('file://'+inname),
+                  'tEXt::Thumb::URI': rox.escape('file://' + inname),
                   'tEXt::Software': self.name})
-        os.rename(outname+self.fname, outname)
+        os.rename(outname + self.fname, outname)
         self.created = outname
 
     def make_working_dir(self):
@@ -286,12 +286,12 @@ class Thumbnailer:
             if exc.errno != errno.EEXIST:
                 raise
 
-        dummy.save(outname+self.fname, 'png',
+        dummy.save(outname + self.fname, 'png',
                    {"tEXt::Thumb::Size": str(s.st_size),
                     "tEXt::Thumb::MTime": str(s.st_mtime),
-                    'tEXt::Thumb::URI': rox.escape('file://'+inname),
+                    'tEXt::Thumb::URI': rox.escape('file://' + inname),
                     'tEXt::Software': self.name})
-        os.rename(outname+self.fname, outname)
+        os.rename(outname + self.fname, outname)
         self.created = outname
 
     def report_exception(self):

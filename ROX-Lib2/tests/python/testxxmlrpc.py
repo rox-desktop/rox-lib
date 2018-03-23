@@ -3,8 +3,6 @@
 import unittest
 import sys
 import io
-import os
-import time
 import xmlrpc.client
 from os.path import dirname, abspath, join
 
@@ -43,7 +41,7 @@ class TestXXMLRPC(unittest.TestCase):
         call = obj.echo(0)
         try:
             call.get_response()
-            assert false
+            assert False
         except xmlrpc.client.Fault as ex:
             self.assertEqual('TypeError', ex.faultCode)
             assert ex.faultString.find('cannot concatenate') >= 0
@@ -60,7 +58,7 @@ class TestXXMLRPC(unittest.TestCase):
         call = obj.echo(0)
         try:
             call.get_response()
-            assert false
+            assert False
         except xmlrpc.client.Fault as ex:
             self.assertEqual('UnknownObject', ex.faultCode)
 
@@ -69,7 +67,7 @@ class TestXXMLRPC(unittest.TestCase):
         call = obj.write("Hi")
         try:
             call.get_response()
-            assert false
+            assert False
         except xmlrpc.client.Fault as ex:
             self.assertEqual('NoSuchMethod', ex.faultCode)
 

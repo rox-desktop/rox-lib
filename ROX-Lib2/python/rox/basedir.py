@@ -1,19 +1,19 @@
 """The freedesktop.org Base Directory specification provides a way for
 applications to locate shared data and configuration:
 
-	http://www.freedesktop.org/standards/
+    http://www.freedesktop.org/standards/
 
 This module can be used to load and save from and to these directories.
 
 Typical usage:
 
-	from rox import basedir
-	
-	for dir in basedir.load_config_paths('mydomain.org', 'MyProg', 'Options'):
-		print "Load settings from", dir
+    from rox import basedir
 
-	dir = basedir.save_config_path('mydomain.org', 'MyProg')
-	print >>file(os.path.join(dir, 'Options'), 'w'), "foo=2"
+    for dir in basedir.load_config_paths('mydomain.org', 'MyProg', 'Options'):
+        print "Load settings from", dir
+
+    dir = basedir.save_config_path('mydomain.org', 'MyProg')
+    print >>file(os.path.join(dir, 'Options'), 'w'), "foo=2"
 
 Note: see the rox.Options module for a higher-level API for managing options.
 """
@@ -66,8 +66,9 @@ def save_data_path(*resource):
 
 def load_config_paths(*resource):
     """Returns an iterator which gives each directory named 'resource' in the
-    configuration search path. Information provided by earlier directories should
-    take precedence over later ones (ie, the user's config dir comes first)."""
+    configuration search path. Information provided by earlier directories
+    should take precedence over later ones (ie, the user's config dir comes
+    first)."""
     resource = os.path.join(*resource)
     for config_dir in xdg_config_dirs:
         path = os.path.join(config_dir, resource)

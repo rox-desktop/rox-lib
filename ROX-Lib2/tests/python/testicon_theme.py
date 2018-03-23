@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 import unittest
-import os
 import sys
-import shutil
 from os.path import dirname, abspath, join
 rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
 sys.path.insert(0, join(rox_lib, 'python'))

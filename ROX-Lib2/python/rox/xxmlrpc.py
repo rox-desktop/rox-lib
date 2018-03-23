@@ -1,9 +1,8 @@
 """XML-RPC over X. Does not work with Gtk3 yet."""
 import sys
 import weakref
-import time
 
-from gi.repository import Gtk, Gdk, GdkX11
+from gi.repository import Gtk, Gdk
 
 from rox import tasks, xutils
 import xmlrpc.client
@@ -67,7 +66,7 @@ class XXMLRPCServer:
         if event.atom != _message_id_prop:
             return
 
-        if event.state == g.gdk.PROPERTY_NEW_VALUE:
+        if event.state == Gdk.PROPERTY_NEW_VALUE:
             val = xutils.get_property(self.ipc_window.get_window().get_xid(),
                                       _message_id_prop, 'XA_WINDOW', True)
             if val is not None:
@@ -220,7 +219,7 @@ class ClientCall(tasks.Blocker):
             assert self.invisible.xmlrpc_response is not None, repr(val)
             self.trigger()
             if self.waiting:
-                g.main_quit()
+                Gtk.main_quit()
 
     def get_response(self):
         print("getting response")

@@ -24,7 +24,7 @@ pipes, wildcards and so on. Be very careful of escaping in this case (think
 about filenames containing spaces, quotes, apostrophes, etc).
 """
 
-from gi.repository import Gtk, Gdk, GObject, GLib
+from gi.repository import Gtk, GLib
 
 import os
 import sys
@@ -33,7 +33,8 @@ import io
 import signal
 
 
-def _keep_on_exec(fd): fcntl.fcntl(fd, fcntl.F_SETFD, 0)
+def _keep_on_exec(fd):
+    fcntl.fcntl(fd, fcntl.F_SETFD, 0)
 
 
 class ChildError(Exception):
@@ -343,8 +344,8 @@ def _test():
         error = sys.exc_info()[1]
         print("(error reported was '%s')" % error)
 
-    def pipe_through_command(command, src, dst): PipeThroughCommand(
-        command, src, dst).wait()
+    def pipe_through_command(command, src, dst):
+        PipeThroughCommand(command, src, dst).wait()
 
     print("Test _Tmp()...")
 

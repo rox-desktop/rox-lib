@@ -185,7 +185,7 @@ class TestProxy(unittest.TestCase):
             response = root.rename(join(tmp_dir, 'old'),
                                    join(tmp_dir, 'new'))
             yield response
-            assert response.result == None
+            assert response.result is None
 
             assert open(join(tmp_dir, 'new')).read() == 'Hello\n'
 

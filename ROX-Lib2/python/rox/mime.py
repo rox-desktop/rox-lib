@@ -110,7 +110,7 @@ class MIMEtype:
         if not base or not size:
             return base
 
-        h = int(base.get_height()*float(size)/base.get_width())
+        h = int(base.get_height() * float(size) / base.get_width())
         return base.scale_simple(size, h, Gdk.INTERP_BILINEAR)
 
 
@@ -123,7 +123,6 @@ def image_for_type(type, size=48, flags=0):
 
     path = basedir.load_first_config('rox.sourceforge.net', 'MIME-icons',
                                      media + '_' + subtype + '.png')
-    icon = None
     if not path:
         icon_name = '%s-%s' % (media, subtype)
 
@@ -190,7 +189,7 @@ class MagicRule:
 
         hb = f.read(1)
         lb = f.read(1)
-        self.lenvalue = ord(lb)+(ord(hb) << 8)
+        self.lenvalue = ord(lb) + (ord(hb) << 8)
 
         self.value = f.read(self.lenvalue)
 
@@ -229,7 +228,7 @@ class MagicRule:
             raise MIMEerror('Malformed MIME magic line')
 
     def getLength(self):
-        return self.start+self.lenvalue+self.range
+        return self.start + self.lenvalue + self.range
 
     def appendRule(self, rule):
         if self.nest < rule.nest:
@@ -248,14 +247,14 @@ class MagicRule:
     def match0(self, buffer):
         l = len(buffer)
         for o in range(self.range):
-            s = self.start+o
-            e = s+self.lenvalue
+            s = self.start + o
+            e = s + self.lenvalue
             if l < e:
                 return False
             if self.mask:
                 test = ''
                 for i in range(self.lenvalue):
-                    c = ord(buffer[s+i]) & ord(self.mask[i])
+                    c = ord(buffer[s + i]) & ord(self.mask[i])
                     test += chr(c)
             else:
                 test = buffer[s:e]
@@ -452,7 +451,7 @@ def get_type_by_name(path):
         p = ext.find('.')
         if p < 0:
             break
-        ext = ext[p+1:]
+        ext = ext[p + 1:]
         if ext in exts:
             return exts[ext]
     for (glob, mime_type) in globs:

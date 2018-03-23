@@ -2,17 +2,17 @@
 Typical usage:
 
 def fn():
-	proxy_maker = SuProxyMaker('I need root access to change /etc/fstab')
-	yield proxy_maker.blocker
-	root = proxy_maker.get_root()
+    proxy_maker = SuProxyMaker('I need root access to change /etc/fstab')
+    yield proxy_maker.blocker
+    root = proxy_maker.get_root()
 
-	call = root.open('/etc/fstab')
-	yield call
-	fd = call.result
+    call = root.open('/etc/fstab')
+    yield call
+    fd = call.result
 
-	...
+    ...
 
-	root.finish()
+    root.finish()
 
 tasks.Task(fn())
 

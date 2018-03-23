@@ -177,7 +177,7 @@ class IconThemeGTK(IconTheme):
 def get_theme(name=None):
     try:
         theme = IconThemeGTK(name)
-    except:
+    except Exception:
         theme = IconThemeROX(name)
 
     return theme

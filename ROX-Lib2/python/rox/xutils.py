@@ -1,6 +1,11 @@
 import Xlib.display
 from Xlib.X import PropModeAppend, PropModePrepend, PropModeReplace
 
+__all__ = [
+    "get_property", "change_property", "PropModeAppend", "PropModePrepend",
+    "PropModeReplace",
+]
+
 
 def intern_atom(name, only_if_exists=False):
     dpy = Xlib.display.Display()

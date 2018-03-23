@@ -9,11 +9,11 @@ def _getlangs(langs):
     if langs is None:
         langs = ['en', 'C', '']
         try:
-            import rox  # .i18n
+            import rox.i18n
             langs = rox.i18n.langs + langs
-        except:
+        except ImportError:
             pass
-    elif type(langs) is type(''):
+    elif isinstance(langs, str):
         langs = [langs]
     return langs
 
@@ -25,7 +25,7 @@ def _data(node):
 
 
 class AppInfo:
-    """Parsed AppInfo.xml file. Current only deals with the <About>, 
+    """Parsed AppInfo.xml file. Current only deals with the <About>,
     <Summary> and <AppMenu> elements"""
 
     def __init__(self, source):
@@ -183,10 +183,7 @@ class AppInfo:
                 ritem['label'] = labels[lang]
                 break
         else:
-            try:
-                ritem['label'] = labels['']
-            except:
-                ritem['label'] = ''
+            ritem['label'] = labels.get('', '')
 
         subs = []
         for s in item['sub-menus']:

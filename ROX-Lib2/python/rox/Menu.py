@@ -9,27 +9,27 @@ from rox.Menu import Menu, set_save_name, Action, Separator, SubMenu
 set_save_name('Edit')
 
 menu = Menu('main', [
-	SubMenu('File', Menu([
-	  Action('Save',		'save'),
-	  Action('Open Parent',	        'up'),
-	  Action('Close',		'close'),
-	  Separator(),
-	  Action('New',		        'new')
-	])),
-	SubMenu('/Edit', Menu([
-	  Action('Undo',		'undo'),
-	  Action('Redo',		'redo'),
-	  Separator(),
-	  Action('Search...',	        'search'),
-	  Action('Goto line...',	'goto'),
-	  Separator(),
-	  Action('Process...',	        'process'),
-	])),
-	Action('Options',		'show_options', 'F1', stock=Gtk.STOCK_HELP)),
-	Action('Quit',		        'quit', stock=Gtk.STOCK_QUIT),
-	])
+    SubMenu('File', Menu([
+      Action('Save',        'save'),
+      Action('Open Parent',            'up'),
+      Action('Close',        'close'),
+      Separator(),
+      Action('New',                'new')
+    ])),
+    SubMenu('/Edit', Menu([
+      Action('Undo',        'undo'),
+      Action('Redo',        'redo'),
+      Separator(),
+      Action('Search...',            'search'),
+      Action('Goto line...',    'goto'),
+      Separator(),
+      Action('Process...',            'process'),
+    ])),
+    Action('Options',        'show_options', 'F1', stock=Gtk.STOCK_HELP)),
+    Action('Quit',                'quit', stock=Gtk.STOCK_QUIT),
+    ])
 
-There is also an older syntax, where you pass tuples of strings 
+There is also an older syntax, where you pass tuples of strings
 to the Menu constructor. This has not been required since 1.9.13.
 """
 
@@ -38,7 +38,8 @@ from gi.repository import Gtk, Gdk
 
 import os
 import rox
-from . import choices, basedir
+import rox.choices
+import rox.basedir
 
 _save_name = None
 
@@ -193,10 +194,10 @@ class ItemFactory:
 class Menu:
     """A popup menu. This wraps GtkMenu. It handles setting, loading and saving of
     keyboard-shortcuts, applies translations, and has a simpler API."""
-    fns = None		# List of MenuItem objects which can be activated
+    fns = None        # List of MenuItem objects which can be activated
     update_callbacks = None  # List of functions to call just before popping up the menu
     accel_group = None
-    menu = None		# The actual GtkMenu
+    menu = None        # The actual GtkMenu
 
     def __init__(self, name, items):
         """names should be unique (eg, 'popup', 'main', etc).
@@ -215,9 +216,9 @@ class Menu:
 
         site, program, save_leaf = _save_name
         if site:
-            accel_path = basedir.load_first_config(site, program, save_leaf)
+            accel_path = rox.basedir.load_first_config(site, program, save_leaf)
         else:
-            accel_path = choices.load(program, save_leaf)
+            accel_path = rox.choices.load(program, save_leaf)
 
         out = []
         self.fns = []
@@ -259,10 +260,10 @@ class Menu:
         def keys_changed(*unused):
             site, program, name = _save_name
             if site:
-                d = basedir.save_config_path(site, program)
+                d = rox.basedir.save_config_path(site, program)
                 path = os.path.join(d, name)
             else:
-                path = choices.save(program, name)
+                path = rox.choices.save(program, name)
             if path:
                 try:
                     Gtk.AccelMap.save(path)

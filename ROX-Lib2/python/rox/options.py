@@ -2,22 +2,22 @@
 To use the Options system:
 
 1. Create an OptionGroup:
-	options = OptionGroup('MyProg', 'Options')
+    options = OptionGroup('MyProg', 'Options')
 You can also use the handy rox.setup_app_options() in most applications.
 
 2. Create the options:
-	colour = Option('colour', 'red', options)
-	size = Option('size', 3, options)
-	icons = ListOption('icons', ('circle', 'square', 'triangle'), options)
+    colour = Option('colour', 'red', options)
+    size = Option('size', 3, options)
+    icons = ListOption('icons', ('circle', 'square', 'triangle'), options)
 
 3. Register any callbacks (notification of options changing):
-	def my_callback():
-		if colour.has_changed:
-			print "The colour is now", colour.value
-	options.add_notify(my_callback)
+    def my_callback():
+        if colour.has_changed:
+            print "The colour is now", colour.value
+    options.add_notify(my_callback)
 
 4. Notify any changes from defaults:
-	options.notify()
+    options.notify()
 
 See OptionsBox for editing options. Do not change the value of options
 yourself.
@@ -113,7 +113,7 @@ class ListOption(Option):
 
     def _set(self, value):
         try:
-            tmp = len(value)
+            len(value)
         except:
             rox.options.Option._set(self, value)
             return

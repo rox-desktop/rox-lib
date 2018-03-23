@@ -167,7 +167,7 @@ def unwatch(handler):
         _monitor.stop_watch(handler.watched_path)
     elif _fam:
         try:
-            fam_request = _fam_requests.pop(watched_path)
+            fam_request = _fam_requests.pop(handler.watched_path)
         except KeyError:
             return
         fam_request.cancelMonitor()

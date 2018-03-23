@@ -252,7 +252,7 @@ class ExceptionExplorer(Gtk.Frame):
             frame = selected_frame()
             try:
                 info(repr(eval(expr, frame.f_locals, frame.f_globals)))
-            except:
+            except Exception:
                 extype, value = sys.exc_info()[:2]
                 brief = ''.join(traceback.format_exception_only(extype, value))
                 alert(brief)

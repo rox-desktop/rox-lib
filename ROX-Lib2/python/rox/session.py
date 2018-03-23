@@ -16,13 +16,13 @@ it is synchronized with a value of the same name in the ROX-Session settings.
 
 import rox
 import rox.xxmlrpc
-# import gobject
 
 try:
     import dbus
-    dbus_ok = (dbus.version >= (0, 42, 0))
-except:
+except ImportError:
     dbus_ok = False
+else:
+    dbus_ok = (dbus.version >= (0, 42, 0))
 
 if dbus_ok:
     bus = dbus.Bus(dbus.Bus.TYPE_SESSION)

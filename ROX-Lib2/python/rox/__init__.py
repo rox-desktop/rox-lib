@@ -5,15 +5,15 @@ will display a suitable error and quit.
 
 The AppRun script of a simple application might look like this:
 
-	#!/usr/bin/env python
-	import findrox; findrox.version(1, 9, 12)
-	import rox
-
-	window = rox.Window()
-	window.set_title('My window')
-	window.show()
-
-	rox.mainloop()
+    #!/usr/bin/env python
+    import findrox; findrox.version(1, 9, 12)
+    import rox
+    
+    window = rox.Window()
+    window.set_title('My window')
+    window.show()
+    
+    rox.mainloop()
 
 This program creates and displays a window. The rox.Window widget keeps
 track of how many toplevel windows are open. rox.mainloop() will return
@@ -45,20 +45,20 @@ app_dir = os.path.dirname(_path)
 if _path.endswith('/AppRun') or _path.endswith('/AppletRun'):
     sys.argv[0] = os.path.dirname(_path)
 
-from . import i18n
+import rox.i18n
 
 _roxlib_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-_ = i18n.translation(os.path.join(_roxlib_dir, 'Messages'))
+_ = rox.i18n.translation(os.path.join(_roxlib_dir, 'Messages'))
 
 have_display = Gdk.Display.get_default() is not None
 
 
 def _warn_old_findrox():
     try:
-        import findrox
-    except:
+        import rox.findrox
+    except ImportError:
         return  # Don't worry too much if it's missing
-    if not hasattr(findrox, 'version'):
+    if not hasattr(rox.findrox, 'version'):
         print(_("WARNING from ROX-Lib: the version of "
                 "findrox.py used by this application (%s) is very "
                 "old and may cause problems.") % app_dir, file=sys.stderr)
@@ -100,7 +100,7 @@ def bug(message="A bug has been detected in this program. Please report "
     "Display an error message and offer a debugging prompt."
     try:
         raise Exception(message)
-    except:
+    except Exception:
         type, value, tb = sys.exc_info()
         from . import debug
         debug.show_exception(type, value, tb, auto_details=True)
@@ -368,13 +368,13 @@ def our_host_name():
     """Try to return the canonical name for this computer. This is used
     in the drag-and-drop protocol to work out whether a drop is coming from
     a remote machine (and therefore has to be fetched differently)."""
-    from socket import getfqdn
+    import socket
     global _host_name
     if _host_name:
         return _host_name
     try:
-        _host_name = getfqdn()
-    except:
+        _host_name = socket.getfqdn()
+    except socket.error:
         _host_name = 'localhost'
         alert("ROX-Lib socket.getfqdn() failed!")
     return _host_name
@@ -510,7 +510,7 @@ def get_icon(path):
     found:
     1. The Filer's globicons file (not implemented)
     2. A directory's .DirIcon file
-    3. A file in ~/.thumbnails whose name is the md5 hash of os.path.abspath(path), suffixed with '.png' 
+    3. A file in ~/.thumbnails whose name is the md5 hash of os.path.abspath(path), suffixed with '.png'
     4. A file in $XDG_CONFIG_HOME/rox.sourceforge.net/MIME-Icons for the full type of the file.
     5. An icon of the form 'gnome-mime-media-subtype' in the current GTK icon theme.
     6. A file in $XDG_CONFIG_HOME/rox.sourceforge.net/MIME-Icons for the 'media' part of the file's type (eg, 'text')

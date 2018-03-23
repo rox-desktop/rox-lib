@@ -3,7 +3,6 @@
 import unittest
 import sys
 import os
-import time
 import gc
 from os.path import dirname, abspath, join
 from io import StringIO

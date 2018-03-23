@@ -2,7 +2,6 @@
 import unittest
 import os
 import sys
-import shutil
 from io import StringIO
 from os.path import dirname, abspath, join
 rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
@@ -36,7 +35,7 @@ class TestROX(unittest.TestCase):
         self.assertEqual('hello\nworld\n',
                          self.try_with_args(['hello', 'world']))
 
-    def testNormal(self):
+    def testNormal2(self):
         self.assertEqual('world\n-\n',
                          self.try_with_args(['--g-fatal-warnings',
                                              'world', '-']))
