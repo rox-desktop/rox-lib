@@ -6,11 +6,12 @@ If you want to save a selection then you can create a new object specially for
 the purpose and pass that to the SaveBox."""
 
 import os, sys
-import rox
-from rox import alert, g, _, filer, escape
-from rox import choices, get_local_path, basedir, mime
 
-gdk = g.gdk
+from gi.repository import Gtk, Gdk
+
+import rox
+from rox import alert, _, filer, escape
+from rox import choices, get_local_path, basedir, mime
 
 TARGET_XDS = 0
 TARGET_RAW = 1
@@ -20,17 +21,17 @@ def _chmod(path, mode):
 	(for FAT partitions)."""
 	try:
 		os.chmod(path, mode)
-	except OSError, ex:
+	except OSError as ex:
 		if ex.errno != 1:
 			raise
 		# Log the error and continue.
-		print >>sys.stderr, "Warning: Failed to set permissions:", ex
+		print("Warning: Failed to set permissions:", ex, file=sys.stderr)
 
 def _write_xds_property(context, value):
 	win = context.source_window
 	if value:
 		win.property_change('XdndDirectSave0', 'text/plain', 8,
-					gdk.PROP_MODE_REPLACE,
+					Gdk.PROP_MODE_REPLACE,
 					value)
 	else:
 		win.property_delete('XdndDirectSave0')
@@ -110,11 +111,11 @@ class Saveable:
 				raise AbortSave(None)	# (message already shown)
 		
 		import random
-		tmp = 'tmp-' + `random.randrange(1000000)`
+		tmp = 'tmp-' + repr(random.randrange(1000000))
 		tmp = os.path.join(parent_dir, tmp)
 
 		def open_private(path):
-			return os.fdopen(os.open(path, os.O_CREAT | os.O_WRONLY, 0600), 'wb')
+			return os.fdopen(os.open(path, os.O_CREAT | os.O_WRONLY, 0o600), 'wb')
 		
 		try:
 			stream = open_private(tmp)
@@ -134,7 +135,7 @@ class Saveable:
 			if tmp and os.path.exists(tmp):
 				if os.path.getsize(tmp) == 0 or \
 				   rox.confirm(_("Delete temporary file '%s'?") % tmp,
-				   		g.STOCK_DELETE):
+				   		Gtk.STOCK_DELETE):
 					os.unlink(tmp)
 			raise AbortSave(None)
 		self.save_set_permissions(path)
@@ -142,7 +143,7 @@ class Saveable:
 
 	def save_to_selection(self, selection_data):
 		"""Write data to the selection. The default method uses save_to_stream()."""
-		from cStringIO import StringIO
+		from io import StringIO
 		stream = StringIO()
 		self.save_to_stream(stream)
 		selection_data.set(selection_data.target, 8, stream.getvalue())
@@ -162,9 +163,9 @@ class Saveable:
 		if save_mode is not None:
 			_chmod(path, save_mode)
 		else:
-			mask = os.umask(0077)	# Get the current umask
+			mask = os.umask(0o077)	# Get the current umask
 			os.umask(mask)		# Set it back how it was
-			_chmod(path, 0666 & ~mask)
+			_chmod(path, 0o666 & ~mask)
 	
 	def save_done(self):
 		"""Time to close the savebox. Default method does nothing."""
@@ -205,7 +206,7 @@ class Saveable:
 		should cause the recursive mainloop to return."""
 		raise Exception("Lazy programmer error: can't abort save!")
 
-class SaveArea(g.VBox):
+class SaveArea(Gtk.VBox):
 	"""A SaveArea contains the widgets used in a save box. You can use
 	this to put a savebox area in a larger window."""
 	
@@ -219,7 +220,7 @@ class SaveArea(g.VBox):
 		if it has never been saved.
 		'type' is the MIME-type to use (eg 'text/plain').
 		"""
-		g.VBox.__init__(self, False, 0)
+		Gtk.VBox.__init__(self, False, 0)
 
 		self.document = document
 		self.initial_uri = uri
@@ -228,7 +229,7 @@ class SaveArea(g.VBox):
 		self.pack_start(drag_area, True, True, 0)
 		drag_area.show_all()
 
-		entry = g.Entry()
+		entry = Gtk.Entry()
 		entry.connect('activate', lambda w: self.save_to_file_in_entry())
 		self.entry = entry
 		self.pack_start(entry, False, True, 4)
@@ -241,18 +242,18 @@ class SaveArea(g.VBox):
 		if pixbuf:
 			self.icon.set_from_pixbuf(pixbuf)
 		else:
-			self.icon.set_from_stock(g.STOCK_MISSING_IMAGE, g.ICON_SIZE_DND)
+			self.icon.set_from_stock(Gtk.STOCK_MISSING_IMAGE, Gtk.IconSize.DND)
 
 	def _create_drag_area(self, type):
-		align = g.Alignment()
+		align = Gtk.Alignment()
 		align.set(.5, .5, 0, 0)
 
-		self.drag_box = g.EventBox()
+		self.drag_box = Gtk.EventBox()
 		self.drag_box.set_border_width(4)
-		self.drag_box.add_events(gdk.BUTTON_PRESS_MASK)
+		self.drag_box.add_events(Gdk.BUTTON_PRESS_MASK)
 		align.add(self.drag_box)
 
-		self.icon = g.Image()
+		self.icon = Gtk.Image()
 		self._set_icon(type)
 
 		self._set_drag_source(type)
@@ -286,9 +287,9 @@ class SaveArea(g.VBox):
 
 		if not targets:
 			raise Exception("Document %s can't save!" % self.document)
-		self.drag_box.drag_source_set(gdk.BUTTON1_MASK | gdk.BUTTON3_MASK,
+		self.drag_box.drag_source_set(Gdk.BUTTON1_MASK | Gdk.BUTTON3_MASK,
 					      targets,
-					      gdk.ACTION_COPY | gdk.ACTION_MOVE)
+					      Gdk.ACTION_COPY | Gdk.ACTION_MOVE)
 	
 	def save_to_file_in_entry(self):
 		"""Call this when the user clicks on an OK button you provide."""
@@ -437,9 +438,9 @@ class SaveArea(g.VBox):
 				return True		# No change detected
 			return rox.confirm("File '%s' edited by another program since last load/save. "
 					   "Really save (discarding other changes)?\n\n%s" %
-					   (path, '\n'.join(msg)), g.STOCK_DELETE)
+					   (path, '\n'.join(msg)), Gtk.STOCK_DELETE)
 		return rox.confirm(_("File '%s' already exists -- overwrite it?") % path,
-				   g.STOCK_DELETE, _('_Overwrite'))
+				   Gtk.STOCK_DELETE, _('_Overwrite'))
 	
 	def set_uri(self, uri):
 		"""Data is safely saved somewhere. Update the document's URI and save_last_stat (for local saves).
@@ -457,7 +458,7 @@ class SaveArea(g.VBox):
 	def save_done(self):
 		self.document.save_done()
 
-class SaveBox(g.Dialog):
+class SaveBox(Gtk.Dialog):
 	"""A SaveBox is a GtkDialog that contains a SaveArea and, optionally, a Discard button.
 	Calls rox.toplevel_(un)ref automatically.
 	"""
@@ -467,31 +468,31 @@ class SaveBox(g.Dialog):
 		"""See SaveArea.__init__.
 		parent was added in version 2.0.5. To support older versions, use set_transient_for.
 		If discard is True then an extra discard button is added to the dialog."""
-		g.Dialog.__init__(self, parent = parent)
+		Gtk.Dialog.__init__(self, parent = parent)
 		self.set_has_separator(False)
 
-		self.add_button(g.STOCK_CANCEL, g.RESPONSE_CANCEL)
-		self.add_button(g.STOCK_SAVE, g.RESPONSE_OK)
-		self.set_default_response(g.RESPONSE_OK)
+		self.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+		self.add_button(Gtk.STOCK_SAVE, Gtk.ResponseType.OK)
+		self.set_default_response(Gtk.ResponseType.OK)
 
 		if discard:
-			discard_area = g.HButtonBox()
+			discard_area = Gtk.HButtonBox()
 
 			def discard_clicked(event):
 				document.discard()
 				self.destroy()
-			button = rox.ButtonMixed(g.STOCK_DELETE, _('_Discard'))
+			button = rox.ButtonMixed(Gtk.STOCK_DELETE, _('_Discard'))
 			discard_area.pack_start(button, False, True, 2)
 			button.connect('clicked', discard_clicked)
-			button.unset_flags(g.CAN_FOCUS)
-			button.set_flags(g.CAN_DEFAULT)
+                        button.set_can_focus(False)
+                        button.set_can_default(True)
 			self.vbox.pack_end(discard_area, False, True, 0)
 			self.vbox.reorder_child(discard_area, 0)
 			
 			discard_area.show_all()
 
 		self.set_title(_('Save As:'))
-		self.set_position(g.WIN_POS_MOUSE)
+		self.set_position(Gtk.WindowPosition.MOUSE)
 		self.set_wmclass('savebox', 'Savebox')
 		self.set_border_width(1)
 
@@ -521,7 +522,7 @@ class SaveBox(g.Dialog):
 		i = i + 1
 		# Have to do this here, or the selection gets messed up
 		save_area.entry.grab_focus()
-		g.Editable.select_region(save_area.entry, i, -1) # PyGtk bug
+		Gtk.Editable.select_region(save_area.entry, i, -1) # PyGtk bug
 		#save_area.entry.select_region(i, -1)
 
 		def got_response(widget, response):
@@ -531,11 +532,11 @@ class SaveBox(g.Dialog):
 				except:
 					rox.report_exception()
 				return
-			if response == int(g.RESPONSE_CANCEL):
+			if response == int(Gtk.ResponseType.CANCEL):
 				self.destroy()
-			elif response == int(g.RESPONSE_OK):
+			elif response == int(Gtk.ResponseType.OK):
 				self.save_area.save_to_file_in_entry()
-			elif response == int(g.RESPONSE_DELETE_EVENT):
+			elif response == int(Gtk.ResponseType.DELETE_EVENT):
 				pass
 			else:
 				raise Exception('Unknown response!')
@@ -558,7 +559,7 @@ class SaveBox(g.Dialog):
 		required. Make sure you call the default method too!
 		Not called if box is destroyed from a recursive mainloop inside
 		a save_to_* function."""
-		self.set_response_sensitive(g.RESPONSE_OK, not in_progress)
+		self.set_response_sensitive(Gtk.ResponseType.OK, not in_progress)
 		self.save_in_progress = in_progress
 
 class StringSaver(SaveBox, Saveable):
@@ -603,7 +604,7 @@ class SaveFilter(Saveable):
 			self.stdin = None
 	
 	def save_to_stream(self, stream):
-		from processes import PipeThroughCommand
+		from .processes import PipeThroughCommand
 
 		assert not hasattr(self, 'child_run')	# No longer supported
 

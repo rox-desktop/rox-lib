@@ -7,32 +7,33 @@ module.
 EXPERIMENTAL.
 """
 
-from __future__ import generators
+
 # Note: do not import rox or gtk. Needs to work without DISPLAY.
 import os, sys
 from select import select
-import cPickle as pickle
-import gobject
+import pickle as pickle
+
+from gi.repository import GLib
 
 class Proxy:
 	def __init__(self, to_peer, from_peer, slave_object = None):
 		if not hasattr(to_peer, 'fileno'):
-			to_peer = os.fdopen(to_peer, 'w')
+			to_peer = os.fdopen(to_peer, 'wb')
 		if not hasattr(from_peer, 'fileno'):
-			from_peer = os.fdopen(from_peer, 'r')
+			from_peer = os.fdopen(from_peer, 'rb')
 		self.to_peer = to_peer
 		self.from_peer = from_peer
-		self.out_buffer = ""
-		self.in_buffer = ""
+		self.out_buffer = b""
+		self.in_buffer = b""
 
 		self.enable_read_watch()
 	
 	def enable_read_watch(self):
-		gobject.io_add_watch(self.from_peer, gobject.IO_IN,
+		GLib.io_add_watch(self.from_peer, 0, GLib.IO_IN,
 			lambda src, cond: self.read_ready())
 
 	def enable_write_watch(self):
-		gobject.io_add_watch(self.to_peer.fileno(), gobject.IO_OUT,
+		GLib.io_add_watch(self.to_peer.fileno(), 0, GLib.IO_OUT,
 			lambda src, cond: self.write_ready())
 
 	def write_object(self, object):
@@ -42,7 +43,7 @@ class Proxy:
 			self.enable_write_watch()
 
 		s = pickle.dumps(object)
-		s = str(len(s)) + ":" + s
+		s = bytes(str(len(s)), "utf8") + b":" + s
 		self.out_buffer += s
 	
 	def write_ready(self):
@@ -50,7 +51,7 @@ class Proxy:
 		while self.out_buffer:
 			w = select([], [self.to_peer], [], 0)[1]
 			if not w:
-				print "Not ready for writing"
+				print("Not ready for writing")
 				return True
 			n = os.write(self.to_peer.fileno(), self.out_buffer)
 			self.out_buffer = self.out_buffer[n:]
@@ -63,8 +64,8 @@ class Proxy:
 			self.lost_connection()
 			return False
 		self.in_buffer += new
-		while ':' in self.in_buffer:
-			l, rest = self.in_buffer.split(':', 1)
+		while b':' in self.in_buffer:
+			l, rest = self.in_buffer.split(b':', 1)
 			l = int(l)
 			if len(rest) < l:
 				return True 	# Haven't got everything yet
@@ -91,7 +92,7 @@ class SlaveProxy(Proxy):
 		serial, method, args = value
 		try:
 			result = getattr(self.slave_object, method)(*args)
-		except Exception, e:
+		except Exception as e:
 			result = e
 		self.write_object((serial, result))
 

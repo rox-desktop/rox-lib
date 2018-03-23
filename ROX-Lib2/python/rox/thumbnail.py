@@ -80,7 +80,7 @@ def get_method(path=None, mtype=None):
     if path:
         mtype=rox.mime.get_type(path)
 
-    if isinstance(mtype, basestring):
+    if isinstance(mtype, str):
         mtype=rox.mime.lookup(mtype)
 
     if not mtype:
@@ -269,7 +269,7 @@ class Thumbnailer:
         d=os.path.dirname(outname)
         try:
             os.makedirs(d)
-        except OSError, exc:
+        except OSError as exc:
             if exc.errno!=errno.EEXIST:
                 raise
                                                          

@@ -34,9 +34,10 @@ Tasks use python's generator API to provide a more pleasant interface to
 callbacks. See the Task class (below) for more information.
 """
 
-import rox, gobject
-from rox import g
-import gobject
+import rox
+
+from gi.repository import GLib
+
 
 # The list of Blockers whose event has happened, in the order they were
 # triggered
@@ -117,7 +118,7 @@ class TimeoutBlocker(Blocker):
 		"""Trigger after 'timeout' seconds (may be a fraction)."""
 		Blocker.__init__(self)
 		rox.toplevel_ref()
-		gobject.timeout_add(long(timeout * 1000), self._timeout)
+		GLib.timeout_add(int(timeout * 1000), self._timeout)
 	
 	def _timeout(self):
 		rox.toplevel_unref()
@@ -138,13 +139,13 @@ class InputBlocker(Blocker):
 	def add_task(self, task):
 		Blocker.add_task(self, task)
 		if self._tag is None:
-			self._tag = gobject.io_add_watch(self._stream, gobject.IO_IN | gobject.IO_HUP,
+			self._tag = GLib.io_add_watch(self._stream, GLib.IO_IN | GLib.IO_HUP,
 				_io_callback, self)
 	
 	def remove_task(self, task):
 		Blocker.remove_task(self, task)
 		if not self._rox_lib_tasks:
-			gobject.source_remove(self._tag)
+			GLib.source_remove(self._tag)
 			self._tag = None
 
 class OutputBlocker(Blocker):
@@ -158,13 +159,13 @@ class OutputBlocker(Blocker):
 	def add_task(self, task):
 		Blocker.add_task(self, task)
 		if self._tag is None:
-			self._tag = gobject.io_add_watch(self._stream, gobject.IO_OUT | gobject.IO_HUP,
+			self._tag = GLib.io_add_watch(self._stream, GLib.IO_OUT | GLib.IO_HUP,
 				_io_callback, self)
 	
 	def remove_task(self, task):
 		Blocker.remove_task(self, task)
 		if not self._rox_lib_tasks:
-			gobject.source_remove(self._tag)
+			GLib.source_remove(self._tag)
 			self._tag = None
 
 _idle_blocker = IdleBlocker()
@@ -195,13 +196,19 @@ class Task:
 		"""Call iterator.next() from a glib idle function. This function
 		can yield Blocker() objects to suspend processing while waiting
 		for events. name is used only for debugging."""
-		assert iterator.next, "Object passed is not an iterator!"
-		self.next = iterator.next
+		assert iterator.__next__, "Object passed is not an iterator!"
+		self.iterator = iterator
 		self.name = name
 		self.finished = Blocker()
 		# Block new task on the idle handler...
 		_idle_blocker.add_task(self)
 		self._rox_blockers = (_idle_blocker,)
+	
+	def __next__(self):
+		return self.iterator.__next__()
+	
+	def __iter__(self):
+		return self
 	
 	def _resume(self):
 		# Remove from our blockers' queues
@@ -209,7 +216,7 @@ class Task:
 			blocker.remove_task(self)
 		# Resume the task
 		try:
-			new_blockers = self.next()
+			new_blockers = next(self)
 		except StopIteration:
 			# Task ended
 			self.finished.trigger()
@@ -245,7 +252,7 @@ class Task:
 def _schedule():
 	assert not _run_queue
 	rox.toplevel_ref()
-	gobject.idle_add(_handle_run_queue)
+	GLib.idle_add(_handle_run_queue)
 
 def _handle_run_queue():
 	global _idle_blocker

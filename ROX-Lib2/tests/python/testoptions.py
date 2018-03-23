@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.6
+#!/usr/bin/env python3
 import unittest
 import os, sys, shutil
 from os.path import dirname, abspath, join
@@ -27,7 +27,7 @@ class TestOptions(unittest.TestCase):
 		g2 = options.OptionGroup('MyProg', 'Options')
 		o1 = options.Option('colour', 'green', g2)
 		g2.notify()
-		self.assertEquals('red', o1.value)
+		self.assertEqual('red', o1.value)
 
 	def testXDG(self):
 		group = options.OptionGroup('MyProg', 'Options', 'site')
@@ -40,7 +40,7 @@ class TestOptions(unittest.TestCase):
 		g2 = options.OptionGroup('MyProg', 'Options', 'site')
 		o1 = options.Option('colour', 'green', g2)
 		g2.notify()
-		self.assertEquals('red', o1.value)
+		self.assertEqual('red', o1.value)
 	
 	def testNotify(self):
 		self.c = 0
@@ -49,9 +49,9 @@ class TestOptions(unittest.TestCase):
 		group = options.OptionGroup('MyProg', 'Options', 'site')
 		o1 = options.Option('colour', 'green', group)
 		group.add_notify(notify)
-		self.assertEquals(0, self.c)
+		self.assertEqual(0, self.c)
 		group.notify()
-		self.assertEquals(1, self.c)
+		self.assertEqual(1, self.c)
 
 		try:
 			options.Option('size', 'small', group)
@@ -61,7 +61,7 @@ class TestOptions(unittest.TestCase):
 
 		group.remove_notify(notify)
 		group.notify()
-		self.assertEquals(1, self.c)
+		self.assertEqual(1, self.c)
 
 		assert not o1.has_changed
 		o1._set('hi')

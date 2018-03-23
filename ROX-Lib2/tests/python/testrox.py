@@ -1,15 +1,15 @@
-#!/usr/bin/env python2.6
+#!/usr/bin/env python3
 import unittest
 import os, sys, shutil
-from StringIO import StringIO
+from io import StringIO
 from os.path import dirname, abspath, join
 rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
 sys.path.insert(0, join(rox_lib, 'python'))
 
-if os.environ.has_key('ROXLIB_TEST_SUB'):
+if 'ROXLIB_TEST_SUB' in os.environ:
 	import rox
 	for arg in sys.argv[1:]:
-		print arg
+		print(arg)
 	sys.exit()
 os.environ['ROXLIB_TEST_SUB'] = 'YES'
 
@@ -24,17 +24,17 @@ class TestROX(unittest.TestCase):
 		return result.getvalue()
 	
 	def testEmpty(self):
-		self.assertEquals('', self.try_with_args([]))
+		self.assertEqual('', self.try_with_args([]))
 
 	def testStdin(self):
-		self.assertEquals('-\n', self.try_with_args(['-']))
+		self.assertEqual('-\n', self.try_with_args(['-']))
 
 	def testNormal(self):
-		self.assertEquals('hello\nworld\n',
+		self.assertEqual('hello\nworld\n',
 				self.try_with_args(['hello', 'world']))
 
 	def testNormal(self):
-		self.assertEquals('world\n-\n',
+		self.assertEqual('world\n-\n',
 				self.try_with_args(['--g-fatal-warnings',
 						    'world', '-']))
 

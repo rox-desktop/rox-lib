@@ -77,7 +77,7 @@ def expand_languages(languages = None):
 			if val:
 				languages = val.split(':')
 				break
-        if 'C' not in languages:
+	if 'C' not in languages:
 		languages.append('C')
 
 	# now normalize and expand the languages
@@ -109,6 +109,6 @@ def translation(messages_dir, languages = None):
 	if not mofile:
 		return lambda x: x
 	import gettext
-	return gettext.GNUTranslations(file(mofile)).ugettext
+	return gettext.GNUTranslations(open(mofile, 'rb')).gettext
 
 langs = expand_languages()

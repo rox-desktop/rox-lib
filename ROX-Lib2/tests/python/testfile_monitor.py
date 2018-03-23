@@ -1,10 +1,15 @@
+#!/usr/bin/env python3
 import os
+from os.path import dirname, abspath, join
 import sys
 import unittest
 import tempfile
 import shutil
 
-import gobject
+from gi.repository import GLib
+
+rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
+sys.path.insert(0, join(rox_lib, 'python'))
 
 from rox import file_monitor
 
@@ -13,7 +18,7 @@ class TestFileMonitor(unittest.TestCase):
 
     def testFileMonitor(self):
 
-        mainloop = gobject.MainLoop()
+        mainloop = GLib.MainLoop()
 
         files_created = []
         files_deleted = []
@@ -42,8 +47,8 @@ class TestFileMonitor(unittest.TestCase):
                 f.write('test')
                 f.close()
 
-            gobject.timeout_add(100, create_file)
-            gobject.timeout_add(3000, mainloop.quit)
+            GLib.timeout_add(100, create_file)
+            GLib.timeout_add(3000, mainloop.quit)
 
             mainloop.run()
 
@@ -56,8 +61,8 @@ class TestFileMonitor(unittest.TestCase):
             def delete_file():
                 os.remove(testfile_path)
 
-            gobject.timeout_add(100, delete_file)
-            gobject.timeout_add(3000, mainloop.quit)
+            GLib.timeout_add(100, delete_file)
+            GLib.timeout_add(3000, mainloop.quit)
 
             mainloop.run()
 
@@ -72,8 +77,8 @@ class TestFileMonitor(unittest.TestCase):
             def create_subdir():
                 os.mkdir(testdir_path)
 
-            gobject.timeout_add(100, create_subdir)
-            gobject.timeout_add(3000, mainloop.quit)
+            GLib.timeout_add(100, create_subdir)
+            GLib.timeout_add(3000, mainloop.quit)
 
             mainloop.run()
 
@@ -86,8 +91,8 @@ class TestFileMonitor(unittest.TestCase):
             def delete_subdir():
                 os.rmdir(testdir_path)
 
-            gobject.timeout_add(100, delete_subdir)
-            gobject.timeout_add(3000, mainloop.quit)
+            GLib.timeout_add(100, delete_subdir)
+            GLib.timeout_add(3000, mainloop.quit)
 
             mainloop.run()
 
@@ -103,8 +108,8 @@ class TestFileMonitor(unittest.TestCase):
             def create_subdir():
                 os.mkdir(testdir_path)
 
-            gobject.timeout_add(100, create_subdir)
-            gobject.timeout_add(3000, mainloop.quit)
+            GLib.timeout_add(100, create_subdir)
+            GLib.timeout_add(3000, mainloop.quit)
 
             mainloop.run()
 
@@ -122,8 +127,8 @@ class TestFileMonitor(unittest.TestCase):
             def delete_subdir():
                 os.rmdir(testdir_path)
 
-            gobject.timeout_add(100, delete_subdir)
-            gobject.timeout_add(3000, mainloop.quit)
+            GLib.timeout_add(100, delete_subdir)
+            GLib.timeout_add(3000, mainloop.quit)
 
             mainloop.run()
 

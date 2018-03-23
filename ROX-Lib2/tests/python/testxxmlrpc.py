@@ -1,14 +1,16 @@
-#!/usr/bin/env python2.6
-from __future__ import generators
+#!/usr/bin/env python3
+
 import unittest
-import sys, StringIO
-import os, time, xmlrpclib
+import sys, io
+import os, time, xmlrpc.client
 from os.path import dirname, abspath, join
 
 rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
 sys.path.insert(0, join(rox_lib, 'python'))
 
-from rox import xxmlrpc, g
+from gi.repository import Gtk
+
+from rox import xxmlrpc
 
 class TestObject:
 	allowed_methods = ['echo', 'none']
@@ -29,7 +31,7 @@ class TestXXMLRPC(unittest.TestCase):
 	def testEcho(self):
 		obj = self.proxy.get_object('/foo')
 		call = obj.echo('Hello World')
-		self.assertEquals("Echo: Hello World", call.get_response())
+		self.assertEqual("Echo: Hello World", call.get_response())
 
 	def testFault(self):
 		obj = self.proxy.get_object('/foo')
@@ -37,16 +39,16 @@ class TestXXMLRPC(unittest.TestCase):
 		try:
 			call.get_response()
 			assert false
-		except xmlrpclib.Fault, ex:
-			self.assertEquals('TypeError', ex.faultCode)
+		except xmlrpc.client.Fault as ex:
+			self.assertEqual('TypeError', ex.faultCode)
 			assert ex.faultString.find('cannot concatenate') >= 0
 
 	def testAsync(self):
 		obj = self.proxy.get_object('/foo')
 		call1 = obj.echo('Hello')
 		call2 = obj.echo('World')
-		self.assertEquals("Echo: World", call2.get_response())
-		self.assertEquals("Echo: Hello", call1.get_response())
+		self.assertEqual("Echo: World", call2.get_response())
+		self.assertEqual("Echo: Hello", call1.get_response())
 
 	def testBadObject(self):
 		obj = self.proxy.get_object('/food')
@@ -54,8 +56,8 @@ class TestXXMLRPC(unittest.TestCase):
 		try:
 			call.get_response()
 			assert false
-		except xmlrpclib.Fault, ex:
-			self.assertEquals('UnknownObject', ex.faultCode)
+		except xmlrpc.client.Fault as ex:
+			self.assertEqual('UnknownObject', ex.faultCode)
 	
 	def testBadMethod(self):
 		obj = self.proxy.get_object('/foo')
@@ -63,27 +65,27 @@ class TestXXMLRPC(unittest.TestCase):
 		try:
 			call.get_response()
 			assert false
-		except xmlrpclib.Fault, ex:
-			self.assertEquals('NoSuchMethod', ex.faultCode)
+		except xmlrpc.client.Fault as ex:
+			self.assertEqual('NoSuchMethod', ex.faultCode)
 	
 	def testReturnNone(self):
 		obj = self.proxy.get_object('/foo')
 		call = obj.none()
-		self.assertEquals(True, call.get_response())
+		self.assertEqual(True, call.get_response())
 	
 	def testNoReturn(self):
 		obj = self.proxy.get_object('/foo')
 		call = obj.none()
 		olderr = sys.stderr
-		sys.stderr = StringIO.StringIO()
+		sys.stderr = io.StringIO()
 		try:
 			del call
 			err = sys.stderr.getvalue()
 			assert err.index("ClientCall object destroyed") == 0
-			sys.stderr = StringIO.StringIO()
+			sys.stderr = io.StringIO()
 			# Wait for proxy to try to read window
 			while not sys.stderr.getvalue():
-				g.main_iteration()
+				Gtk.main_iteration()
 			err = sys.stderr.getvalue()
 			assert err.index("No '_XXMLRPC_MESSAGE' property") == 0
 		finally:

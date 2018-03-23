@@ -7,10 +7,12 @@
 	with it to pass to each Setting.
 """
 import os
+
+from gi.repository import GLib
+
 import rox
 from rox.options import OptionGroup, Option
 import rox.session
-import gobject
 
 gconf = None
 
@@ -59,7 +61,8 @@ class Settings(OptionGroup):
 		self.client = client
 	
 	def notify(self):
-		map(apply, self.callbacks)
+		for cb in self.callbacks:
+			cb()
 		for option in self:
 			option.has_changed = False
 	
@@ -165,7 +168,7 @@ class Setting(Option):
 			return False
 
 		if self.garbage:
-			gobject.idle_add(set)
+			GLib.idle_add(set)
 		else:
 			set()
 
@@ -183,11 +186,11 @@ class BoolSetting(Setting):
 # Test routine
 if __name__=='__main__':
 	setobj=get_xsettings()
-	print 'object=', setobj
+	print('object=', setobj)
 	v='Gtk/KeyThemeName'
-	print '%s = %s' % (v, setobj.GetSetting(v))
+	print('%s = %s' % (v, setobj.GetSetting(v)))
 	v='Net/ThemeName'
-	print '%s = %s' % (v, setobj.GetSetting(v))
+	print('%s = %s' % (v, setobj.GetSetting(v)))
 
-	print 'All: ', setobj.Enumerate()
-	print 'ROX: ', setobj.Enumerate('ROX/*')
+	print('All: ', setobj.Enumerate())
+	print('ROX: ', setobj.Enumerate('ROX/*'))

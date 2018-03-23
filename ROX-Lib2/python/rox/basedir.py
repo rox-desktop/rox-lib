@@ -18,7 +18,7 @@ Typical usage:
 Note: see the rox.Options module for a higher-level API for managing options.
 """
 
-from __future__ import generators
+
 import os
 
 _home = os.environ.get('HOME', '/')
@@ -34,8 +34,8 @@ xdg_config_home = os.environ.get('XDG_CONFIG_HOME',
 xdg_config_dirs = [xdg_config_home] + \
 	os.environ.get('XDG_CONFIG_DIRS', '/etc/xdg').split(':')
 
-xdg_data_dirs = filter(lambda x: x, xdg_data_dirs)
-xdg_config_dirs = filter(lambda x: x, xdg_config_dirs)
+xdg_data_dirs = [x for x in xdg_data_dirs if x]
+xdg_config_dirs = [x for x in xdg_config_dirs if x]
 
 def save_config_path(*resource):
 	"""Ensure $XDG_CONFIG_HOME/<resource>/ exists, and return its path.
@@ -46,7 +46,7 @@ def save_config_path(*resource):
 	assert not resource.startswith('/')
 	path = os.path.join(xdg_config_home, resource)
 	if not os.path.isdir(path):
-		os.makedirs(path, 0700)
+		os.makedirs(path, 0o700)
 	return path
 
 def save_data_path(*resource):

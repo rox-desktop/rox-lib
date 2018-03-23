@@ -142,7 +142,7 @@ if libc and hasattr(libc, 'attropen'):
 
         OSError is raised if path does not exist or is not writable."""
         
-        fd=libc.attropen(path, attr, os.O_WRONLY|os.O_CREAT, 0644)
+        fd=libc.attropen(path, attr, os.O_WRONLY|os.O_CREAT, 0o644)
         _error_check(fd, path)
 
         res=os.write(fd, value)
@@ -394,13 +394,13 @@ if __name__=='__main__':
     else:
         path='/tmp'
 
-    print path, supported(path)
-    print path, present(path)
-    print path, get(path, 'user.mime_type')
-    print path, listx(path)
+    print(path, supported(path))
+    print(path, present(path))
+    print(path, get(path, 'user.mime_type'))
+    print(path, listx(path))
 
     set(path, 'user.test', 'this is a test')
-    print path, listx(path)
-    print path, get(path, 'user.test')
+    print(path, listx(path))
+    print(path, get(path, 'user.test'))
     delete(path, 'user.test')
-    print path, listx(path)
+    print(path, listx(path))

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from sys import argv, path, stderr
 from os.path import dirname, abspath
@@ -7,24 +7,34 @@ app_dir = dirname(abspath(argv[0]))
 path.append(app_dir + '/python')
 
 import rox
-from rox import g
+
+import gi
+from gi.repository import Gtk, Gdk
 
 message=rox._("ROX-Lib2 contains code that is useful to newer ROX applications. \
 You should place this directory somewhere where other programs can \
 find it, such as ~/lib or /usr/local/lib.\n\n\
 ROX-Lib version: %s\n\
-PyGTK version: %s\n\
+PyGObject version: %s\n\
 GTK version: %s\n\n\
-PyGTK location:\n%s") % (rox.roxlib_version, g.pygtk_version, g.gtk_version, dirname(g.__file__))
+") % (
+	'%d.%d.%d' % rox.roxlib_version,
+        gi.__version__,
+	'%d.%d.%d' % (
+		Gtk.get_major_version(),
+		Gtk.get_minor_version(),
+		Gtk.get_micro_version()
+	)
+)
 
-if rox.g.gdk.display_get_default() is not None:
-	box = g.MessageDialog(None, g.MESSAGE_QUESTION, 0, g.BUTTONS_OK, message)
-	box.add_button(g.STOCK_HELP, g.RESPONSE_HELP)
+if Gdk.Display.get_default() is not None:
+	box = Gtk.MessageDialog(None, Gtk.MessageType.QUESTION, 0, Gtk.ButtonsType.OK, message)
+	box.add_button(Gtk.STOCK_HELP, Gtk.ResponseType.HELP)
 	box.set_title('ROX-Lib')
-	box.set_position(g.WIN_POS_CENTER)
-	box.set_default_response(g.RESPONSE_OK)
+	box.set_position(Gtk.WindowPosition.CENTER)
+	box.set_default_response(Gtk.ResponseType.OK)
 
-	if box.run() == int(g.RESPONSE_HELP):
+	if box.run() == int(Gtk.ResponseType.HELP):
 		from rox import filer
 		import os.path
 		filer.open_dir(os.path.join(app_dir, "Help"))

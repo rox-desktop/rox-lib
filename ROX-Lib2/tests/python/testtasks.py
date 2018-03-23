@@ -1,5 +1,5 @@
-#!/usr/bin/env python2.6
-from __future__ import generators
+#!/usr/bin/env python3
+
 import unittest
 import sys
 import os, time
@@ -8,16 +8,18 @@ from os.path import dirname, abspath, join
 rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
 sys.path.insert(0, join(rox_lib, 'python'))
 
-from rox import tasks, g
+from gi.repository import Gtk
+
+from rox import tasks
 import rox
 
 class TestTasks(unittest.TestCase):
 	def testIdleBlocker(self):
 		def run():
 			yield None
-			g.main_quit()
+			Gtk.main_quit()
 		tasks.Task(run())
-		g.main()
+		Gtk.main()
 
 	def testTimeoutBlocker(self):
 		def run():
@@ -25,9 +27,9 @@ class TestTasks(unittest.TestCase):
 			yield tasks.TimeoutBlocker(0.6)
 			end = time.time()
 			assert end > start + 0.5
-			g.main_quit()
+			Gtk.main_quit()
 		tasks.Task(run())
-		g.main()
+		Gtk.main()
 	
 	def testInputBlocker(self):
 		readable, writeable = os.pipe()
@@ -37,22 +39,22 @@ class TestTasks(unittest.TestCase):
 			yield ib, tb
 			assert not ib.happened
 			assert tb.happened
-			os.write(writeable, "!")
+			os.write(writeable, b"!")
 
 			tb = tasks.TimeoutBlocker(0.2)
 			yield ib, tb
 			assert ib.happened
 			assert not tb.happened
 
-			assert os.read(readable, 1) == '!'
+			assert os.read(readable, 1) == b'!'
 			os.close(writeable)
 			ib = tasks.InputBlocker(readable)
 			yield ib
 			assert ib.happened
 
-			g.main_quit()
+			Gtk.main_quit()
 		tasks.Task(run())
-		g.main()
+		Gtk.main()
 
 	def testOutputBlocker(self):
 		readable, writeable = os.pipe()
@@ -64,7 +66,7 @@ class TestTasks(unittest.TestCase):
 				tb = tasks.TimeoutBlocker(0.2)
 				yield ob, tb
 				if ob.happened:
-					sent += os.write(writeable, 'Hello\n')
+					sent += os.write(writeable, b'Hello\n')
 				else:
 					assert tb.happened
 					break
@@ -82,9 +84,9 @@ class TestTasks(unittest.TestCase):
 			assert ob.happened
 			assert not tb.happened
 
-			g.main_quit()
+			Gtk.main_quit()
 		tasks.Task(run())
-		g.main()
+		Gtk.main()
 
 	def testFinished(self):
 		readable, writeable = os.pipe()
@@ -100,21 +102,21 @@ class TestTasks(unittest.TestCase):
 		def wait_for(t1, expected):
 			yield t1.finished
 			assert got == expected
-			g.main_quit()
+			Gtk.main_quit()
 
 		t1 = tasks.Task(run())
 		tasks.Task(wait_for(t1, [0, 1, 2]))
 		assert not t1.finished.happened
-		g.main()
+		Gtk.main()
 		assert t1.finished.happened
 
 		old = rox.report_exception
 		try:
-			rox.report_exception = lambda: (got.append(False), g.main_quit())
+			rox.report_exception = lambda: (got.append(False), Gtk.main_quit())
 			got = []
 			t2 = tasks.Task(run(fail = True))
 			tasks.Task(wait_for(t2, [0, 1, 2, False]))
-			g.main()
+			Gtk.main()
 		finally:
 			rox.report_exception = old
 

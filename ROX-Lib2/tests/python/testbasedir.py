@@ -1,7 +1,8 @@
-#!/usr/bin/env python2.6
+#!/usr/bin/env python3
 import unittest
 import os, sys, shutil
 from os.path import dirname, abspath, join
+from imp import reload
 rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
 sys.path.insert(0, join(rox_lib, 'python'))
 
@@ -25,54 +26,54 @@ class TestBasedir(unittest.TestCase):
 			if x in os.environ:
 				del os.environ[x]
 		reload(basedir)
-		self.assertEquals(os.path.expanduser('~/.config'),
+		self.assertEqual(os.path.expanduser('~/.config'),
 				  basedir.xdg_config_home)
-		self.assertEquals([basedir.xdg_config_home, '/etc/xdg'],
+		self.assertEqual([basedir.xdg_config_home, '/etc/xdg'],
 				  basedir.xdg_config_dirs)
 
-		self.assertEquals(os.path.expanduser('~/.local/share'),
+		self.assertEqual(os.path.expanduser('~/.local/share'),
 				  basedir.xdg_data_home)
-		self.assertEquals([basedir.xdg_data_home,
+		self.assertEqual([basedir.xdg_data_home,
 					'/usr/local/share', '/usr/share'],
 				  basedir.xdg_data_dirs)
 
 	def testOverride(self):
-		self.assertEquals('/tmp/config', basedir.xdg_config_home)
-		self.assertEquals([basedir.xdg_config_home,
+		self.assertEqual('/tmp/config', basedir.xdg_config_home)
+		self.assertEqual([basedir.xdg_config_home,
 					'/tmp/config.2', '/tmp/config.3'],
 				  basedir.xdg_config_dirs)
 
-		self.assertEquals('/tmp/share', basedir.xdg_data_home)
-		self.assertEquals([basedir.xdg_data_home,
+		self.assertEqual('/tmp/share', basedir.xdg_data_home)
+		self.assertEqual([basedir.xdg_data_home,
 					'/tmp/share.2', '/tmp/share.3'],
 				  basedir.xdg_data_dirs)
 	
 	def testMkDir(self):
 		assert not os.path.isdir(basedir.xdg_config_home)
 		path = basedir.save_config_path('ROX-Lib-Test')
-		self.assertEquals('/tmp/config/ROX-Lib-Test', path)
+		self.assertEqual('/tmp/config/ROX-Lib-Test', path)
 		assert os.path.isdir(basedir.xdg_config_home)
 		assert os.path.isdir(path)
 
 	def testJoin(self):
-		self.assertEquals('/tmp/config/foo/bar',
+		self.assertEqual('/tmp/config/foo/bar',
 				  basedir.save_config_path('foo/bar'))
-		self.assertEquals('/tmp/config/foo/bar',
+		self.assertEqual('/tmp/config/foo/bar',
 				  basedir.save_config_path('foo', 'bar'))
 
-		self.assertEquals('/tmp/share/foo/bar',
+		self.assertEqual('/tmp/share/foo/bar',
 				  basedir.save_data_path('foo/bar'))
-		self.assertEquals('/tmp/share/foo/bar',
+		self.assertEqual('/tmp/share/foo/bar',
 				  basedir.save_data_path('foo', 'bar'))
 
-		self.assertEquals(['/tmp/share/foo/bar'],
+		self.assertEqual(['/tmp/share/foo/bar'],
 				  list(basedir.load_data_paths('foo/bar')))
-		self.assertEquals(['/tmp/share/foo/bar'],
+		self.assertEqual(['/tmp/share/foo/bar'],
 				  list(basedir.load_data_paths('foo', 'bar')))
 
-		self.assertEquals(['/tmp/config/foo/bar'],
+		self.assertEqual(['/tmp/config/foo/bar'],
 				  list(basedir.load_config_paths('foo/bar')))
-		self.assertEquals(['/tmp/config/foo/bar'],
+		self.assertEqual(['/tmp/config/foo/bar'],
 				  list(basedir.load_config_paths('foo', 'bar')))
 
 suite = unittest.makeSuite(TestBasedir)

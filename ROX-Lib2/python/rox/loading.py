@@ -1,17 +1,18 @@
 """ROX applications should provide good drag-and-drop support. Use this module
 to allow drops onto widgets in your application."""
 
-import rox
-from rox import g, alert, get_local_path, _
+from gi.repository import Gtk, Gdk
 
-gdk = g.gdk
+import rox
+from rox import alert, get_local_path, _
+
 
 TARGET_URILIST = 0
 TARGET_RAW = 1
 
 def extract_uris(data):
 	"""Convert a text/uri-list to a python list of (still escaped) URIs"""
-	lines = data.split('\r\n')
+	lines = data.decode('utf-8').split('\r\n')
 	out = []
 	for l in lines:
 		if l == chr(0):
@@ -20,7 +21,7 @@ def extract_uris(data):
 			out.append(l)
 	return out
 
-def provides(context, type): return type in map(str, context.targets)
+def provides(context, type): return type in list(map(str, context.list_targets()))
 
 class RemoteFiles(Exception):
 	"Internal use"
@@ -37,21 +38,21 @@ class XDSLoader:
 		"""Call this after initialising the widget.
 		Types is a list of MIME-types, or None to only accept files."""
 
-		targets = [('text/uri-list', 0, TARGET_URILIST)]
+		targets = [Gtk.TargetEntry.new('text/uri-list', 0, TARGET_URILIST)]
 		if types:
 			for mimetype in types + ['application/octet-stream']:
-				targets.append((mimetype, 0, TARGET_RAW))
+				targets.append(Gtk.TargetEntry.new(mimetype, 0, TARGET_RAW))
 		
 		self.targets = targets
-		if isinstance(self, g.Widget):
+		if isinstance(self, Gtk.Widget):
 			self.xds_proxy_for(self)
 	
 	def xds_proxy_for(self, widget):
 		"Handle drops on this widget as if they were to 'self'."
 		# (Konqueror requires ACTION_MOVE)
-		widget.drag_dest_set(g.DEST_DEFAULT_MOTION | g.DEST_DEFAULT_HIGHLIGHT,
+		widget.drag_dest_set(Gtk.DestDefaults.MOTION | Gtk.DestDefaults.HIGHLIGHT,
 				self.targets,
-				gdk.ACTION_COPY | gdk.ACTION_MOVE | gdk.ACTION_PRIVATE)
+				Gdk.DragAction.COPY | Gdk.DragAction.MOVE | Gdk.DragAction.PRIVATE)
 		
 		widget.connect('drag-data-received', self.xds_data_received)
 		widget.connect('drag-drop', self.xds_drag_drop)
@@ -60,40 +61,40 @@ class XDSLoader:
 		"""Called when something is dropped on us. Decide which of the
 		offered targets to request and ask for it. xds_data_received will
 		be called when it finally arrives."""
-		target = widget.drag_dest_find_target(context, self.targets)
+		target = widget.drag_dest_find_target(context, Gtk.TargetList.new(self.targets))
 		context.rox_leafname = None
 		if target is None:
 			# Error?
-			context.drop_finish(False, time)
+			Gdk.drop_finish(context, False, time)
 		else:
 			if provides(context, 'XdndDirectSave0'):
-				import saving
+				from . import saving
 				context.rox_leafname = saving._read_xds_property(context, False)
 			widget.drag_get_data(context, target, time)
 		return True
 
 	def xds_data_received(self, widget, context, x, y, selection, info, time):
 		"Called when we get some data. Internal."
-		if selection.data is None:
+		if selection.get_data() is None:
 			# Timeout?
-			context.drop_finish(False, time)
+			Gdk.drop_finish(context, False, time)
 			return
 
 		if info == TARGET_RAW:
 			try:
 				self.xds_load_from_selection(selection, context.rox_leafname)
 			except:
-				context.drop_finish(False, time)
+				Gdk.drop_finish(context, False, time)
 				raise
-			context.drop_finish(True, time)
+			Gdk.drop_finish(context, True, time)
 			return 1
 		if info != TARGET_URILIST:
 			return 0
 
-		uris = extract_uris(selection.data)
+		uris = extract_uris(selection.get_data())
 		if not uris:
 			alert("Nothing to load!")
-			context.drop_finish(False, time)
+			Gdk.drop_finish(context, False, time)
 			return 1
 
 		try:
@@ -105,10 +106,10 @@ class XDSLoader:
 				widget.drag_get_data(context, 'application/octet-stream', time)
 				return 1	# Don't do drag_finish
 		except:
-			context.drop_finish(False, time)
+			Gdk.drop_finish(context, False, time)
 			rox.report_exception()
 		else:
-			context.drop_finish(True, time)
+			Gdk.drop_finish(context, True, time)
 
 		return 1
 	
@@ -139,9 +140,9 @@ class XDSLoader:
 		"""Try to load this selection (data from another application). The default
 		puts the data in a cStringIO and calls xds_load_from_stream()."""
 		if selection.data is None:
-			g.gdk.beep()	# Load aborted
+			Gdk.beep()	# Load aborted
 			return
-		from cStringIO import StringIO
+		from io import StringIO
 		mimetype = str(selection.type)
 		self.xds_load_from_stream(leafname, mimetype, StringIO(selection.data))
 	

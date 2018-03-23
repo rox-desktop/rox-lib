@@ -7,7 +7,7 @@ in ROX-Lib 1.9.13). Return a list of widgets (which are packed into either an
 HBox or a VBox). For example, to add a button widget:
 
 def build_button(box, node, label):
-	button = g.Button(label)
+	button = Gtk.Button(label)
 	box.may_add_tip(button, node)
 	button.connect('clicked', my_button_handler)
 	return [button]
@@ -26,7 +26,7 @@ and arrange for box.check_widget to be called when the user changes the
 value:
 
 def build_toggle(box, node, label, option):
-	toggle = g.CheckButton(label)
+	toggle = Gtk.CheckButton(label)
 	box.may_add_tip(toggle, node)
 
 	box.handlers[option] = (
@@ -39,10 +39,11 @@ def build_toggle(box, node, label, option):
 OptionsBox.widget_registry['mytoggle'] = build_toggle
 """
 
-from rox import g, options, _
+from gi.repository import Gtk, Gdk, GObject
+
+from rox import options, _
 import rox
 from xml.dom import Node, minidom
-import gobject
 
 REVERT = 1
 
@@ -72,11 +73,10 @@ def str_attr(node, name, val=''):
 		pass
 	return val
 
-class OptionsBox(g.Dialog):
+class OptionsBox(Gtk.Dialog):
 	"""A dialog box which lets the user edit the options. The file
 	Options.xml specifies the layout of this box."""
 
-	tips = None	# GtkTooltips
 	options = None	# The OptionGroup we are editing
 	revert = None	# Option -> old value
 	handlers = None	# Option -> (get, set)
@@ -116,28 +116,21 @@ class OptionsBox(g.Dialog):
 				translation = lambda x: x
 		self.trans = translation
 
-		g.Dialog.__init__(self)
-		if (g.pygtk_version < (2, 12, 0)):
-			# gtk.Tooltips deprecated as of pygtk-2.12.0
-			self.tips = g.Tooltips()
-		self.set_has_separator(False)
+		Gtk.Dialog.__init__(self)
 
 		self.options = options_group
 		self.set_title((_('%s options')) % options_group.program)
-		self.set_position(g.WIN_POS_CENTER)
+		self.set_position(Gtk.WindowPosition.CENTER)
 
-		button = rox.ButtonMixed(g.STOCK_UNDO, _('_Revert'))
+		button = rox.ButtonMixed(Gtk.STOCK_UNDO, _('_Revert'))
 		self.add_action_widget(button, REVERT)
 		revert_tooltip = _('Restore all options to how they were '
 					    'when the window was opened')
-		if (g.pygtk_version >= (2, 12, 0)):
-			button.set_tooltip_text(revert_tooltip)
-		else:
-			self.tips.set_tip(button, revert_tooltip)
+		button.set_tooltip_text(revert_tooltip)
 
-		self.add_button(g.STOCK_OK, g.RESPONSE_OK)
+		self.add_button(Gtk.STOCK_OK, Gtk.ResponseType.OK)
 
-		self.set_default_response(g.RESPONSE_OK)
+		self.set_default_response(Gtk.ResponseType.OK)
 
 		doc = minidom.parse(options_xml)
 		assert doc.documentElement.localName == 'options'
@@ -152,7 +145,7 @@ class OptionsBox(g.Dialog):
 			if section.nodeType != Node.ELEMENT_NODE:
 				continue
 			if section.localName != 'section':
-				print "Unknown section", section
+				print("Unknown section", section)
 				continue
 			sections.append(section)
 
@@ -178,7 +171,7 @@ class OptionsBox(g.Dialog):
 		self.connect('destroy', destroyed)
 
 		def got_response(widget, response):
-			if response == int(g.RESPONSE_OK):
+			if response == int(Gtk.ResponseType.OK):
 				self.destroy()
 			elif response == REVERT:
 				for o in self.options:
@@ -220,7 +213,7 @@ class OptionsBox(g.Dialog):
 				try:
 					handler = self.handlers[option][1]
 				except KeyError:
-					print "No widget for option '%s'!" % option
+					print("No widget for option '%s'!" % option)
 				else:
 					handler()
 		finally:
@@ -228,42 +221,42 @@ class OptionsBox(g.Dialog):
 	
 	def build_window_frame(self, add_frame = True):
 		"Create the main structure of the window."
-		hbox = g.HBox(False, 4)
+		hbox = Gtk.HBox(False, 4)
 		self.vbox.pack_start(hbox, True, True, 0)
 
 		# scrolled window for the tree view
-		sw = g.ScrolledWindow()
-		sw.set_shadow_type(g.SHADOW_IN)
-		sw.set_policy(g.POLICY_NEVER, g.POLICY_AUTOMATIC)
+		sw = Gtk.ScrolledWindow()
+		sw.set_shadow_type(Gtk.ShadowType.IN)
+		sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
 		hbox.pack_start(sw, False, True, 0)
 		self.sections_swin = sw		# Used to hide it...
 
 		# tree view
-		model = g.TreeStore(gobject.TYPE_STRING, gobject.TYPE_INT)
-		tv = g.TreeView(model)
+		model = Gtk.TreeStore(GObject.TYPE_STRING, GObject.TYPE_INT)
+		tv = Gtk.TreeView(model)
 		sel = tv.get_selection()
-		sel.set_mode(g.SELECTION_BROWSE)
+		sel.set_mode(Gtk.SelectionMode.BROWSE)
 		tv.set_headers_visible(False)
 		self.sections = model
 		self.tree_view = tv
-		tv.unset_flags(g.CAN_FOCUS)	# Stop irritating highlight
+		tv.set_can_focus(False)	# Stop irritating highlight
 
 		# Add a column to display column 0 of the store...
-		cell = g.CellRendererText()
-		column = g.TreeViewColumn('Section', cell, text = 0)
+		cell = Gtk.CellRendererText()
+		column = Gtk.TreeViewColumn('Section', cell, text = 0)
 		tv.append_column(column)
 
 		sw.add(tv)
 
 		# main options area
-		notebook = g.Notebook()
+		notebook = Gtk.Notebook()
 		notebook.set_show_tabs(False)
 		notebook.set_show_border(False)
 		self.notebook = notebook
 
 		if add_frame:
-			frame = g.Frame()
-			frame.set_shadow_type(g.SHADOW_IN)
+			frame = Gtk.Frame()
+			frame.set_shadow_type(Gtk.ShadowType.IN)
 			hbox.pack_start(frame, True, True, 0)
 			frame.add(notebook)
 		else:
@@ -301,9 +294,9 @@ class OptionsBox(g.Dialog):
 	def build_section(self, section, parent):
 		"""Create a new page for the notebook and a new entry in the
 		sections tree, and build all the widgets inside the page."""
-		page = g.VBox(False, 4)
+		page = Gtk.VBox(False, 4)
 		page.set_border_width(4)
-		self.notebook.append_page(page, g.Label('unused'))
+		self.notebook.append_page(page, Gtk.Label('unused'))
 
 		titer = self.sections.append(parent)
 		self.sections.set(titer,
@@ -372,10 +365,7 @@ class OptionsBox(g.Dialog):
 		else:
 			data = None
 		if data:
-			if (g.pygtk_version >= (2, 12, 0)):
-				widget.set_tooltip_text(self.trans(data))
-			else:
-				self.tips.set_tip(widget, self.trans(data))
+			widget.set_tooltip_text(self.trans(data))
 	
 	def get_size_group(self, name):
 		"""Return the GtkSizeGroup for this name, creating one
@@ -383,13 +373,13 @@ class OptionsBox(g.Dialog):
 		try:
 			return self.size_groups[name]
 		except KeyError:
-			group = g.SizeGroup(g.SIZE_GROUP_HORIZONTAL)
+			group = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
 			self.size_groups[name] = group
 		return group
 
 	def make_sized_label(self, label, suffix = ""):
 		"""Create a GtkLabel and add it to the current size-group, if any"""
-		widget = g.Label(label)
+		widget = Gtk.Label(label)
 		if self.current_size_group:
 			widget.set_alignment(1.0, 0.5)
 			group = self.get_size_group(self.current_size_group + suffix)
@@ -403,7 +393,7 @@ class OptionsBox(g.Dialog):
 	# and, if it's for an Option, set self.handlers[option] = (get, set).
 
 	def build_unknown(self, node, label, option = None):
-		return [g.Label("Unknown widget type <%s>" % node.localName)]
+		return [Gtk.Label("Unknown widget type <%s>" % node.localName)]
 
 	def build_label(self, node, label):
 		help_flag = int(node.getAttribute('help') or '0')
@@ -412,21 +402,21 @@ class OptionsBox(g.Dialog):
 			widget.set_alignment(0, 0.5)
 		else:
 			widget.set_alignment(0, 1)
-		widget.set_justify(g.JUSTIFY_LEFT)
+		widget.set_justify(Gtk.Justification.LEFT)
 		widget.set_line_wrap(True)
 
 		if help_flag:
-			hbox = g.HBox(False, 4)
-			image = g.Image()
-			image.set_from_stock(g.STOCK_DIALOG_INFO,
-						g.ICON_SIZE_BUTTON)
-			align = g.Alignment(0, 0, 0, 0)
+			hbox = Gtk.HBox(False, 4)
+			image = Gtk.Image()
+			image.set_from_stock(Gtk.STOCK_DIALOG_INFO,
+						Gtk.IconSize.BUTTON)
+			align = Gtk.Alignment(0, 0, 0, 0)
 
 			align.add(image)
 			hbox.pack_start(align, False, True, 0)
 			hbox.pack_start(widget, False, True, 0)
 
-			spacer = g.EventBox()
+			spacer = Gtk.EventBox()
 			spacer.set_size_request(6, 6)
 
 			return [hbox, spacer]
@@ -434,16 +424,16 @@ class OptionsBox(g.Dialog):
 	
 	def build_spacer(self, node, label):
 		"""<spacer/>"""
-		eb = g.EventBox()
+		eb = Gtk.EventBox()
 		eb.set_size_request(8, 8)
 		return [eb]
 
 	def build_hbox(self, node, label):
 		"""<hbox>...</hbox> to layout child widgets horizontally."""
-		return self.do_box(node, label, g.HBox(False, 4))
+		return self.do_box(node, label, Gtk.HBox(False, 4))
 	def build_vbox(self, node, label):
 		"""<vbox>...</vbox> to layout child widgets vertically."""
-		return self.do_box(node, label, g.VBox(False, 0))
+		return self.do_box(node, label, Gtk.VBox(False, 0))
 		
 	def do_box(self, node, label, widget):
 		"Helper function for building hbox, vbox and frame widgets."
@@ -459,8 +449,8 @@ class OptionsBox(g.Dialog):
 
 	def build_frame(self, node, label):
 		"""<frame label='Title'>...</frame> to group options under a heading."""
-		frame = g.Frame(label)
-		frame.set_shadow_type(g.SHADOW_NONE)
+		frame = Gtk.Frame.new(label)
+		frame.set_shadow_type(Gtk.ShadowType.NONE)
 
 		# Make the label bold...
 		# (bug in pygtk => use set_markup)
@@ -473,7 +463,7 @@ class OptionsBox(g.Dialog):
 		#list.insert(attr)
 		#label_widget.set_attributes(list)
 
-		vbox = g.VBox(False, 4)
+		vbox = Gtk.VBox(False, 4)
 		vbox.set_border_width(12)
 		frame.add(vbox)
 
@@ -483,8 +473,8 @@ class OptionsBox(g.Dialog):
 
 	def do_entry(self, node, label, option):
 		"Helper function for entry and secretentry widgets"
-		box = g.HBox(False, 4)
-		entry = g.Entry()
+		box = Gtk.HBox(False, 4)
+		entry = Gtk.Entry()
 
 		if label:
 			label_wid = self.make_sized_label(label)
@@ -519,7 +509,7 @@ class OptionsBox(g.Dialog):
 			if len(ch)>=1:
 				ch=ch[0]
 			else:
-				ch=u'\0'
+				ch='\0'
 		except:
 			ch='*'
 		
@@ -534,7 +524,7 @@ class OptionsBox(g.Dialog):
 
 		self.may_add_tip(button, node)
 
-		hbox = g.HBox(False, 4)
+		hbox = Gtk.HBox(False, 4)
 		hbox.pack_start(self.make_sized_label(label), False, True, 0)
 		hbox.pack_start(button, False, True, 0)
 
@@ -548,7 +538,7 @@ class OptionsBox(g.Dialog):
 
 		self.may_add_tip(button, node)
 
-		hbox = g.HBox(False, 4)
+		hbox = Gtk.HBox(False, 4)
 		hbox.pack_start(self.make_sized_label(label), False, True, 0)
 		hbox.pack_start(button, False, True, 0)
 
@@ -570,19 +560,19 @@ class OptionsBox(g.Dialog):
 		if unit:
 			unit = self.trans(unit)
 
-		hbox = g.HBox(False, 4)
+		hbox = Gtk.HBox(False, 4)
 		if label:
 			widget = self.make_sized_label(label)
 			widget.set_alignment(1.0, 0.5)
 			hbox.pack_start(widget, False, True, 0)
 
-		spin = g.SpinButton(g.Adjustment(minv, minv, maxv, step))
+		spin = Gtk.SpinButton.new(Gtk.Adjustment.new(minv, minv, maxv, step, 0, 0), 0.0, 0)
 		spin.set_width_chars(max(len(str(minv)), len(str(maxv))))
 		hbox.pack_start(spin, False, True, 0)
 		self.may_add_tip(spin, node)
 
 		if unit:
-			hbox.pack_start(g.Label(unit), False, True, 0)
+			hbox.pack_start(Gtk.Label(unit), False, True, 0)
 
 		self.handlers[option] = (
 			lambda: str(spin.get_value()),
@@ -595,17 +585,16 @@ class OptionsBox(g.Dialog):
 	def build_filechooser(self, node, label, option):
 		"""<filechooser name='...' label='...'/>Tooltip</filechooser>.
 		Lets the user choose a file (using a GtkFileChooser or by drag-and-drop).
-		Note: requires GTK >= 2.6
 		"""
-		filebutton = g.FileChooserButton(label)
-		eb = g.EventBox()
+		filebutton = Gtk.FileChooserButton(label)
+		eb = Gtk.EventBox()
 		eb.add(filebutton)
 		self.may_add_tip(eb, node)
 
-		clearbutton = g.Button(stock = g.STOCK_CLEAR)
-		hbox = g.HBox(False, 4)
+		clearbutton = Gtk.Button(stock = Gtk.STOCK_CLEAR)
+		hbox = Gtk.HBox(False, 4)
 		if label:
-			hbox.pack_start(g.Label(label + ":"), False, True, 0)
+			hbox.pack_start(Gtk.Label(label + ":"), False, True, 0)
 		hbox.pack_start(eb, True, True, 0)
 		hbox.pack_start(clearbutton, False, True, 0)
 
@@ -630,17 +619,10 @@ class OptionsBox(g.Dialog):
 
 		values = []
 
-		has_combo = hasattr(g, 'combo_box_new_text')
-		if has_combo:
-			option_menu = g.combo_box_new_text()
-			option_menu.get_history = option_menu.get_active
-			option_menu.set_history = option_menu.set_active
-		else:
-			option_menu = g.OptionMenu()
-			menu = g.Menu()
+		option_menu = Gtk.ComboBoxText.new()
 
 		if label:
-			box = g.HBox(False, 4)
+			box = Gtk.HBox(False, 4)
 			label_wid = self.make_sized_label(label)
 			label_wid.set_alignment(1.0, 0.5)
 			box.pack_start(label_wid, False, True, 0)
@@ -655,26 +637,20 @@ class OptionsBox(g.Dialog):
 			value = item.getAttribute('value')
 			label_item = self.trans(item.getAttribute('label')) or value
 
-			if has_combo:
-				option_menu.append_text(label_item)
-			else:
-				menu.append(g.MenuItem(label_item))
+			option_menu.append_text(label_item)
 
 			values.append(value)
 
-		if not has_combo:
-			menu.show_all()
-			option_menu.set_menu(menu)
 		option_menu.connect('changed', lambda e: self.check_widget(option))
 
 		def get():
-			return values[option_menu.get_history()]
+			return values[option_menu.get_active()]
 
 		def set():
 			try:
-				option_menu.set_history(values.index(option.value))
+				option_menu.set_active(values.index(option.value))
 			except ValueError:
-				print "Value '%s' not in combo list" % option.value
+				print("Value '%s' not in combo list" % option.value)
 
 		self.handlers[option] = (get, set)
 
@@ -692,7 +668,8 @@ class OptionsBox(g.Dialog):
 		button = None
 		for radio in node.getElementsByTagName('radio'):
 			label = self.trans(radio.getAttribute('label'))
-			button = g.RadioButton(button, label)
+			button = Gtk.RadioButton.new_from_widget(button)
+			button.set_label(label)
 			self.may_add_tip(button, radio)
 			radios.append(button)
 			values.append(radio.getAttribute('value'))
@@ -702,7 +679,7 @@ class OptionsBox(g.Dialog):
 			try:
 				i = values.index(option.value)
 			except:
-				print "Value '%s' not in radio group!" % option.value
+				print("Value '%s' not in radio group!" % option.value)
 				i = 0
 			radios[i].set_active(True)
 		def get():
@@ -717,7 +694,7 @@ class OptionsBox(g.Dialog):
 	
 	def build_toggle(self, node, label, option):
 		"<toggle name='...' label='...'>Tooltip</toggle>"
-		toggle = g.CheckButton(label)
+		toggle = Gtk.CheckButton(label)
 		self.may_add_tip(toggle, node)
 
 		self.handlers[option] = (
@@ -735,7 +712,7 @@ class OptionsBox(g.Dialog):
 		showvalue = int(node.getAttribute('showvalue') or "0")
 		end = node.getAttribute('end')
 
-		hbox = g.HBox(False, 4)
+		hbox = Gtk.HBox(False, 4)
 		if label:
 			widget = self.make_sized_label(label)
 			hbox.pack_start(widget, False, True, 0)
@@ -745,8 +722,8 @@ class OptionsBox(g.Dialog):
 							suffix = '-unit'),
 					False, True, 0)
 		
-		adj = g.Adjustment(minv, minv, maxv, 1, 10, 0)
-		slide = g.HScale(adj)
+		adj = Gtk.Adjustment(minv, minv, maxv, 1, 10, 0)
+		slide = Gtk.HScale(adj)
 			
 		if fixed:
 			slide.set_size_request(adj.upper, 24)
@@ -754,7 +731,7 @@ class OptionsBox(g.Dialog):
 			slide.set_size_request(120, -1)
 		if showvalue:
 			slide.set_draw_value(True)
-			slide.set_value_pos(g.POS_LEFT)
+			slide.set_value_pos(Gtk.PositionType.LEFT)
 			slide.set_digits(0)
 		else:
 			slide.set_draw_value(False)
@@ -775,32 +752,32 @@ class OptionsBox(g.Dialog):
 		"""<fixedlist name='...' label='...' selection='single|none|multiple'>Tooltip<listitem label='...'/><listitem label='...'/></fixedlist>"""
 		select=str_attr(node, 'selection', 'single')
     
-		cont=g.VBox(False, 4)
+		cont=Gtk.VBox(False, 4)
 		cont._rox_lib_expand=True
     
 		if label:
-			label_wid = g.Label(label)
+			label_wid = Gtk.Label(label)
 			cont.pack_start(label_wid, False, True, 0)
 			label_wid.show()
                         
-		swin = g.ScrolledWindow()
+		swin = Gtk.ScrolledWindow()
 		swin.set_border_width(4)
-		swin.set_policy(g.POLICY_NEVER, g.POLICY_ALWAYS)
-		swin.set_shadow_type(g.SHADOW_IN)
+		swin.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.ALWAYS)
+		swin.set_shadow_type(Gtk.ShadowType.IN)
 		#swin.set_size_request(-1, 128)
 		cont.pack_start(swin, True, True, 0)
     
-		model = g.ListStore(str)
-		view = g.TreeView(model)
+		model = Gtk.ListStore(str)
+		view = Gtk.TreeView(model)
 		swin.add(view)
 
 		selection=view.get_selection()
 		if select=='none':
-			selection.set_mode(g.SELECTION_NONE)
+			selection.set_mode(Gtk.SelectionMode.NONE)
 		elif select=='multiple':
-			selection.set_mode(g.SELECTION_MULTIPLE)
+			selection.set_mode(Gtk.SelectionMode.MULTIPLE)
 		else:
-			selection.set_mode(g.SELECTION_SINGLE)
+			selection.set_mode(Gtk.SelectionMode.SINGLE)
 			select='single'
 
 		def sel_changed(sel, box):
@@ -808,8 +785,8 @@ class OptionsBox(g.Dialog):
         
 		selection.connect('changed', sel_changed, self)
 
-		cell = g.CellRendererText()
-		column = g.TreeViewColumn('', cell, text = 0)
+		cell = Gtk.CellRendererText()
+		column = Gtk.TreeViewColumn('', cell, text = 0)
 		view.append_column(column)
 
 		for item in node.getElementsByTagName('listitem'):
@@ -824,9 +801,9 @@ class OptionsBox(g.Dialog):
 
 		def get():
 			mode=view.get_selection().get_mode()
-			if mode==int(g.SELECTION_NONE):
+			if mode==int(Gtk.SelectionMode.NONE):
 				return []
-			elif mode==int(g.SELECTION_SINGLE):
+			elif mode==int(Gtk.SelectionMode.SINGLE):
 				model, iter=view.get_selection().get_selected()
 				return [str(model.get_value(iter, 0))]
         
@@ -858,32 +835,32 @@ class OptionsBox(g.Dialog):
 		extend=bool_attr(node, 'extend')
 		select=str_attr(node, 'selection', 'single')
 		
-		cont=rox.g.VBox(False, 4)
+		cont=Gtk.VBox(False, 4)
 		cont._rox_lib_expand=True
     
 		if label:
-			label_wid = rox.g.Label(label)
+			label_wid = Gtk.Label(label)
 			cont.pack_start(label_wid, False, True, 0)
 			label_wid.show()
                         
-		swin = g.ScrolledWindow()
+		swin = Gtk.ScrolledWindow()
 		swin.set_border_width(4)
-		swin.set_policy(g.POLICY_NEVER, g.POLICY_ALWAYS)
-		swin.set_shadow_type(g.SHADOW_IN)
+		swin.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.ALWAYS)
+		swin.set_shadow_type(Gtk.ShadowType.IN)
 		#swin.set_size_request(-1, 128)
 		cont.pack_start(swin, True, True, 0)
     
-		model = g.ListStore(str, str)
-		view = g.TreeView(model)
+		model = Gtk.ListStore(str, str)
+		view = Gtk.TreeView(model)
 		swin.add(view)
 
 		selection=view.get_selection()
 		if select=='none':
-			selection.set_mode(g.SELECTION_NONE)
+			selection.set_mode(Gtk.SelectionMode.NONE)
 		elif select=='multiple':
-			selection.set_mode(g.SELECTION_MULTIPLE)
+			selection.set_mode(Gtk.SelectionMode.MULTIPLE)
 		else:
-			selection.set_mode(g.SELECTION_SINGLE)
+			selection.set_mode(Gtk.SelectionMode.SINGLE)
 			select='single'
 
 		if reorder:
@@ -896,15 +873,15 @@ class OptionsBox(g.Dialog):
 			model.set(iter, col, new_text)
 			self.check_widget(option)
 			
-		cell = g.CellRendererText()
-		column = g.TreeViewColumn('Variable', cell, text = 0)
+		cell = Gtk.CellRendererText()
+		column = Gtk.TreeViewColumn('Variable', cell, text = 0)
 		view.append_column(column)
 		if edit:
 			cell.set_property('editable', True)
 			cell.connect('edited', cell_edited, 0)
 
-		cell = g.CellRendererText()
-		column = g.TreeViewColumn('Value', cell, text = 1)
+		cell = Gtk.CellRendererText()
+		column = Gtk.TreeViewColumn('Value', cell, text = 1)
 		view.append_column(column)
 		if edit:
 			cell.set_property('editable', True)
@@ -917,10 +894,10 @@ class OptionsBox(g.Dialog):
 				view.get_selection().select_iter(iter)
 			box.check_widget(option)
 		if extend:
-			hbox=g.HBox(False, 2)
+			hbox=Gtk.HBox(False, 2)
 			cont.pack_start(hbox, False)
         
-			but=g.Button(stock=g.STOCK_ADD)
+			but=Gtk.Button(stock=Gtk.STOCK_ADD)
 			but.connect('clicked', add, self)
 			hbox.pack_start(but, False)            
 
@@ -949,14 +926,14 @@ class OptionsBox(g.Dialog):
 		return [cont]
 
 	
-class FontButton(g.Button):
+class FontButton(Gtk.Button):
 	"""A button that opens a GtkFontSelectionDialog"""
 	def __init__(self, option_box, option, title):
-		g.Button.__init__(self)
+		Gtk.Button.__init__(self)
 		self.option_box = option_box
 		self.option = option
 		self.title = title
-		self.label = g.Label('<font>')
+		self.label = Gtk.Label('<font>')
 		self.add(self.label)
 		self.dialog = None
 		self.connect('clicked', self.clicked)
@@ -977,26 +954,26 @@ class FontButton(g.Button):
 			self.dialog = None
 
 		def response(dialog, resp):
-			if resp != int(g.RESPONSE_OK):
+			if resp != int(Gtk.ResponseType.OK):
 				dialog.destroy()
 				return
 			self.label.set_text(dialog.get_font_name())
 			dialog.destroy()
 			self.option_box.check_widget(self.option)
 
-		self.dialog = g.FontSelectionDialog(self.title)
-		self.dialog.set_position(g.WIN_POS_MOUSE)
+		self.dialog = Gtk.FontSelectionDialog(self.title)
+		self.dialog.set_position(Gtk.WindowPosition.MOUSE)
 		self.dialog.connect('destroy', closed)
 		self.dialog.connect('response', response)
 
 		self.dialog.set_font_name(self.get())
 		self.dialog.show()
 
-class ColourButton(g.Button):
+class ColourButton(Gtk.Button):
 	"""A button that opens a GtkColorSelectionDialog"""
 	def __init__(self, option_box, option, title):
-		g.Button.__init__(self)
-		self.c_box = g.EventBox()
+		Gtk.Button.__init__(self)
+		self.c_box = Gtk.EventBox()
 		self.add(self.c_box)
 		self.option_box = option_box
 		self.option = option
@@ -1004,24 +981,28 @@ class ColourButton(g.Button):
 		self.set_size_request(64, 14)
 		self.dialog = None
 		self.connect('clicked', self.clicked)
-		self.connect('expose-event', self.expose)
+		self.connect('draw', self.draw)
 
-	def expose(self, widget, event):
+	def draw(self, widget, cr):
+		pass
+		# TODO: replace draw_rectangle()
 		# Some themes draw images and stuff here, so we have to
 		# override it manually.
-		self.c_box.window.draw_rectangle(
-			self.c_box.style.bg_gc[g.STATE_NORMAL], True,
-			0, 0,
-			self.c_box.allocation.width,
-			self.c_box.allocation.height)
+		#self.c_box.get_window().draw_rectangle(
+		#	self.c_box.style.bg_gc[Gtk.StateType.NORMAL], True,
+		#	0, 0,
+		#	self.c_box.allocation.width,
+		#	self.c_box.allocation.height)
 
 	def set(self, c = None):
 		if c is None:
-			c = g.gdk.color_parse(self.option.value)
-		self.c_box.modify_bg(g.STATE_NORMAL, c)
+			c = Gdk.color_parse(self.option.value)
+		self.color = c
+		self.c_box.modify_bg(Gtk.StateType.NORMAL, c)
 
 	def get(self):
-		c = self.c_box.get_style().bg[g.STATE_NORMAL]
+		#c = self.c_box.get_style().bg[Gtk.StateType.NORMAL]
+		c = self.color
 		return '#%04x%04x%04x' % (c.red, c.green, c.blue)
 
 	def clicked(self, button):
@@ -1032,20 +1013,21 @@ class ColourButton(g.Button):
 			self.dialog = None
 
 		def response(dialog, resp):
-			if resp != int(g.RESPONSE_OK):
+			if resp != int(Gtk.ResponseType.OK):
 				dialog.destroy()
 				return
-			self.set(dialog.colorsel.get_current_color())
+			self.set(dialog.get_color_selection().get_current_color())
 			dialog.destroy()
 			self.option_box.check_widget(self.option)
 
-		self.dialog = g.ColorSelectionDialog(self.title)
-		self.dialog.set_position(g.WIN_POS_MOUSE)
+		self.dialog = Gtk.ColorSelectionDialog(self.title)
+		self.dialog.set_position(Gtk.WindowPosition.MOUSE)
 		self.dialog.connect('destroy', closed)
 		self.dialog.connect('response', response)
-
-		c = self.c_box.get_style().bg[g.STATE_NORMAL]
-		self.dialog.colorsel.set_current_color(c)
+		
+		# FIXME
+		#c = self.c_box.get_style().bg[Gtk.StateType.NORMAL]
+		self.dialog.get_color_selection().set_current_color(self.color)
 		self.dialog.show()
 		
 # Add your own options here... (maps element localName to build function)

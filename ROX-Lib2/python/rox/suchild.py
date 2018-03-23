@@ -2,7 +2,7 @@
 import os, sys
 import shutil
 
-import proxy
+from . import proxy
 
 read_watches = []
 write_watches = []
@@ -58,7 +58,7 @@ class Slave:
 		return os.unlink(path)
 	
 	def open(self, path, mode = 'r'):
-		stream = file(path, mode)
+		stream = open(path, mode)
 		streams[id(stream)] = stream
 		return id(stream)
 	
@@ -81,7 +81,7 @@ class Slave:
 if __name__ == '__main__':
 	from select import select
 
-	to_parent, from_parent = map(int, sys.argv[1:])
+	to_parent, from_parent = list(map(int, sys.argv[1:]))
 
 	sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0]))))
 

@@ -1,9 +1,9 @@
 """This is an internal module. Do not use it. GTK 2.4 will contain functions
 that replace those defined here."""
-from __future__ import generators
+
 
 import os
-import basedir
+from . import basedir
 import rox
 
 theme_dirs = [os.path.join(os.environ.get('HOME', '/'), '.icons')] + \
@@ -18,7 +18,7 @@ def _ini_parser(stream):
 		if line.startswith("[") and line.endswith("]"):
 			section = line[1:-1]
 		elif section:
-			key, value = map(str.strip, line.split('=', 1))
+			key, value = list(map(str.strip, line.split('=', 1)))
 			yield section, key, value
 		else:
 			raise Exception("Error in file '%s': Expected '[SECTION]' but got '%s'" %
@@ -29,7 +29,7 @@ class Index:
 	def __init__(self, dir):
 		self.dir = dir
 		self.sections = {}
-		for section, key, value in _ini_parser(file(os.path.join(dir, "index.theme"))):
+		for section, key, value in _ini_parser(open(os.path.join(dir, "index.theme"))):
 			try:
 				self.sections[section][key] = value
 			except KeyError:

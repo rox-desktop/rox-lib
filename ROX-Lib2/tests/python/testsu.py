@@ -1,5 +1,5 @@
-#!/usr/bin/env python2.6
-from __future__ import generators
+#!/usr/bin/env python3
+
 import unittest
 import sys, os
 from os.path import dirname, abspath, join
@@ -7,7 +7,9 @@ from os.path import dirname, abspath, join
 rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
 sys.path.insert(0, join(rox_lib, 'python'))
 
-from rox import su, tasks, g
+from gi.repository import Gtk
+
+from rox import su, tasks
 
 assert os.getuid() != 0, "Can't run tests as root"
 
@@ -46,10 +48,10 @@ class TestSU(unittest.TestCase):
 			assert response.result == os.getuid()
 
 			root.finish()
-			g.main_quit()
+			Gtk.main_quit()
 
 		tasks.Task(run())
-		g.main()
+		Gtk.main()
 
 suite = unittest.makeSuite(TestSU)
 if __name__ == '__main__':

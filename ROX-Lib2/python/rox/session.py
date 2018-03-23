@@ -111,15 +111,15 @@ if bus and not running():
 
 # Test routine
 if __name__=='__main__':
-    print 'Session running? %s' % running()
+    print('Session running? %s' % running())
     settings=get_settings()
 
     def test_get(name):
         try:
             v=settings.GetSetting(name)
-            print '%s = %s' % (name, v)
-        except Exception, exc:
-            print "Can't get %s: %s" % (name, exc)
+            print('%s = %s' % (name, v))
+        except Exception as exc:
+            print("Can't get %s: %s" % (name, exc))
 
     test_get('Gtk/KeyThemeName')
     test_get('Net/ThemeName')

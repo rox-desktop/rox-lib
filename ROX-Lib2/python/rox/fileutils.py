@@ -14,33 +14,36 @@ def report_patherror(message, path):
 	"""Display a <Cancel>/<Retry>/<Examine> dialog.
 	This will raise an OSError exception if the user selects Cancel, or
 	will return successfully if the user chooses to retry."""
-	from rox import g, filer, toplevel_ref, toplevel_unref, ButtonMixed
+	from rox import filer, toplevel_ref, toplevel_unref, ButtonMixed
+
+        from gi.repository import Gtk
+
 	toplevel_ref()
-	box = g.MessageDialog(None, 0, g.MESSAGE_QUESTION,
-				g.BUTTONS_CANCEL, message)
+	box = g.MessageDialog(None, 0, Gtk.MessageType.QUESTION,
+				Gtk.ButtonsType.CANCEL, message)
 
-	button = ButtonMixed(g.STOCK_REDO, _('Retry'))
-	button.set_flags(g.CAN_DEFAULT)
+	button = ButtonMixed(Gtk.STOCK_REDO, _('Retry'))
+        button.set_can_default(True)
 	button.show()
-	box.add_action_widget(button, g.RESPONSE_OK)
+	box.add_action_widget(button, Gtk.ResponseType.OK)
 
-	button = ButtonMixed(g.STOCK_JUMP_TO, _('Examine'))
-	button.set_flags(g.CAN_DEFAULT)
+	button = ButtonMixed(Gtk.STOCK_JUMP_TO, _('Examine'))
+        button.set_can_default(True)
 	button.show()
-	box.add_action_widget(button, g.RESPONSE_APPLY)
+	box.add_action_widget(button, Gtk.ResponseType.APPLY)
 
-	box.set_position(g.WIN_POS_CENTER)
+	box.set_position(Gtk.WindowPosition.CENTER)
 	box.set_title(_('Error:'))
-	box.set_default_response(g.RESPONSE_APPLY)
+	box.set_default_response(Gtk.ResponseType.APPLY)
 	while 1:
 		resp = box.run()
-		if resp != int(g.RESPONSE_APPLY): break
+		if resp != int(Gtk.ResponseType.APPLY): break
 		filerpath = os.path.normpath(path)
 		filer.show_file(filerpath)
 	box.destroy()
 	toplevel_unref()
-	if resp != int(g.RESPONSE_OK):
-		raise OSError, message
+	if resp != int(Gtk.ResponseType.OK):
+		raise OSError(message)
 
 def _makedirs_recursive(path, mode):
 	"""Recursive part of makedirs. Calls itself to ensure head
@@ -61,11 +64,11 @@ def _makedirs_recursive(path, mode):
 		try:
 			os.mkdir(path, mode)
 			return
-		except OSError, msg:
+		except OSError as msg:
 			report_patherror(("%s.\n" + _("Could not create directory `%s'.\n")) \
 				% (msg[1], path), path)
 
-def makedirs(path, mode=0777):
+def makedirs(path, mode=0o777):
 	"""Make a directory at the specified path, creating intermediate
 	directories if necessary. No error if 'path' is already a directory.
 

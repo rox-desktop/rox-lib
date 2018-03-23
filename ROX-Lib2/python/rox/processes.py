@@ -10,7 +10,7 @@ run other commands. It also, optionally, allows a stream of data to be fed
 in to the process's standard input, and can collect the output to another
 stream. Typical usage:
 
-rox.processes.PipeThroughCommand(('echo', 'hello'), None, file('output', 'w')).wait()
+rox.processes.PipeThroughCommand(('echo', 'hello'), None, open('output', 'w')).wait()
 
 This creates a new process, and execs 'echo hello' in it with output sent
 to the file 'output' (any file-like object can be used). The wait() runs a
@@ -24,10 +24,9 @@ pipes, wildcards and so on. Be very careful of escaping in this case (think
 about filenames containing spaces, quotes, apostrophes, etc).
 """
 
-from rox import g
-import gobject
+from gi.repository import Gtk, Gdk, GObject, GLib
 
-import os, sys, fcntl
+import os, sys, fcntl, io
 import signal
 
 def _keep_on_exec(fd): fcntl.fcntl(fd, fcntl.F_SETFD, 0)
@@ -97,13 +96,9 @@ class Process:
 		os.close(stderr_w)
 		self.err_from_child = stderr_r
 
-		if not hasattr(gobject, 'io_add_watch'):
-			self.tag = g.input_add_full(self.err_from_child,
-					g.gdk.INPUT_READ, self._got_errors)
-		else:
-			self.tag = gobject.io_add_watch(self.err_from_child,
-					gobject.IO_IN | gobject.IO_HUP | gobject.IO_ERR,
-					self._got_errors)
+		self.tag = GLib.io_add_watch(self.err_from_child, 0,
+				GLib.IO_IN | GLib.IO_HUP | GLib.IO_ERR,
+				self._got_errors)
 
 		self.parent_post_fork()
 	
@@ -162,7 +157,7 @@ class Process:
 			return True
 
 		os.close(self.err_from_child)
-		gobject.source_remove(self.tag)
+		GLib.source_remove(self.tag)
 		del self.tag
 
 		pid, status = os.waitpid(self.child, 0)
@@ -188,12 +183,15 @@ class PipeThroughCommand(Process):
 		'command' may be a string (passed to os.system) or a list (os.execvp).
 		"""
 
-		if src is not None and not hasattr(src, 'fileno'):
+		if src is not None:
 			import shutil
-			new = _Tmp()
-			src.seek(0)
-			shutil.copyfileobj(src, new)
-			src = new
+			try:
+				src.fileno()
+			except io.UnsupportedOperation:
+				new = _Tmp()
+				src.seek(0)
+				shutil.copyfileobj(src, new)
+				src = new
 
 		Process.__init__(self)
 
@@ -204,7 +202,7 @@ class PipeThroughCommand(Process):
 
 		self.callback = None
 		self.killed = 0
-		self.errors = ""
+		self.errors = b""
 
 		self.done = False	# bool or exception
 		self.waiting = False
@@ -215,18 +213,23 @@ class PipeThroughCommand(Process):
 		assert self.tmp_stream is None
 
 		if self.dst:
-			if hasattr(self.dst, 'fileno'):
-				self.dst.flush()
+			try:
+				self.dst.fileno()
 				self.tmp_stream = self.dst
-			else:
-				self.tmp_stream = _Tmp()
+			except io.UnsupportedOperation:
+				mode = (
+					"w+"
+					if isinstance(self.dst, io.TextIOBase)
+					else "w+b"
+				)
+				self.tmp_stream = _Tmp(mode)
 
 	def start_error(self):
 		self.tmp_stream = None
 
 	def child_run(self):
 		"""Assigns file descriptors and calls child_run_with_streams."""
-		src = self.src or file('/dev/null', 'r')
+		src = self.src or open('/dev/null', 'r')
 
 		os.dup2(src.fileno(), 0)
 		_keep_on_exec(0)
@@ -275,7 +278,7 @@ class PipeThroughCommand(Process):
 			try:
 				self.check_errors(errors, status)
 				self.done = True
-			except Exception, e:
+			except Exception as e:
 				self.done = e
 		else:
 			self.done = True
@@ -294,7 +297,7 @@ class PipeThroughCommand(Process):
 		if self.waiting:
 			assert self.done
 			self.waiting = False
-			g.main_quit()
+			Gtk.main_quit()
 	
 	def wait(self):
 		"""Run a recursive mainloop until the command terminates.
@@ -303,7 +306,7 @@ class PipeThroughCommand(Process):
 			self.start()
 		self.waiting = True
 		while not self.done:
-			g.main()
+			Gtk.main()
 		if self.done is not True:
 			raise self.done
 	
@@ -314,44 +317,31 @@ class PipeThroughCommand(Process):
 def _Tmp(mode = 'w+b', suffix = '-tmp'):
 	"Create a seekable, randomly named temp file (deleted automatically after use)."
 	import tempfile
-	try:
-		return tempfile.NamedTemporaryFile(mode, suffix = suffix)
-	except:
-		# python2.2 doesn't have NamedTemporaryFile...
-		pass
-
-	import random
-	name = tempfile.mktemp(`random.randint(1, 1000000)` + suffix)
-
-	fd = os.open(name, os.O_RDWR|os.O_CREAT|os.O_EXCL, 0700)
-	tmp = tempfile.TemporaryFileWrapper(os.fdopen(fd, mode), name)
-	tmp.name = name
-	return tmp
-
+	return tempfile.NamedTemporaryFile(mode, suffix = suffix)
 	
 def _test():
 	"Check that this module works."
 
 	def show():
 		error = sys.exc_info()[1]
-		print "(error reported was '%s')" % error
+		print("(error reported was '%s')" % error)
 	
 	def pipe_through_command(command, src, dst): PipeThroughCommand(command, src, dst).wait()
 
-	print "Test _Tmp()..."
+	print("Test _Tmp()...")
 	
 	test_file = _Tmp()
 	test_file.write('Hello')
-	print >>test_file, ' ',
+	print(' ', end=' ', file=test_file)
 	test_file.flush()
 	os.write(test_file.fileno(), 'World')
 
 	test_file.seek(0)
 	assert test_file.read() == 'Hello World'
 
-	print "Test pipe_through_command():"
+	print("Test pipe_through_command():")
 
-	print "Try an invalid command..."
+	print("Try an invalid command...")
 	try:
 		pipe_through_command('bad_command_1234', None, None)
 		assert 0
@@ -360,33 +350,33 @@ def _test():
 	else:
 		assert 0
 
-	print "Try a valid command..."
+	print("Try a valid command...")
 	pipe_through_command('exit 0', None, None)
 	
-	print "Writing to a non-fileno stream..."
-	from cStringIO import StringIO
+	print("Writing to a non-fileno stream...")
+	from io import StringIO
 	a = StringIO()
 	pipe_through_command('echo Hello', None, a)
 	assert a.getvalue() == 'Hello\n'
 
-	print "Try with args..."
+	print("Try with args...")
 	a = StringIO()
 	pipe_through_command(('echo', 'Hello'), None, a)
 	assert a.getvalue() == 'Hello\n'
 
-	print "Reading from a stream to a StringIO..."
+	print("Reading from a stream to a StringIO...")
 	test_file.seek(1)			# (ignored)
 	pipe_through_command('cat', test_file, a)
 	assert a.getvalue() == 'Hello\nHello World'
 
-	print "Writing to a fileno stream..."
+	print("Writing to a fileno stream...")
 	test_file.seek(0)
 	test_file.truncate(0)
 	pipe_through_command('echo Foo', None, test_file)
 	test_file.seek(0)
 	assert test_file.read() == 'Foo\n'
 
-	print "Read and write fileno streams..."
+	print("Read and write fileno streams...")
 	src = _Tmp()
 	src.write('123')
 	src.seek(0)
@@ -396,7 +386,7 @@ def _test():
 	test_file.seek(0)
 	assert test_file.read() == '123'
 
-	print "Detect non-zero exit value..."
+	print("Detect non-zero exit value...")
 	try:
 		pipe_through_command('exit 1', None, None)
 	except ChildError:
@@ -404,7 +394,7 @@ def _test():
 	else:
 		assert 0
 	
-	print "Detect writes to stderr..."
+	print("Detect writes to stderr...")
 	try:
 		pipe_through_command('echo one >&2; sleep 2; echo two >&2', None, None)
 	except ChildError:
@@ -412,24 +402,24 @@ def _test():
 	else:
 		assert 0
 
-	print "Check tmp file is deleted..."
+	print("Check tmp file is deleted...")
 	name = test_file.name
 	assert os.path.exists(name)
 	test_file = None
 	assert not os.path.exists(name)
 
-	print "Check we can kill a runaway proces..."
+	print("Check we can kill a runaway proces...")
 	ptc = PipeThroughCommand('sleep 100; exit 1', None, None)
 	def stop():
 		ptc.kill()
-	g.timeout_add(2000, stop)
+	GLib.timeout_add(2000, stop)
 	try:
 		ptc.wait()
 		assert 0
 	except ChildKilled:
 		pass
 	
-	print "All tests passed!"
+	print("All tests passed!")
 
 if __name__ == '__main__':
 	_test()

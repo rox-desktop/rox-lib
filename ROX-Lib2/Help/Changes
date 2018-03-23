@@ -5,6 +5,13 @@
 
 Note: for a detailed changelog use the GIT history.
 
+Release 3.0.0 (unreleased):
+
+General:
+
+- Ported to Gtk3.
+- Ported to Python 3.
+
 
 Release 2.0.7 (unreleased):
 

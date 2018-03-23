@@ -4,15 +4,15 @@ python-gamin or python-fam must be installed."""
 import os
 from collections import defaultdict, namedtuple
 
-from rox import g
+from gi.repository import GLib
 
 
 try:
-    import gio
+    from gi.repository import Gio
     gamin = None
     _fam = None
 except ImportError:
-    gio = None
+    Gio = None
     try:
         import gamin
         _fam = None
@@ -28,11 +28,11 @@ class FileMonitorNotAvailable(Exception):
     """Raised when neither gamin nor fam backends are available."""
 
 
-if gio:
+if Gio:
     _gio_file_monitors = {}
-    EVENT_CREATED = gio.FILE_MONITOR_EVENT_CREATED
-    EVENT_DELETED = gio.FILE_MONITOR_EVENT_DELETED
-    EVENT_CHANGED = gio.FILE_MONITOR_EVENT_CHANGED
+    EVENT_CREATED = Gio.FileMonitorEvent.CREATED
+    EVENT_DELETED = Gio.FileMonitorEvent.DELETED
+    EVENT_CHANGED = Gio.FileMonitorEvent.CHANGED
 elif gamin:
     _monitor = gamin.WatchMonitor()
     EVENT_CREATED = gamin.GAMCreated
@@ -91,7 +91,7 @@ def _event(filename, event, path):
 
 def is_available():
     """Check if the gio, gamin or fam backend is available."""
-    return bool(gio or gamin or _fam)
+    return bool(Gio or gamin or _fam)
 
 
 def nop(*args, **kwargs):
@@ -123,10 +123,13 @@ def watch(watched_path, on_file_deleted=nop, on_file_changed=nop,
 
     FileMonitorNotAvailable is raised when neither gamin nor fam backends
         are available."""
-    if gio:
+    if Gio:
         if watched_path not in _gio_file_monitors:
-            file = gio.File(path=watched_path)
-            _gio_file_monitors[watched_path] = file_monitor = file.monitor()
+            vfs = Gio.Vfs.get_default()
+            file = vfs.get_file_for_path(watched_path)
+            _gio_file_monitors[watched_path] = file_monitor = (
+                file.monitor(0, None)
+            )
             file_monitor.connect("changed", _gio_file_changed)
     elif gamin:
         if os.path.isdir(watched_path):
@@ -158,7 +161,7 @@ def unwatch(handler):
     if handlers:
         return
     del _handlers[handler.watched_path]
-    if gio:
+    if Gio:
         _gio_file_monitors.pop(handler.watched_path).cancel()
     elif gamin:
         _monitor.stop_watch(handler.watched_path)
@@ -184,4 +187,4 @@ def _watch():
     return True
 
 
-g.timeout_add(1000, _watch)
+GLib.timeout_add(1000, _watch)

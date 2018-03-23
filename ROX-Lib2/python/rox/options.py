@@ -23,7 +23,7 @@ See OptionsBox for editing options. Do not change the value of options
 yourself.
 """
 
-from __future__ import generators
+
 import os
 
 import rox
@@ -175,7 +175,7 @@ class OptionGroup:
 						v.append(data(s))
 						self.pending[name]=v
 				else:
-					print "Warning: Non Option element", o
+					print("Warning: Non Option element", o)
 		except:
 			rox.report_exception()
 	
@@ -232,15 +232,16 @@ class OptionGroup:
 		if not self.too_late_for_registrations:
 			self.too_late_for_registrations = 1
 			if self.pending and warn_unused:
-				print "Warning: Some options loaded but unused:"
-				for (key, value) in self.pending.iteritems():
-					print "%s=%s" % (key, value)
+				print("Warning: Some options loaded but unused:")
+				for (key, value) in self.pending.items():
+					print("%s=%s" % (key, value))
 			for o in self:
 				if o.value is None:
 					o._set(o.default_value)
-		map(apply, self.callbacks)
+		for cb in self.callbacks:
+			cb()
 		for option in self:
 			option.has_changed = 0
 	
 	def __iter__(self):
-		return self.options.itervalues()
+		return iter(self.options.values())

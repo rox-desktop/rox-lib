@@ -15,6 +15,8 @@ import os
 import stat
 import fnmatch
 
+from gi.repository import Gdk, GdkPixbuf
+
 import rox
 import rox.choices
 from rox import i18n, _, basedir, xattr
@@ -47,6 +49,9 @@ def lookup(media, subtype = None):
 	if (media, subtype) not in types:
 		types[(media, subtype)] = MIMEtype(media, subtype)
 	return types[(media, subtype)]
+
+class MIMEerror(Exception):
+	pass
 
 class MIMEtype:
 	"""Type holding data about a MIME type"""
@@ -100,12 +105,12 @@ class MIMEtype:
 			return base
 
 		h=int(base.get_height()*float(size)/base.get_width())
-		return base.scale_simple(size, h, rox.g.gdk.INTERP_BILINEAR)
+		return base.scale_simple(size, h, Gdk.INTERP_BILINEAR)
 
 def image_for_type(type, size=48, flags=0):
 	'''Search XDG_CONFIG or icon theme for a suitable icon. Returns a
 	pixbuf, or None.'''
-	from icon_theme import users_theme
+	from .icon_theme import users_theme
 	
 	media, subtype = type.split('/', 1)
 
@@ -118,7 +123,7 @@ def image_for_type(type, size=48, flags=0):
 		try:
 			path=users_theme.lookup_icon(icon_name, size, flags)
 		except:
-			print "Error loading MIME icon"
+			print("Error loading MIME icon")
 
 	if not path:
 		icon_name = 'mime-%s:%s' % (media, subtype)
@@ -130,7 +135,7 @@ def image_for_type(type, size=48, flags=0):
 				path = users_theme.lookup_icon(icon_name, size)
 
 		except:
-			print "Error loading MIME icon"
+			print("Error loading MIME icon")
 
 	if not path:
 		path = basedir.load_first_config('rox.sourceforge.net',
@@ -141,15 +146,12 @@ def image_for_type(type, size=48, flags=0):
 		try:
 			path=users_theme.lookup_icon(icon_name, size, flags)
 		except:
-			print "Error loading MIME icon"
+			print("Error loading MIME icon")
 
 	if path:
-		if hasattr(rox.g.gdk, 'pixbuf_new_from_file_at_size'):
-			return rox.g.gdk.pixbuf_new_from_file_at_size(path,
-								      size,
-								      size)
-		else:
-			return rox.g.gdk.pixbuf_new_from_file(path)
+		return GdkPixbuf.Pixbuf.new_from_file_at_size(path,
+							      size,
+							      size)
 	else:
 		return None
 
@@ -216,7 +218,7 @@ class MagicRule:
 			self.range=1
 
 		if c!='\n':
-			raise 'Malformed MIME magic line'
+			raise MIMEerror('Malformed MIME magic line')
 
 	def getLength(self):
 		return self.start+self.lenvalue+self.range
@@ -231,7 +233,7 @@ class MagicRule:
 		
 	def match(self, buffer):
 		if self.match0(buffer):
-			if self.next:
+			if self.__next__:
 				return self.next.match(buffer)
 			return True
 
@@ -257,8 +259,8 @@ class MagicRule:
 		return '<MagicRule %d>%d=[%d]%s&%s~%d+%d>' % (self.nest,
 							      self.start,
 							      self.lenvalue,
-							      `self.value`,
-							      `self.mask`,
+							      repr(self.value),
+							      repr(self.mask),
 							      self.word,
 							      self.range)
 
@@ -297,7 +299,7 @@ class MagicDB:
 		f=file(fname, 'r')
 		line=f.readline()
 		if line!='MIME-Magic\0\n':
-			raise 'Not a MIME magic file'
+			raise MIMEerror('Not a MIME magic file')
 
 		while True:
 			shead=f.readline()
@@ -305,7 +307,7 @@ class MagicDB:
 			if not shead:
 				break
 			if shead[0]!='[' or shead[-2:]!=']\n':
-				raise 'Malformed section heading'
+				raise MIMEerror('Malformed section heading')
 			pri, tname=shead[1:-2].split(':')
 			#print shead[1:-2]
 			pri=int(pri)
@@ -340,7 +342,7 @@ class MagicDB:
 	def match(self, path, max_pri=100, min_pri=0):
 		try:
 			buf=file(path, 'r').read(self.maxlen)
-			pris=self.types.keys()
+			pris=list(self.types.keys())
 			pris.sort(lambda a, b: -cmp(a, b))
 			for pri in pris:
 				#print pri, max_pri, min_pri
@@ -483,7 +485,7 @@ def get_type(path, follow=1, name_pri=100):
 		if not t: t = get_type_by_name(path)
 		if not t: t = get_type_by_contents(path, max_pri=name_pri)
 		if t is None:
-			if stat.S_IMODE(st.st_mode) & 0111:
+			if stat.S_IMODE(st.st_mode) & 0o111:
 				return app_exe
 			else:
 				return text
@@ -558,7 +560,7 @@ def get_type_handler(mime_type, handler_type = 'MIME-types'):
 def _test(name):
 	"""Print results for name.  Test routine"""
 	t=get_type(name, name_pri=80)
-	print name, t, t.get_comment()
+	print(name, t, t.get_comment())
 
 if __name__=='__main__':
 	import sys

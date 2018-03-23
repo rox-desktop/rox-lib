@@ -1,7 +1,8 @@
-#!/usr/bin/env python2.6
+#!/usr/bin/env python3
 import unittest
 import os, sys, shutil
 from os.path import dirname, abspath, join
+from imp import reload
 rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
 sys.path.insert(0, join(rox_lib, 'python'))
 
@@ -33,38 +34,38 @@ class TestChoices(unittest.TestCase):
 		del os.environ['CHOICESPATH']
 		reload(choices)
 		
-		self.assertEquals(
+		self.assertEqual(
 			[os.path.expanduser('~/Choices'),
 			 '/usr/local/share/Choices',
 			 '/usr/share/Choices'],
 			 choices.paths)
 
 	def testLoadNothing(self):
-		self.assertEquals('/tmp/choices', choices.paths[0])
+		self.assertEqual('/tmp/choices', choices.paths[0])
 		assert not os.path.exists('/tmp/choices')
 
-		self.assertEquals(choices.load('Edit', 'Options'), None)
+		self.assertEqual(choices.load('Edit', 'Options'), None)
 	
 	def testLoad(self):
 		os.mkdir('/tmp/choices')
 		os.mkdir('/tmp/choices/Edit')
-		self.assertEquals(choices.load('Edit', 'Options'), None)
+		self.assertEqual(choices.load('Edit', 'Options'), None)
 
-		file('/tmp/choices/Edit/Options', 'w').close()
-		self.assertEquals(choices.load('Edit', 'Options'),
+		open('/tmp/choices/Edit/Options', 'w').close()
+		self.assertEqual(choices.load('Edit', 'Options'),
 				  '/tmp/choices/Edit/Options')
 
 		os.mkdir('/tmp/choices2')
 		os.mkdir('/tmp/choices2/Edit')
-		self.assertEquals(choices.load('Edit', 'Options'),
+		self.assertEqual(choices.load('Edit', 'Options'),
 				  '/tmp/choices/Edit/Options')
 
-		file('/tmp/choices2/Edit/Options', 'w').close()
-		self.assertEquals(choices.load('Edit', 'Options'),
+		open('/tmp/choices2/Edit/Options', 'w').close()
+		self.assertEqual(choices.load('Edit', 'Options'),
 				  '/tmp/choices/Edit/Options')
 
 		os.unlink('/tmp/choices/Edit/Options')
-		self.assertEquals(choices.load('Edit', 'Options'),
+		self.assertEqual(choices.load('Edit', 'Options'),
 				  '/tmp/choices2/Edit/Options')
 
 	def testMigrateNothing(self):
@@ -79,8 +80,8 @@ class TestChoices(unittest.TestCase):
 	
 	def testMigrateNormal(self):
 		save = choices.save('Edit', 'Options')
-		self.assertEquals(save, '/tmp/choices/Edit/Options')
-		file(save, 'w').close()
+		self.assertEqual(save, '/tmp/choices/Edit/Options')
+		open(save, 'w').close()
 		choices.migrate('Edit', 'rox.sourceforge.net')
 
 		assert os.path.isfile(
@@ -99,9 +100,9 @@ class TestChoices(unittest.TestCase):
 	
 	def testFailedMigration(self):
 		save = choices.save('Edit', 'Options')
-		file(save, 'w').close()
+		open(save, 'w').close()
 		save2 = basedir.save_config_path('rox.sourceforge.net', 'Edit')
-		file(os.path.join(save2, 'Options'), 'w').close()
+		open(os.path.join(save2, 'Options'), 'w').close()
 		old, sys.stderr = sys.stderr, null
 		try:
 			choices.migrate('Edit', 'rox.sourceforge.net')

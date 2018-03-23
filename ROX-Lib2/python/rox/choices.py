@@ -74,13 +74,12 @@ def migrate(dir, site):
 	if os.path.islink(full) or not os.path.exists(full):
 		return
 
-	import basedir
+	from . import basedir
 	dest = os.path.join(basedir.xdg_config_home, site, dir)
 	if os.path.exists(dest):
-		print >>sys.stderr, \
-			"Old config directory '%s' and new config " \
+		print("Old config directory '%s' and new config " \
 			"directory '%s' both exist. Not migrating settings!" % \
-			(full, dest)
+			(full, dest), file=sys.stderr)
 		return
 	
 	site_dir = os.path.join(basedir.xdg_config_home, site)

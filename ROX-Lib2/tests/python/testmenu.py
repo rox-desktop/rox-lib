@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.6
+#!/usr/bin/env python3
 import unittest
 import os, sys, shutil
 from os.path import dirname, abspath, join
@@ -8,10 +8,13 @@ sys.path.insert(0, join(rox_lib, 'python'))
 os.environ['CHOICESPATH'] = '/tmp/choices:/tmp/choices2'
 os.environ['XDG_CONFIG_HOME'] = '/tmp/config'
 
+from gi.repository import Gtk
+
 import rox
 from rox.Menu import Menu, set_save_name, SubMenu
 from rox.Menu import Separator, Action, ToggleItem
-from rox import basedir, choices, g
+from rox import basedir, choices
+
 set_save_name('Foo')
 
 class MyToggleItem(ToggleItem):
@@ -32,12 +35,12 @@ class TestMenu(unittest.TestCase):
 
 		self.menu = Menu('main', [
 		SubMenu('File', [
-		  Action('Save',	'save',	'<Ctrl>S', g.STOCK_SAVE),
-		  Action('Parent',	'up',	'', g.STOCK_GO_UP),
-		  Action('Close',	'close','', g.STOCK_CLOSE),
+		  Action('Save',	'save',	'<Ctrl>S', Gtk.STOCK_SAVE),
+		  Action('Parent',	'up',	'', Gtk.STOCK_GO_UP),
+		  Action('Close',	'close','', Gtk.STOCK_CLOSE),
 		  Separator(),
-		  Action('New',	'new',	'', g.STOCK_NEW)]),
-		Action('Help',	'help',	'F1', g.STOCK_HELP),
+		  Action('New',	'new',	'', Gtk.STOCK_NEW)]),
+		Action('Help',	'help',	'F1', Gtk.STOCK_HELP),
 		self.my_t1,
 		self.my_t2,
 		])

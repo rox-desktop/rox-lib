@@ -86,8 +86,8 @@ class AppInfo:
         langs = _getlangs(langs)
 
         for lang in langs:
-            if self.about.has_key(lang):
-                if self.about[lang].has_key(elname):
+            if lang in self.about:
+                if elname in self.about[lang]:
                     return self.about[lang][elname]
         else:
             return None
@@ -112,7 +112,7 @@ class AppInfo:
         value must be a unicode string.
         """
 
-        if not self.about.has_key(lang):
+        if lang not in self.about:
             ab = self._doc.createElement('About')
             ab.setAttributeNS(XML_NAMESPACE, 'xml:lang', lang)
             self._doc.documentElement.appendChild(ab)
@@ -138,7 +138,7 @@ class AppInfo:
         langs = _getlangs(langs)
 
         for lang in langs:
-            if self.summary.has_key(lang):
+            if lang in self.summary:
                 return self.summary[lang]
         else:
             return None
@@ -150,7 +150,7 @@ class AppInfo:
         value must be a unicode string.
         """
 
-        if self.summary.has_key(lang):
+        if lang in self.summary:
             for summary in self._doc.documentElement.getElementsByTagName(
               'Summary'):
                 if summary.getAttributeNS(XML_NAMESPACE, 'lang') == lang:
@@ -176,7 +176,7 @@ class AppInfo:
 
         for lang in langs:
             #print labels, lang, labels.has_key(lang)
-            if labels.has_key(lang):
+            if lang in labels:
                 ritem['label']=labels[lang]
                 break
         else:
@@ -235,17 +235,17 @@ class AppInfo:
 
 # Some test code
 if __name__=='__main__':
-    print _getlangs(None)
+    print(_getlangs(None))
     ai=AppInfo(sys.argv[1])
     #print ai
-    print 'Summary: %s' % ai.getSummary()
-    print ai.getAbout('Authors')
-    print 'Authors: %s' % ai.getAuthors()
+    print('Summary: %s' % ai.getSummary())
+    print(ai.getAbout('Authors'))
+    print('Authors: %s' % ai.getAuthors())
     #print ai.findElements('AppMenu')
-    print ai.menu
+    print(ai.menu)
     for menu in ai.getAppMenu():
-        print '%s (%s) -> %d sub' % (menu['label'], menu['option'],
-                                     len(menu['sub-menus']))
+        print('%s (%s) -> %d sub' % (menu['label'], menu['option'],
+                                     len(menu['sub-menus'])))
     #print ai.findElements('CanRun')
-    print ai.getCanRun()
-    print ai.getCanThumbnail()
+    print(ai.getCanRun())
+    print(ai.getCanThumbnail())

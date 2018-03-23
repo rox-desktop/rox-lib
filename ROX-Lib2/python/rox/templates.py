@@ -65,11 +65,11 @@ class ProxyWindow:
             try:
                 win=self.__dict__['_window']
             except:
-                raise  AttributeError, '_window'
+                raise  AttributeError('_window')
             
             if hasattr(win, name):
                 return getattr(win, name)
-            raise AttributeError, name
+            raise AttributeError(name)
 
 class Templates(glade.XML, UserDict.DictMixin):
     """A set of widget instances created from a glade file."""
@@ -114,16 +114,16 @@ class Templates(glade.XML, UserDict.DictMixin):
         
         widget=self.get_widget(str(key))
         if not widget:
-            raise KeyError, key
+            raise KeyError(key)
         return widget
 
     def __setitem__(self, key, value):
         """Set a widget.  Raises an exception."""
-        raise TypeError, 'read-only, cannot set '+key
+        raise TypeError('read-only, cannot set '+key)
 
     def __delitem__(self, key):
         """Delete a widget.  Raises an exception."""
-        raise TypeError, 'read-only, cannot delete '+key
+        raise TypeError('read-only, cannot delete '+key)
 
     def keys(self):
         """Return list of all named widgets."""

@@ -15,7 +15,7 @@ os.waitpid(pid)
 
 """
 
-import os, urlparse
+import os, urllib.parse
 
 import rox
 from rox import basedir
@@ -47,7 +47,7 @@ def launch(uri):
     rox.uri_handler.get() is used to look up the launcher command which is
     executed.  The process id of the command is returned (see os.wait()), or
     None if no launcher is defined for that URI."""
-    comp=urlparse.urlparse(uri)
+    comp=urllib.parse.urlparse(uri)
     handler=get(comp[0])
     if not handler:
         return
@@ -60,10 +60,10 @@ def launch(uri):
     return os.spawnlp(os.P_NOWAIT, 'sh', 'sh', '-c', cmd)
 
 if __name__=='__main__':
-    print get('file')
-    print get('http')
-    print get('mailto')
-    print get('svn+ssh')
+    print(get('file'))
+    print(get('http'))
+    print(get('mailto'))
+    print(get('svn+ssh'))
 
     launch('file:///tmp')
     launch('http://rox.sf.net/')

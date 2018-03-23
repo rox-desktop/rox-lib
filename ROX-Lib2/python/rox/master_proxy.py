@@ -5,9 +5,9 @@ functions which a slave must not do.
 EXPERIMENTAL.
 """
 
-from __future__ import generators
-from proxy import Proxy
-import tasks	# (imports rox, and thus gtk)
+
+from .proxy import Proxy
+from . import tasks	# (imports rox, and thus gtk)
 
 class MasterObject(object):
 	"""Invoking a method on a MasterObject invokes the corresponding
@@ -42,7 +42,9 @@ class RequestBlocker(tasks.Blocker):
 	it rather than returning it.
 	"""
 
-	def _error(self):
+	def __result(self):
+		if self.has_result:
+			return self._result
 		if self.error is not None:
 			raise self.error
 		raise Exception('No result yet! Yield this blocker first.')
@@ -50,7 +52,8 @@ class RequestBlocker(tasks.Blocker):
 	master = None
 	serial = None
 	error = None
-	result = property(_error)
+	has_result = False
+	result = property(__result)
 
 	def __init__(self, master, serial):
 		tasks.Blocker.__init__(self)
@@ -64,7 +67,8 @@ class RequestBlocker(tasks.Blocker):
 		if isinstance(data, Exception):
 			self.error = data
 		else:
-			self.result = data
+			self._result = data
+			self.has_result = True
 		self.trigger()
 		
 class LostConnection(Exception):
@@ -93,6 +97,6 @@ class MasterProxy(Proxy):
 		del self._queue[serial]
 	
 	def lost_connection(self):
-		for x in self._queue.values():
+		for x in list(self._queue.values()):
 			x.add(LostConnection('Lost connection to su proxy'))
 		assert not self._queue

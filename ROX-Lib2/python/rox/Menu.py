@@ -25,24 +25,21 @@ menu = Menu('main', [
 	  Separator(),
 	  Action('Process...',	        'process'),
 	])),
-	Action('Options',		'show_options', 'F1', stock=g.STOCK_HELP)),
-	Action('Quit',		        'quit', stock=g.STOCK_QUIT),
+	Action('Options',		'show_options', 'F1', stock=Gtk.STOCK_HELP)),
+	Action('Quit',		        'quit', stock=Gtk.STOCK_QUIT),
 	])
 
 There is also an older syntax, where you pass tuples of strings 
 to the Menu constructor. This has not been required since 1.9.13.
 """
 
-from __future__ import generators
+
+
+from gi.repository import Gtk, Gdk
 
 import os
 import rox
-from rox import g
-import choices, basedir
-
-import warnings
-warnings.filterwarnings('ignore', 'use gtk.UIManager', DeprecationWarning,
-			'rox')
+from . import choices, basedir
 
 _save_name = None
 def set_save_name(prog, leaf = 'menus', site = None):
@@ -119,6 +116,65 @@ def _walk(items):
 			for l, y in _walk(x.submenu):
 				yield "/" + x.label + l, y
 
+class ItemFactory:
+	"""Replacement for Gtk.ItemFactory, which was removed in Gtk3, with
+	just enough functionality to make Menu work."""
+
+	def __init__(self, menu_cls, name, accel_group):
+		self._menu_cls = menu_cls
+		self._name = name
+		self._accel_group = accel_group
+		menu = menu_cls()
+		self._widgets = {name: menu}
+		self._menus = {'': menu}
+
+	def create_items(self, items):
+		for item in items:
+			self._create_widget(item)
+		for item in items:
+			path = item[0]
+			parent_path = '/'.join(path.split('/')[:-1])
+			menu = self._menus[parent_path]
+			menu.append(self._widgets[path])
+
+	def _create_widget(self, item):
+		path = item[0]
+		key = item[1]
+		cb = item[2]
+		action = item[3]
+		type = item[4]
+		stock_id = None if len(item) < 6 else item[5]
+		label = path.split('/')[-1]
+		if type == '<Separator>':
+			widget = Gtk.SeparatorMenuItem.new()
+		elif type == '<ToggleItem>':
+			widget = Gtk.CheckMenuItem.new_with_label(label)
+		elif type == '<StockItem>':
+			widget = Gtk.ImageMenuItem.new_from_stock(
+				stock_id, self._accel_group
+			)
+		else:
+			widget = Gtk.MenuItem.new_with_label(label)
+
+		if type == '<Branch>':
+		    self._menus[path] = Gtk.Menu()
+
+		def activate(widget):
+			cb(action, widget)
+		widget.connect("activate", activate)
+
+		if key:
+			keyval, modifiers = Gtk.accelerator_parse(key)
+			self._accel_group.connect(
+				keyval, modifiers, Gtk.AccelFlags.VISIBLE,
+				lambda: activate(widget)
+			)
+
+		self._widgets[path] = widget
+
+	def get_widget(self, path):
+		return self._widgets[path]
+
 class Menu:
 	"""A popup menu. This wraps GtkMenu. It handles setting, loading and saving of
 	keyboard-shortcuts, applies translations, and has a simpler API."""
@@ -133,14 +189,14 @@ class Menu:
 		[(name, callback_name, type, key), ...].
 		'name' is the item's path.
 		'callback_name' is the NAME of a method to call.
-		'type' is as for g.ItemFactory.
+		'type' is as for Gtk.ItemFactory.
 		'key' is only used if no bindings are in Choices."""
 		if not _save_name:
 			raise Exception('Call rox.Menu.set_save_name() first!')
 
-		ag = g.AccelGroup()
+		ag = Gtk.AccelGroup()
 		self.accel_group = ag
-		factory = g.ItemFactory(g.Menu, '<%s>' % name, ag)
+		factory = ItemFactory(Gtk.Menu, '<%s>' % name, ag)
 
 		site, program, save_leaf = _save_name
 		if site:
@@ -179,7 +235,7 @@ class Menu:
 			self.update_callbacks.append(lambda f = fn, w = widget: f(self, w))
 
 		if accel_path:
-			g.accel_map_load(accel_path)
+			Gtk.AccelMap.load(accel_path)
 		
 		self.caller = None	# Caller of currently open menu
 		self.menu = factory.get_widget('<%s>' % name)
@@ -193,14 +249,14 @@ class Menu:
 				path = choices.save(program, name)
 			if path:
 				try:
-					g.accel_map_save(path)
+					Gtk.AccelMap.save(path)
 				except AttributeError:
-					print "Error saving keybindings to", path
+					print("Error saving keybindings to", path)
 		# GtkAccelGroup has its own (unrelated) connect method,
 		# so the obvious approach doesn't work.
 		#ag.connect('accel_changed', keys_changed)
-		import gobject
-		gobject.GObject.connect(ag, 'accel_changed', keys_changed)
+		from gi.repository import GObject
+		GObject.Object.connect(ag, 'accel_changed', keys_changed)
 	
 	def attach(self, window, object):
 		"""Keypresses on this window will be treated as menu shortcuts
@@ -211,20 +267,29 @@ class Menu:
 		window.connect('key-press-event', kev)
 		window.add_accel_group(self.accel_group)
 	
-	def _position(self, menu):
-		x, y, mods = g.gdk.get_default_root_window().get_pointer()
-		width, height = menu.size_request()
-		return (x - width * 3 / 4, y - 16, True)
+	def _position(self, menu, x, y, user_data=None):
+		display = Gdk.Display.get_default()
+		__, x, y, mods = (
+			Gdk.get_default_root_window()
+			.get_device_position(
+				display.get_device_manager()
+				.get_client_pointer()
+			)
+		)
+		minimum_size, natural_size = menu.get_preferred_size()
+		return (x - natural_size.width * 3 / 4, y - 16, True)
 	
 	def popup(self, caller, event, position_fn = None):
 		"""Display the menu. Call 'caller.<callback_name>' when an item is chosen.
 		For applets, position_fn should be my_applet.position_menu)."""
 		self.caller = caller
-		map(apply, self.update_callbacks) # Update toggles, etc
+		# Update toggles, etc
+		for cb in self.update_callbacks:
+			cb()
 		if event:
-			self.menu.popup(None, None, position_fn or self._position, event.button, event.time)
+			self.menu.popup(None, None, position_fn or self._position, None, event.button, event.time)
 		else:
-			self.menu.popup(None, None, position_fn or self._position, 0, 0)
+			self.menu.popup(None, None, position_fn or self._position, None, 0, 0)
 	
 	def _activate(self, action, widget):
 		if self.caller:

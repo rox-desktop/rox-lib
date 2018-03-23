@@ -4,7 +4,7 @@ import os
 import subprocess
 from xml.sax.saxutils import escape
 import xml.etree.ElementTree as ET
-from cStringIO import StringIO
+from io import StringIO
 
 
 rox_filer_interface = "http://rox.sourceforge.net/2005/interfaces/ROX-Filer"
@@ -23,13 +23,13 @@ def _spawn(argv):
 				execvp(argv[0], argv)
 			except:
 				pass
-			print "Warning: exec('%s') failed!" % argv[0]
+			print("Warning: exec('%s') failed!" % argv[0])
 			_exit(1)
 		elif child == -1:
-			print "Error: fork() failed!"
+			print("Error: fork() failed!")
 		_exit(1)
 	elif child == -1:
-		print "Error: fork() failed!"
+		print("Error: fork() failed!")
 	waitpid(child, 0)
 
 def _get_rox_command(args):
@@ -49,7 +49,7 @@ def _get_rox_command(args):
 	if os.path.exists('/uri/0install/rox.sourceforge.net'):
 		return ('/bin/0run', 'rox.sourceforge.net/rox 2002-01-01') + args
 	else:
-		print "Didn't find rox in PATH, and Zero Install not present. Trying 'rox' anyway..."
+		print("Didn't find rox in PATH, and Zero Install not present. Trying 'rox' anyway...")
 		return ('rox',) + args
 
 def spawn_rox(args):
@@ -80,7 +80,7 @@ def _build_elements(name, elements, stream):
 
 def _build_element_dict(name, elem_dict, stream):
 	stream.write('<%s>' % name)
-	for key, value in elem_dict.iteritems():
+	for key, value in elem_dict.items():
 		_build_element(key, value, stream)
 	stream.write('</%s>' % name)
 
@@ -119,14 +119,14 @@ class _RPC(object):
 			)
 			if stdoutdata:
 				root = ET.fromstring(stdoutdata)
-	                        body_elem = root.find('{http://www.w3.org/2001/12/soap-envelope}Body')
-	                        fault_elem = body_elem.find('{http://www.w3.org/2001/12/soap-envelope}Fault')
+				body_elem = root.find('{http://www.w3.org/2001/12/soap-envelope}Body')
+				fault_elem = body_elem.find('{http://www.w3.org/2001/12/soap-envelope}Fault')
 				faultcode = fault_elem.find('faultcode').text
-	                        faultstring = fault_elem.find('faultstring').text
+				faultstring = fault_elem.find('faultstring').text
 				raise RPCError(
-					"Failed to execute %s with arguments %s: %s\n%s" % (
-						attr, str(kwargs), faultcode, faultstring
-					)
+				"Failed to execute %s with arguments %s: %s\n%s" % (
+					attr, str(kwargs), faultcode, faultstring
+				)
 				)
 		return _proxy
 
@@ -137,5 +137,5 @@ of the rpc object.
 
 Example:
 
-filer.rpc.PinboardAdd(Path='/', Label='File System')
+filer.rpc.PinboardAdd(path='/', label='File System')
 """

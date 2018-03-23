@@ -4,6 +4,8 @@ annoys users if programs fight over the defaults."""
 
 import os
 
+from gi.repository import Gtk, GdkPixbuf
+
 import rox
 from rox import _, mime, choices, basedir
 
@@ -50,8 +52,8 @@ class InstallList(rox.Dialog):
 	info - optional message to display below list
 	check - if true (the default), check for existing entries"""
         rox.Dialog.__init__(self, title=_('Install %s') % itype,
-                            buttons=(rox.g.STOCK_CANCEL, rox.g.RESPONSE_CLOSE,
-                                     rox.g.STOCK_OK, rox.g.RESPONSE_ACCEPT))
+                            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CLOSE,
+                                     Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
 
         self.itype=itype
         self.dir=dir
@@ -63,67 +65,67 @@ class InstallList(rox.Dialog):
 
         vbox=self.vbox
 
-        swin = rox.g.ScrolledWindow()
+        swin = Gtk.ScrolledWindow()
         swin.set_size_request(-1, 160)
         swin.set_border_width(4)
-        swin.set_policy(rox.g.POLICY_NEVER, rox.g.POLICY_ALWAYS)
-        swin.set_shadow_type(rox.g.SHADOW_IN)
+        swin.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.ALWAYS)
+        swin.set_shadow_type(Gtk.ShadowType.IN)
         vbox.pack_start(swin, True, True, 0)
 
-        self.model = rox.g.ListStore(str, str, str, int, rox.g.gdk.Pixbuf,
+        self.model = Gtk.ListStore(str, str, str, int, GdkPixbuf.Pixbuf,
                                      int, int)
-        view = rox.g.TreeView(self.model)
+        view = Gtk.TreeView(self.model)
         self.view = view
         swin.add(view)
         view.set_search_column(1)
 
-        cell = rox.g.CellRendererPixbuf()
-        column = rox.g.TreeViewColumn('', cell, pixbuf = _ICON)
+        cell = Gtk.CellRendererPixbuf()
+        column = Gtk.TreeViewColumn('', cell, pixbuf = _ICON)
         view.append_column(column)
         
-        cell = rox.g.CellRendererText()
-        column = rox.g.TreeViewColumn(_('Type'), cell, text = _TNAME)
+        cell = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn(_('Type'), cell, text = _TNAME)
         view.append_column(column)
         column.set_sort_column_id(_TNAME)
         
-        cell = rox.g.CellRendererText()
-        column = rox.g.TreeViewColumn(_('Name'), cell, text = _COMMENT)
+        cell = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn(_('Name'), cell, text = _COMMENT)
         view.append_column(column)
         column.set_sort_column_id(_COMMENT)
 
         if check:
-            cell = rox.g.CellRendererText()
-            column = rox.g.TreeViewColumn(_('Current'), cell, text = _CURRENT)
+            cell = Gtk.CellRendererText()
+            column = Gtk.TreeViewColumn(_('Current'), cell, text = _CURRENT)
             view.append_column(column)
             column.set_sort_column_id(_CURRENT)
 
-        cell = rox.g.CellRendererToggle()
+        cell = Gtk.CellRendererToggle()
         cell.set_property('activatable', True)
         cell.connect('toggled', self.install_toggled, self.model)
-        column = rox.g.TreeViewColumn(_('Install?'), cell, active = _INSTALL)
+        column = Gtk.TreeViewColumn(_('Install?'), cell, active = _INSTALL)
         view.append_column(column)
         column.set_sort_column_id(_INSTALL)
 
-        cell = rox.g.CellRendererToggle()
+        cell = Gtk.CellRendererToggle()
         cell.connect('toggled', self.uninstall_toggled, self.model)
-        column = rox.g.TreeViewColumn(_('Uninstall?'), cell, active = _UNINSTALL,
+        column = Gtk.TreeViewColumn(_('Uninstall?'), cell, active = _UNINSTALL,
                                       activatable= _IS_OURS)
         view.append_column(column)
         column.set_sort_column_id(_UNINSTALL)
 
-        view.get_selection().set_mode(rox.g.SELECTION_NONE)
+        view.get_selection().set_mode(Gtk.SelectionMode.NONE)
 
 	if info:
-		hbox=rox.g.HBox(spacing=4)
-		img=rox.g.image_new_from_stock(rox.g.STOCK_DIALOG_INFO,
-					       rox.g.ICON_SIZE_DIALOG)
-		hbox.pack_start(img)
+		hbox=Gtk.HBox(spacing=4)
+		img=Gtk.image_new_from_stock(Gtk.STOCK_DIALOG_INFO,
+					       Gtk.IconsSize.DIALOG)
+		hbox.pack_start(img, True, True, 0)
 
-		lbl=rox.g.Label(info)
+		lbl=Gtk.Label(info)
 		lbl.set_line_wrap(True)
-		hbox.pack_start(lbl)
+		hbox.pack_start(lbl, True, True, 0)
 
-		vbox.pack_start(hbox)
+		vbox.pack_start(hbox, True, True, 0)
 
         vbox.show_all()
         
@@ -246,7 +248,7 @@ def _install_at(path, app_dir, injint):
         f.write('#!/bin/sh\n')
         f.write('0launch -c "%s" "$@"\n' % injint)
         f.close()
-        os.chmod(tmp, 0755)
+        os.chmod(tmp, 0o755)
     else:
         os.symlink(app_dir, tmp)
 
@@ -267,7 +269,7 @@ def _install_type_handler(types, dir, desc, application=None, overwrite=True,
 		
     win=InstallList(application, desc, dir, types, info)
 
-    if win.run()!=int(rox.g.RESPONSE_ACCEPT):
+    if win.run()!=int(Gtk.ResponseType.ACCEPT):
 	    win.destroy()
 	    return
 
@@ -333,7 +335,7 @@ def install_send_to_types(types, application=None, injint=None):
 			_("""The application can handle files of these types.  Click on OK to add it to the SendTo menu for the type of file, and also the customized File menu."""),
 			check=False)
 
-	if win.run()!=int(rox.g.RESPONSE_ACCEPT):
+	if win.run()!=int(Gtk.ResponseType.ACCEPT):
 		win.destroy()
 		return
 	

@@ -2,14 +2,15 @@
 
 import os
 
+from gi.repository import Gtk, GdkPixbuf
+
 import rox
-from rox import g
 import webbrowser
 
-class InfoWin(g.Dialog):
+class InfoWin(Gtk.Dialog):
     """Window to show app info"""
     def __init__(self, program, purpose, version, author, website):
-        g.Dialog.__init__(self)
+        Gtk.Dialog.__init__(self)
         self.website=website
 
         def close(iw, event=None, data=None):
@@ -17,69 +18,69 @@ class InfoWin(g.Dialog):
 
         self.connect("delete_event", close)
 
-        hbox=g.HBox()
-        self.vbox.pack_start(hbox)
+        hbox=Gtk.HBox()
+        self.vbox.pack_start(hbox, True, True, 0)
         hbox.show()
 
         try:
             path=os.path.join(rox.app_dir, '.DirIcon')
-            pixbuf=g.gdk.pixbuf_new_from_file(path)
-            icon=g.Image()
+            pixbuf=GdkPixbuf.Pixbuf.new_from_file(path)
+            icon=Gtk.Image()
             icon.set_from_pixbuf(pixbuf)
-            hbox.pack_start(icon)
+            hbox.pack_start(icon, True, True, 0)
             icon.show()
         except:
             #rox.report_exception()
             pass
 
-        table=g.Table(5, 2)
-        hbox.pack_start(table)
+        table=Gtk.Table(5, 2)
+        hbox.pack_start(table, True, True, 0)
 
-        label=g.Label("Program")
+        label=Gtk.Label("Program")
         table.attach(label, 0, 1, 0, 1)
 
-        frame=g.Frame()
-        frame.set_shadow_type(g.SHADOW_IN)
+        frame=Gtk.Frame()
+        frame.set_shadow_type(Gtk.ShadowType.IN)
         table.attach(frame, 1, 2, 0, 1)
 
-        label=g.Label(program or '')
+        label=Gtk.Label(program or '')
         frame.add(label)
 
-        label=g.Label("Purpose")
+        label=Gtk.Label("Purpose")
         table.attach(label, 0, 1, 1, 2)
 
-        frame=g.Frame()
-        frame.set_shadow_type(g.SHADOW_IN)
+        frame=Gtk.Frame()
+        frame.set_shadow_type(Gtk.ShadowType.IN)
         table.attach(frame, 1, 2, 1, 2)
 
-        label=g.Label(purpose or '')
+        label=Gtk.Label(purpose or '')
         frame.add(label)
 
-        label=g.Label("Version")
+        label=Gtk.Label("Version")
         table.attach(label, 0, 1, 2, 3)
 
-        frame=g.Frame()
-        frame.set_shadow_type(g.SHADOW_IN)
+        frame=Gtk.Frame()
+        frame.set_shadow_type(Gtk.ShadowType.IN)
         table.attach(frame, 1, 2, 2, 3)
 
-        label=g.Label(version or '')
+        label=Gtk.Label(version or '')
         frame.add(label)
 
-        label=g.Label("Authors")
+        label=Gtk.Label("Authors")
         table.attach(label, 0, 1, 3, 4)
 
-        frame=g.Frame()
-        frame.set_shadow_type(g.SHADOW_IN)
+        frame=Gtk.Frame()
+        frame.set_shadow_type(Gtk.ShadowType.IN)
         table.attach(frame, 1, 2, 3, 4)
 
-        label=g.Label(author or '')
+        label=Gtk.Label(author or '')
         frame.add(label)
 
-        label=g.Label("Web site")
+        label=Gtk.Label("Web site")
         table.attach(label, 0, 1, 5, 6)
 
         if website:
-            button=g.Button(website)
+            button=Gtk.Button(website)
             table.attach(button, 1, 2, 5, 6)
 
             def goto_website(widget, iw):
@@ -88,14 +89,14 @@ class InfoWin(g.Dialog):
             button.connect("clicked", goto_website, self)
             
         else:
-            frame=g.Frame()
-            frame.set_shadow_type(g.SHADOW_IN)
+            frame=Gtk.Frame()
+            frame.set_shadow_type(Gtk.ShadowType.IN)
             table.attach(frame, 1, 2, 5, 6)
 
         hbox=self.action_area
 
-        button=g.Button(stock=g.STOCK_CLOSE)
-        hbox.pack_start(button)
+        button=Gtk.Button(stock=Gtk.STOCK_CLOSE)
+        hbox.pack_start(button, True, True, 0)
 
         def dismiss(widget, iw):
             iw.hide()
