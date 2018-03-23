@@ -30,6 +30,12 @@ import sys
 import os
 import codecs
 
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
+
 _to_utf8 = codecs.getencoder('utf-8')
 
 roxlib_version = (3, 0, 0)
@@ -43,10 +49,6 @@ from . import i18n
 
 _roxlib_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 _ = i18n.translation(os.path.join(_roxlib_dir, 'Messages'))
-
-from gi.repository import Gtk
-from gi.repository import Gdk
-from gi.repository import GdkPixbuf
 
 have_display = Gdk.Display.get_default() is not None
 
