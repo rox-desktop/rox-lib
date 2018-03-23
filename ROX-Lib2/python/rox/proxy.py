@@ -9,92 +9,96 @@ EXPERIMENTAL.
 
 
 # Note: do not import rox or gtk. Needs to work without DISPLAY.
-import os, sys
+import os
+import sys
 from select import select
 import pickle as pickle
 
 from gi.repository import GLib
 
+
 class Proxy:
-	def __init__(self, to_peer, from_peer, slave_object = None):
-		if not hasattr(to_peer, 'fileno'):
-			to_peer = os.fdopen(to_peer, 'wb')
-		if not hasattr(from_peer, 'fileno'):
-			from_peer = os.fdopen(from_peer, 'rb')
-		self.to_peer = to_peer
-		self.from_peer = from_peer
-		self.out_buffer = b""
-		self.in_buffer = b""
+    def __init__(self, to_peer, from_peer, slave_object=None):
+        if not hasattr(to_peer, 'fileno'):
+            to_peer = os.fdopen(to_peer, 'wb')
+        if not hasattr(from_peer, 'fileno'):
+            from_peer = os.fdopen(from_peer, 'rb')
+        self.to_peer = to_peer
+        self.from_peer = from_peer
+        self.out_buffer = b""
+        self.in_buffer = b""
 
-		self.enable_read_watch()
-	
-	def enable_read_watch(self):
-		GLib.io_add_watch(self.from_peer, 0, GLib.IO_IN,
-			lambda src, cond: self.read_ready())
+        self.enable_read_watch()
 
-	def enable_write_watch(self):
-		GLib.io_add_watch(self.to_peer.fileno(), 0, GLib.IO_OUT,
-			lambda src, cond: self.write_ready())
+    def enable_read_watch(self):
+        GLib.io_add_watch(self.from_peer, 0, GLib.IO_IN,
+                          lambda src, cond: self.read_ready())
 
-	def write_object(self, object):
-		if self.to_peer is None:
-			raise Exception('Peer is defunct')
-		if not self.out_buffer:
-			self.enable_write_watch()
+    def enable_write_watch(self):
+        GLib.io_add_watch(self.to_peer.fileno(), 0, GLib.IO_OUT,
+                          lambda src, cond: self.write_ready())
 
-		s = pickle.dumps(object)
-		s = bytes(str(len(s)), "utf8") + b":" + s
-		self.out_buffer += s
-	
-	def write_ready(self):
-		"""Returns True if the buffer is not empty on exit."""
-		while self.out_buffer:
-			w = select([], [self.to_peer], [], 0)[1]
-			if not w:
-				print("Not ready for writing")
-				return True
-			n = os.write(self.to_peer.fileno(), self.out_buffer)
-			self.out_buffer = self.out_buffer[n:]
-		return False
+    def write_object(self, object):
+        if self.to_peer is None:
+            raise Exception('Peer is defunct')
+        if not self.out_buffer:
+            self.enable_write_watch()
 
-	def read_ready(self):
-		new = os.read(self.from_peer.fileno(), 1000)
-		if not new:
-			self.finish()
-			self.lost_connection()
-			return False
-		self.in_buffer += new
-		while b':' in self.in_buffer:
-			l, rest = self.in_buffer.split(b':', 1)
-			l = int(l)
-			if len(rest) < l:
-				return True 	# Haven't got everything yet
-			s = rest[:l]
-			self.in_buffer = rest[l:]
-			value = pickle.loads(s)
-			self._dispatch(value)
-		return True
+        s = pickle.dumps(object)
+        s = bytes(str(len(s)), "utf8") + b":" + s
+        self.out_buffer += s
 
-	def finish(self):
-		self.to_slave = self.from_slave = None
-	
-	def lost_connection(self):
-		raise Exception("Lost connection to peer!")
+    def write_ready(self):
+        """Returns True if the buffer is not empty on exit."""
+        while self.out_buffer:
+            w = select([], [self.to_peer], [], 0)[1]
+            if not w:
+                print("Not ready for writing")
+                return True
+            n = os.write(self.to_peer.fileno(), self.out_buffer)
+            self.out_buffer = self.out_buffer[n:]
+        return False
+
+    def read_ready(self):
+        new = os.read(self.from_peer.fileno(), 1000)
+        if not new:
+            self.finish()
+            self.lost_connection()
+            return False
+        self.in_buffer += new
+        while b':' in self.in_buffer:
+            l, rest = self.in_buffer.split(b':', 1)
+            l = int(l)
+            if len(rest) < l:
+                return True 	# Haven't got everything yet
+            s = rest[:l]
+            self.in_buffer = rest[l:]
+            value = pickle.loads(s)
+            self._dispatch(value)
+        return True
+
+    def finish(self):
+        self.to_slave = self.from_slave = None
+
+    def lost_connection(self):
+        raise Exception("Lost connection to peer!")
+
 
 class SlaveProxy(Proxy):
-	"""Methods invoked on MasterProxy.root will be invoked on
-	slave_object. The result is a master_proxy.RequestBlocker."""
-	def __init__(self, to_master, from_master, slave_object):
-		Proxy.__init__(self, to_master, from_master)
-		self.slave_object = slave_object
-	
-	def _dispatch(self, value):
-		serial, method, args = value
-		try:
-			result = getattr(self.slave_object, method)(*args)
-		except Exception as e:
-			result = e
-		self.write_object((serial, result))
+    """Methods invoked on MasterProxy.root will be invoked on
+    slave_object. The result is a master_proxy.RequestBlocker."""
 
-	def lost_connection(self):
-		sys.exit()
+    def __init__(self, to_master, from_master, slave_object):
+        Proxy.__init__(self, to_master, from_master)
+        self.slave_object = slave_object
+
+    def _dispatch(self, value):
+        serial, method, args = value
+        try:
+            result = getattr(self.slave_object, method)(*args)
+        except Exception as e:
+            result = e
+        self.write_object((serial, result))
+
+    def lost_connection(self):
+        sys.exit()

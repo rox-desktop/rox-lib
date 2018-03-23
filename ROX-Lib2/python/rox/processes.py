@@ -26,400 +26,420 @@ about filenames containing spaces, quotes, apostrophes, etc).
 
 from gi.repository import Gtk, Gdk, GObject, GLib
 
-import os, sys, fcntl, io
+import os
+import sys
+import fcntl
+import io
 import signal
+
 
 def _keep_on_exec(fd): fcntl.fcntl(fd, fcntl.F_SETFD, 0)
 
+
 class ChildError(Exception):
-	"Raised when the child process reports an error."
-	def __init__(self, message):
-		Exception.__init__(self, message)
+    "Raised when the child process reports an error."
+
+    def __init__(self, message):
+        Exception.__init__(self, message)
+
 
 class ChildKilled(ChildError):
-	"Raised when child died due to a call to the kill method."
-	def __init__(self):
-		ChildError.__init__(self, "Operation aborted at user's request")
+    "Raised when child died due to a call to the kill method."
+
+    def __init__(self):
+        ChildError.__init__(self, "Operation aborted at user's request")
+
 
 class Process:
-	"""This represents another process. You should subclass this
-	and override the various methods. Use this when you want to
-	run another process in the background, but still be able to
-	communicate with it."""
-	def __init__(self):
-		self.child = None
-	
-	def start(self):
-		"""Create the subprocess. Calls pre_fork() and forks.
-		The parent then calls parent_post_fork() and returns,
-		while the child calls child_post_fork() and then
-		child_run()."""
-		
-		assert self.child is None
+    """This represents another process. You should subclass this
+    and override the various methods. Use this when you want to
+    run another process in the background, but still be able to
+    communicate with it."""
 
-		stderr_r = stderr_w = None
+    def __init__(self):
+        self.child = None
 
-		try:
-			self.pre_fork()
-			stderr_r, stderr_w = os.pipe()
-			child = os.fork()
-		except:
-			if stderr_r: os.close(stderr_r)
-			if stderr_w: os.close(stderr_w)
-			self.start_error()
-			raise
+    def start(self):
+        """Create the subprocess. Calls pre_fork() and forks.
+        The parent then calls parent_post_fork() and returns,
+        while the child calls child_post_fork() and then
+        child_run()."""
 
-		if child == 0:
-			# This is the child process
-			try:
-				try:
-					os.setpgid(0, 0)  # Start a new process group
-					os.close(stderr_r)
+        assert self.child is None
 
-					if stderr_w != 2:
-						os.dup2(stderr_w, 2)
-						os.close(stderr_w)
+        stderr_r = stderr_w = None
 
-					self.child_post_fork()
-					self.child_run()
-					raise Exception('child_run() returned!')
-				except:
-					import traceback
-					traceback.print_exc()
-			finally:
-				os._exit(1)
-			assert 0
+        try:
+            self.pre_fork()
+            stderr_r, stderr_w = os.pipe()
+            child = os.fork()
+        except:
+            if stderr_r:
+                os.close(stderr_r)
+            if stderr_w:
+                os.close(stderr_w)
+            self.start_error()
+            raise
 
-		self.child = child
+        if child == 0:
+            # This is the child process
+            try:
+                try:
+                    os.setpgid(0, 0)  # Start a new process group
+                    os.close(stderr_r)
 
-		# This is the parent process
-		os.close(stderr_w)
-		self.err_from_child = stderr_r
+                    if stderr_w != 2:
+                        os.dup2(stderr_w, 2)
+                        os.close(stderr_w)
 
-		self.tag = GLib.io_add_watch(self.err_from_child, 0,
-				GLib.IO_IN | GLib.IO_HUP | GLib.IO_ERR,
-				self._got_errors)
+                    self.child_post_fork()
+                    self.child_run()
+                    raise Exception('child_run() returned!')
+                except:
+                    import traceback
+                    traceback.print_exc()
+            finally:
+                os._exit(1)
+            assert 0
 
-		self.parent_post_fork()
-	
-	def pre_fork(self):
-		"""This is called in 'start' just before forking into
-		two processes. If you want to share a resource between
-		both processes (eg, a pipe), create it here.
-		Default method does nothing."""
-		
-	def parent_post_fork(self):
-		"""This is called in the parent after forking. Free the
-		child part of any resources allocated in pre_fork().
-		Also called if the fork or pre_fork() fails.
-		Default method does nothing."""
-	
-	def child_post_fork(self):
-		"""Called in the child after forking. Release the parent
-		part of any resources allocated in pre_fork().
-		Also called (in the parent) if the fork or pre_fork()
-		fails. Default method does nothing."""
-	
-	def start_error(self):
-		"""An error occurred before or during the fork (possibly
-		in pre_fork(). Clean up. Default method calls
-		parent_post_fork() and child_post_fork(). On returning,
-		the original exception will be raised."""
-		self.parent_post_fork()
-		self.child_post_fork()
-	
-	def child_run(self):
-		"""Called in the child process (after child_post_fork()).
-		Do whatever processing is required (perhaps exec another
-		process). If you don't exec, call os._exit(n) when done.
-		DO NOT make gtk calls in the child process, as it shares its
-		parent's connection to the X server until you exec()."""
-		os._exit(0)
-	
-	def kill(self, sig = signal.SIGTERM):
-		"""Send a signal to all processes in the child's process
-		group. The default, SIGTERM, requests all the processes
-		terminate. SIGKILL is more forceful."""
-		assert self.child is not None
-		os.kill(-self.child, sig)
-	
-	def got_error_output(self, data):
-		"""Read some characters from the child's stderr stream.
-		The default method copies to our stderr. Note that 'data'
-		isn't necessarily a complete line; it could be a single
-		character, or several lines, etc."""
-		sys.stderr.write(data)
-	
-	def _got_errors(self, source, cond):
-		got = os.read(self.err_from_child, 100)
-		if got:
-			self.got_error_output(got)
-			return True
+        self.child = child
 
-		os.close(self.err_from_child)
-		GLib.source_remove(self.tag)
-		del self.tag
+        # This is the parent process
+        os.close(stderr_w)
+        self.err_from_child = stderr_r
 
-		pid, status = os.waitpid(self.child, 0)
-		self.child = None
-		self.child_died(status)
-		return False
-		
-	def child_died(self, status):
-		"""Called when the child died (actually, when the child
-		closes its end of the stderr pipe). The child process has
-		already been reaped at this point; 'status' is the status
-		returned by os.waitpid."""
-	
+        self.tag = GLib.io_add_watch(self.err_from_child, 0,
+                                     GLib.IO_IN | GLib.IO_HUP | GLib.IO_ERR,
+                                     self._got_errors)
+
+        self.parent_post_fork()
+
+    def pre_fork(self):
+        """This is called in 'start' just before forking into
+        two processes. If you want to share a resource between
+        both processes (eg, a pipe), create it here.
+        Default method does nothing."""
+
+    def parent_post_fork(self):
+        """This is called in the parent after forking. Free the
+        child part of any resources allocated in pre_fork().
+        Also called if the fork or pre_fork() fails.
+        Default method does nothing."""
+
+    def child_post_fork(self):
+        """Called in the child after forking. Release the parent
+        part of any resources allocated in pre_fork().
+        Also called (in the parent) if the fork or pre_fork()
+        fails. Default method does nothing."""
+
+    def start_error(self):
+        """An error occurred before or during the fork (possibly
+        in pre_fork(). Clean up. Default method calls
+        parent_post_fork() and child_post_fork(). On returning,
+        the original exception will be raised."""
+        self.parent_post_fork()
+        self.child_post_fork()
+
+    def child_run(self):
+        """Called in the child process (after child_post_fork()).
+        Do whatever processing is required (perhaps exec another
+        process). If you don't exec, call os._exit(n) when done.
+        DO NOT make gtk calls in the child process, as it shares its
+        parent's connection to the X server until you exec()."""
+        os._exit(0)
+
+    def kill(self, sig=signal.SIGTERM):
+        """Send a signal to all processes in the child's process
+        group. The default, SIGTERM, requests all the processes
+        terminate. SIGKILL is more forceful."""
+        assert self.child is not None
+        os.kill(-self.child, sig)
+
+    def got_error_output(self, data):
+        """Read some characters from the child's stderr stream.
+        The default method copies to our stderr. Note that 'data'
+        isn't necessarily a complete line; it could be a single
+        character, or several lines, etc."""
+        sys.stderr.write(data)
+
+    def _got_errors(self, source, cond):
+        got = os.read(self.err_from_child, 100)
+        if got:
+            self.got_error_output(got)
+            return True
+
+        os.close(self.err_from_child)
+        GLib.source_remove(self.tag)
+        del self.tag
+
+        pid, status = os.waitpid(self.child, 0)
+        self.child = None
+        self.child_died(status)
+        return False
+
+    def child_died(self, status):
+        """Called when the child died (actually, when the child
+        closes its end of the stderr pipe). The child process has
+        already been reaped at this point; 'status' is the status
+        returned by os.waitpid."""
+
+
 class PipeThroughCommand(Process):
-	"""A Process that runs a command with given input and output (Python) streams."""
+    """A Process that runs a command with given input and output (Python) streams."""
 
-	def __init__(self, command, src, dst):
-		"""Execute 'command' with src as stdin and writing to stream
-		dst. If either stream is not a fileno() stream, temporary files
-		will be used as required.
-		Either stream may be None if input or output is not required.
-		Call the wait() method to wait for the command to finish.
-		'command' may be a string (passed to os.system) or a list (os.execvp).
-		"""
+    def __init__(self, command, src, dst):
+        """Execute 'command' with src as stdin and writing to stream
+        dst. If either stream is not a fileno() stream, temporary files
+        will be used as required.
+        Either stream may be None if input or output is not required.
+        Call the wait() method to wait for the command to finish.
+        'command' may be a string (passed to os.system) or a list (os.execvp).
+        """
 
-		if src is not None:
-			import shutil
-			try:
-				src.fileno()
-			except io.UnsupportedOperation:
-				new = _Tmp()
-				src.seek(0)
-				shutil.copyfileobj(src, new)
-				src = new
+        if src is not None:
+            import shutil
+            try:
+                src.fileno()
+            except io.UnsupportedOperation:
+                new = _Tmp()
+                src.seek(0)
+                shutil.copyfileobj(src, new)
+                src = new
 
-		Process.__init__(self)
+        Process.__init__(self)
 
-		self.command = command
-		self.dst = dst
-		self.src = src
-		self.tmp_stream = None
+        self.command = command
+        self.dst = dst
+        self.src = src
+        self.tmp_stream = None
 
-		self.callback = None
-		self.killed = 0
-		self.errors = b""
+        self.callback = None
+        self.killed = 0
+        self.errors = b""
 
-		self.done = False	# bool or exception
-		self.waiting = False
+        self.done = False  # bool or exception
+        self.waiting = False
 
-	def pre_fork(self):
-		# Output to 'dst' directly if it's a fileno stream. Otherwise,
-		# send output to a temporary file.
-		assert self.tmp_stream is None
+    def pre_fork(self):
+        # Output to 'dst' directly if it's a fileno stream. Otherwise,
+        # send output to a temporary file.
+        assert self.tmp_stream is None
 
-		if self.dst:
-			try:
-				self.dst.fileno()
-				self.tmp_stream = self.dst
-			except io.UnsupportedOperation:
-				mode = (
-					"w+"
-					if isinstance(self.dst, io.TextIOBase)
-					else "w+b"
-				)
-				self.tmp_stream = _Tmp(mode)
+        if self.dst:
+            try:
+                self.dst.fileno()
+                self.tmp_stream = self.dst
+            except io.UnsupportedOperation:
+                mode = (
+                    "w+"
+                    if isinstance(self.dst, io.TextIOBase)
+                    else "w+b"
+                )
+                self.tmp_stream = _Tmp(mode)
 
-	def start_error(self):
-		self.tmp_stream = None
+    def start_error(self):
+        self.tmp_stream = None
 
-	def child_run(self):
-		"""Assigns file descriptors and calls child_run_with_streams."""
-		src = self.src or open('/dev/null', 'r')
+    def child_run(self):
+        """Assigns file descriptors and calls child_run_with_streams."""
+        src = self.src or open('/dev/null', 'r')
 
-		os.dup2(src.fileno(), 0)
-		_keep_on_exec(0)
-		try:
-			os.lseek(0, 0, 0)	# OpenBSD needs this, dunno why
-		except:
-			pass
+        os.dup2(src.fileno(), 0)
+        _keep_on_exec(0)
+        try:
+            os.lseek(0, 0, 0)  # OpenBSD needs this, dunno why
+        except:
+            pass
 
-		if self.dst:
-			os.dup2(self.tmp_stream.fileno(), 1)
-			_keep_on_exec(1)
-	
-		self.child_run_with_streams()
-		os._exit(1)
-	
-	def child_run_with_streams(self):
-		"""This is run by the child process. stdin and stdout have already been set up.
-		Should call exec() or os._exit() to finish. Default method execs self.command."""
-		# (basestr is python2.3 only)
-		if isinstance(self.command, str):
-			if os.system(self.command) == 0:
-				os._exit(0)	# No error code or signal
-		else:
-			os.execvp(self.command[0], self.command)
-	
-	def parent_post_fork(self):
-		if self.dst and self.tmp_stream is self.dst:
-			self.tmp_stream = None
-	
-	def got_error_output(self, data):
-		self.errors += data
-	
-	def check_errors(self, errors, status):
-		"""Raise an exception here if errors (the string the child process wrote to stderr) or
-		status (the status from waitpid) seems to warrent it. It will be returned by wait()."""
-		if errors:
-			raise ChildError("Errors from command '%s':\n%s" % (str(self.command), errors))
-		raise ChildError("Command '%s' returned an error code (%d)!" % (str(self.command), status))
-	
-	def child_died(self, status):
-		errors = self.errors.strip()
+        if self.dst:
+            os.dup2(self.tmp_stream.fileno(), 1)
+            _keep_on_exec(1)
 
-		if self.killed:
-			self.done = ChildKilled()
-		elif errors or status:
-			try:
-				self.check_errors(errors, status)
-				self.done = True
-			except Exception as e:
-				self.done = e
-		else:
-			self.done = True
+        self.child_run_with_streams()
+        os._exit(1)
 
-		assert self.done is True or isinstance(self.done, Exception)
+    def child_run_with_streams(self):
+        """This is run by the child process. stdin and stdout have already been set up.
+        Should call exec() or os._exit() to finish. Default method execs self.command."""
+        # (basestr is python2.3 only)
+        if isinstance(self.command, str):
+            if os.system(self.command) == 0:
+                os._exit(0)  # No error code or signal
+        else:
+            os.execvp(self.command[0], self.command)
 
-		if self.done is True:
-			# Success
-			# If dst wasn't a fileno stream, copy from the temp file to it
-			if self.tmp_stream:
-				self.tmp_stream.seek(0)
-				self.dst.write(self.tmp_stream.read())
+    def parent_post_fork(self):
+        if self.dst and self.tmp_stream is self.dst:
+            self.tmp_stream = None
 
-		self.tmp_stream = None
+    def got_error_output(self, data):
+        self.errors += data
 
-		if self.waiting:
-			assert self.done
-			self.waiting = False
-			Gtk.main_quit()
-	
-	def wait(self):
-		"""Run a recursive mainloop until the command terminates.
-		Raises an exception on error."""
-		if self.child is None:
-			self.start()
-		self.waiting = True
-		while not self.done:
-			Gtk.main()
-		if self.done is not True:
-			raise self.done
-	
-	def kill(self, sig = signal.SIGTERM):
-		self.killed = 1
-		Process.kill(self, sig)
+    def check_errors(self, errors, status):
+        """Raise an exception here if errors (the string the child process wrote to stderr) or
+        status (the status from waitpid) seems to warrent it. It will be returned by wait()."""
+        if errors:
+            raise ChildError("Errors from command '%s':\n%s" %
+                             (str(self.command), errors))
+        raise ChildError("Command '%s' returned an error code (%d)!" %
+                         (str(self.command), status))
 
-def _Tmp(mode = 'w+b', suffix = '-tmp'):
-	"Create a seekable, randomly named temp file (deleted automatically after use)."
-	import tempfile
-	return tempfile.NamedTemporaryFile(mode, suffix = suffix)
-	
+    def child_died(self, status):
+        errors = self.errors.strip()
+
+        if self.killed:
+            self.done = ChildKilled()
+        elif errors or status:
+            try:
+                self.check_errors(errors, status)
+                self.done = True
+            except Exception as e:
+                self.done = e
+        else:
+            self.done = True
+
+        assert self.done is True or isinstance(self.done, Exception)
+
+        if self.done is True:
+            # Success
+            # If dst wasn't a fileno stream, copy from the temp file to it
+            if self.tmp_stream:
+                self.tmp_stream.seek(0)
+                self.dst.write(self.tmp_stream.read())
+
+        self.tmp_stream = None
+
+        if self.waiting:
+            assert self.done
+            self.waiting = False
+            Gtk.main_quit()
+
+    def wait(self):
+        """Run a recursive mainloop until the command terminates.
+        Raises an exception on error."""
+        if self.child is None:
+            self.start()
+        self.waiting = True
+        while not self.done:
+            Gtk.main()
+        if self.done is not True:
+            raise self.done
+
+    def kill(self, sig=signal.SIGTERM):
+        self.killed = 1
+        Process.kill(self, sig)
+
+
+def _Tmp(mode='w+b', suffix='-tmp'):
+    "Create a seekable, randomly named temp file (deleted automatically after use)."
+    import tempfile
+    return tempfile.NamedTemporaryFile(mode, suffix=suffix)
+
+
 def _test():
-	"Check that this module works."
+    "Check that this module works."
 
-	def show():
-		error = sys.exc_info()[1]
-		print("(error reported was '%s')" % error)
-	
-	def pipe_through_command(command, src, dst): PipeThroughCommand(command, src, dst).wait()
+    def show():
+        error = sys.exc_info()[1]
+        print("(error reported was '%s')" % error)
 
-	print("Test _Tmp()...")
-	
-	test_file = _Tmp()
-	test_file.write('Hello')
-	print(' ', end=' ', file=test_file)
-	test_file.flush()
-	os.write(test_file.fileno(), 'World')
+    def pipe_through_command(command, src, dst): PipeThroughCommand(
+        command, src, dst).wait()
 
-	test_file.seek(0)
-	assert test_file.read() == 'Hello World'
+    print("Test _Tmp()...")
 
-	print("Test pipe_through_command():")
+    test_file = _Tmp()
+    test_file.write('Hello')
+    print(' ', end=' ', file=test_file)
+    test_file.flush()
+    os.write(test_file.fileno(), 'World')
 
-	print("Try an invalid command...")
-	try:
-		pipe_through_command('bad_command_1234', None, None)
-		assert 0
-	except ChildError:
-		show()
-	else:
-		assert 0
+    test_file.seek(0)
+    assert test_file.read() == 'Hello World'
 
-	print("Try a valid command...")
-	pipe_through_command('exit 0', None, None)
-	
-	print("Writing to a non-fileno stream...")
-	from io import StringIO
-	a = StringIO()
-	pipe_through_command('echo Hello', None, a)
-	assert a.getvalue() == 'Hello\n'
+    print("Test pipe_through_command():")
 
-	print("Try with args...")
-	a = StringIO()
-	pipe_through_command(('echo', 'Hello'), None, a)
-	assert a.getvalue() == 'Hello\n'
+    print("Try an invalid command...")
+    try:
+        pipe_through_command('bad_command_1234', None, None)
+        assert 0
+    except ChildError:
+        show()
+    else:
+        assert 0
 
-	print("Reading from a stream to a StringIO...")
-	test_file.seek(1)			# (ignored)
-	pipe_through_command('cat', test_file, a)
-	assert a.getvalue() == 'Hello\nHello World'
+    print("Try a valid command...")
+    pipe_through_command('exit 0', None, None)
 
-	print("Writing to a fileno stream...")
-	test_file.seek(0)
-	test_file.truncate(0)
-	pipe_through_command('echo Foo', None, test_file)
-	test_file.seek(0)
-	assert test_file.read() == 'Foo\n'
+    print("Writing to a non-fileno stream...")
+    from io import StringIO
+    a = StringIO()
+    pipe_through_command('echo Hello', None, a)
+    assert a.getvalue() == 'Hello\n'
 
-	print("Read and write fileno streams...")
-	src = _Tmp()
-	src.write('123')
-	src.seek(0)
-	test_file.seek(0)
-	test_file.truncate(0)
-	pipe_through_command('cat', src, test_file)
-	test_file.seek(0)
-	assert test_file.read() == '123'
+    print("Try with args...")
+    a = StringIO()
+    pipe_through_command(('echo', 'Hello'), None, a)
+    assert a.getvalue() == 'Hello\n'
 
-	print("Detect non-zero exit value...")
-	try:
-		pipe_through_command('exit 1', None, None)
-	except ChildError:
-		show()
-	else:
-		assert 0
-	
-	print("Detect writes to stderr...")
-	try:
-		pipe_through_command('echo one >&2; sleep 2; echo two >&2', None, None)
-	except ChildError:
-		show()
-	else:
-		assert 0
+    print("Reading from a stream to a StringIO...")
+    test_file.seek(1)			# (ignored)
+    pipe_through_command('cat', test_file, a)
+    assert a.getvalue() == 'Hello\nHello World'
 
-	print("Check tmp file is deleted...")
-	name = test_file.name
-	assert os.path.exists(name)
-	test_file = None
-	assert not os.path.exists(name)
+    print("Writing to a fileno stream...")
+    test_file.seek(0)
+    test_file.truncate(0)
+    pipe_through_command('echo Foo', None, test_file)
+    test_file.seek(0)
+    assert test_file.read() == 'Foo\n'
 
-	print("Check we can kill a runaway proces...")
-	ptc = PipeThroughCommand('sleep 100; exit 1', None, None)
-	def stop():
-		ptc.kill()
-	GLib.timeout_add(2000, stop)
-	try:
-		ptc.wait()
-		assert 0
-	except ChildKilled:
-		pass
-	
-	print("All tests passed!")
+    print("Read and write fileno streams...")
+    src = _Tmp()
+    src.write('123')
+    src.seek(0)
+    test_file.seek(0)
+    test_file.truncate(0)
+    pipe_through_command('cat', src, test_file)
+    test_file.seek(0)
+    assert test_file.read() == '123'
+
+    print("Detect non-zero exit value...")
+    try:
+        pipe_through_command('exit 1', None, None)
+    except ChildError:
+        show()
+    else:
+        assert 0
+
+    print("Detect writes to stderr...")
+    try:
+        pipe_through_command('echo one >&2; sleep 2; echo two >&2', None, None)
+    except ChildError:
+        show()
+    else:
+        assert 0
+
+    print("Check tmp file is deleted...")
+    name = test_file.name
+    assert os.path.exists(name)
+    test_file = None
+    assert not os.path.exists(name)
+
+    print("Check we can kill a runaway proces...")
+    ptc = PipeThroughCommand('sleep 100; exit 1', None, None)
+
+    def stop():
+        ptc.kill()
+    GLib.timeout_add(2000, stop)
+    try:
+        ptc.wait()
+        assert 0
+    except ChildKilled:
+        pass
+
+    print("All tests passed!")
+
 
 if __name__ == '__main__':
-	_test()
+    _test()

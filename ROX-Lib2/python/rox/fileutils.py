@@ -10,77 +10,81 @@ Typical usage:
 import os
 from rox import _
 
+
 def report_patherror(message, path):
-	"""Display a <Cancel>/<Retry>/<Examine> dialog.
-	This will raise an OSError exception if the user selects Cancel, or
-	will return successfully if the user chooses to retry."""
-	from rox import filer, toplevel_ref, toplevel_unref, ButtonMixed
+    """Display a <Cancel>/<Retry>/<Examine> dialog.
+    This will raise an OSError exception if the user selects Cancel, or
+    will return successfully if the user chooses to retry."""
+    from rox import filer, toplevel_ref, toplevel_unref, ButtonMixed
 
-        from gi.repository import Gtk
+    from gi.repository import Gtk
 
-	toplevel_ref()
-	box = g.MessageDialog(None, 0, Gtk.MessageType.QUESTION,
-				Gtk.ButtonsType.CANCEL, message)
+    toplevel_ref()
+    box = g.MessageDialog(None, 0, Gtk.MessageType.QUESTION,
+                          Gtk.ButtonsType.CANCEL, message)
 
-	button = ButtonMixed(Gtk.STOCK_REDO, _('Retry'))
-        button.set_can_default(True)
-	button.show()
-	box.add_action_widget(button, Gtk.ResponseType.OK)
+    button = ButtonMixed(Gtk.STOCK_REDO, _('Retry'))
+    button.set_can_default(True)
+    button.show()
+    box.add_action_widget(button, Gtk.ResponseType.OK)
 
-	button = ButtonMixed(Gtk.STOCK_JUMP_TO, _('Examine'))
-        button.set_can_default(True)
-	button.show()
-	box.add_action_widget(button, Gtk.ResponseType.APPLY)
+    button = ButtonMixed(Gtk.STOCK_JUMP_TO, _('Examine'))
+    button.set_can_default(True)
+    button.show()
+    box.add_action_widget(button, Gtk.ResponseType.APPLY)
 
-	box.set_position(Gtk.WindowPosition.CENTER)
-	box.set_title(_('Error:'))
-	box.set_default_response(Gtk.ResponseType.APPLY)
-	while 1:
-		resp = box.run()
-		if resp != int(Gtk.ResponseType.APPLY): break
-		filerpath = os.path.normpath(path)
-		filer.show_file(filerpath)
-	box.destroy()
-	toplevel_unref()
-	if resp != int(Gtk.ResponseType.OK):
-		raise OSError(message)
+    box.set_position(Gtk.WindowPosition.CENTER)
+    box.set_title(_('Error:'))
+    box.set_default_response(Gtk.ResponseType.APPLY)
+    while 1:
+        resp = box.run()
+        if resp != int(Gtk.ResponseType.APPLY):
+            break
+        filerpath = os.path.normpath(path)
+        filer.show_file(filerpath)
+    box.destroy()
+    toplevel_unref()
+    if resp != int(Gtk.ResponseType.OK):
+        raise OSError(message)
+
 
 def _makedirs_recursive(path, mode):
-	"""Recursive part of makedirs. Calls itself to ensure head
-	of path exists, and then makes a new directory at path. Returns
-	an Exception if it can't make a directory at path."""
-	if os.path.isdir(path): return
-	head, tail = os.path.split(path)
-	if not tail:
-		head, tail = os.path.split(head)
-	if head and tail:
-		_makedirs_recursive(head, mode)
+    """Recursive part of makedirs. Calls itself to ensure head
+    of path exists, and then makes a new directory at path. Returns
+    an Exception if it can't make a directory at path."""
+    if os.path.isdir(path):
+        return
+    head, tail = os.path.split(path)
+    if not tail:
+        head, tail = os.path.split(head)
+    if head and tail:
+        _makedirs_recursive(head, mode)
 
-	while True:
-		if os.path.exists(path):
-			report_patherror( \
-				_("Could not create directory `%s' because a file already exists at that path.\n") % path, path)
-			continue
-		try:
-			os.mkdir(path, mode)
-			return
-		except OSError as msg:
-			report_patherror(("%s.\n" + _("Could not create directory `%s'.\n")) \
-				% (msg[1], path), path)
+    while True:
+        if os.path.exists(path):
+            report_patherror(
+                _("Could not create directory `%s' because a file already exists at that path.\n") % path, path)
+            continue
+        try:
+            os.mkdir(path, mode)
+            return
+        except OSError as msg:
+            report_patherror(("%s.\n" + _("Could not create directory `%s'.\n"))
+                             % (msg[1], path), path)
+
 
 def makedirs(path, mode=0o777):
-	"""Make a directory at the specified path, creating intermediate
-	directories if necessary. No error if 'path' is already a directory.
+    """Make a directory at the specified path, creating intermediate
+    directories if necessary. No error if 'path' is already a directory.
 
-	On error, a dialog which allows the user to open the filer to fix
-	things and then retry will be opened.
+    On error, a dialog which allows the user to open the filer to fix
+    things and then retry will be opened.
 
-	Returns successfully if all directories get created (or already exist),
-	Raises an OSError if there is a problem, in which case the application
-	should not open a dialog box to inform the user, since one will already
-	have been displayed.
-	"""
-	# Get rid of any ..'s in the path
-	path = os.path.normpath(path)
-	_makedirs_recursive(path, mode)
-
+    Returns successfully if all directories get created (or already exist),
+    Raises an OSError if there is a problem, in which case the application
+    should not open a dialog box to inform the user, since one will already
+    have been displayed.
+    """
+    # Get rid of any ..'s in the path
+    path = os.path.normpath(path)
+    _makedirs_recursive(path, mode)

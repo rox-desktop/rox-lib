@@ -4,24 +4,30 @@ import pydoc
 from pydoc import *
 import inspect
 
-import sys, os
+import sys
+import os
 sys.path.insert(0, os.path.abspath(os.getcwd()))
 
 try:
-	os.mkdir('../Help/python')
+    os.mkdir('../Help/python')
 except OSError:
-	pass
+    pass
 
 # Ignore names starting with _
 old_get = inspect.getmembers
+
+
 def get(object, pred):
-	return [(n,v) for (n,v) in old_get(object, pred) if not n.startswith('_')]
+    return [(n, v) for (n, v) in old_get(object, pred) if not n.startswith('_')]
+
+
 inspect.getmembers = get
+
 
 class MyHtml(pydoc.HTMLDoc):
     def docmodule(self, object, name=None, mod=None, *ignored):
         """Produce HTML documentation for a module object."""
-        name = object.__name__ # ignore the passed-in name
+        name = object.__name__  # ignore the passed-in name
         parts = split(name, '.')
         links = []
         for i in range(len(parts)-1):
@@ -63,7 +69,8 @@ class MyHtml(pydoc.HTMLDoc):
             if inspect.isbuiltin(value) or inspect.getmodule(value) is object:
                 funcs.append((key, value))
                 fdict[key] = '#-' + key
-                if inspect.isfunction(value): fdict[value] = fdict[key]
+                if inspect.isfunction(value):
+                    fdict[value] = fdict[key]
 
         doc = self.markup(getdoc(object), self.preformat, fdict, cdict)
         doc = doc and '<tt>%s</tt>' % doc
@@ -73,8 +80,8 @@ class MyHtml(pydoc.HTMLDoc):
             modpkgs = []
             modnames = []
             for file in os.listdir(object.__path__[0]):
-	    	if file.startswith('_'):
-			continue
+                if file.startswith('_'):
+                    continue
                 path = os.path.join(object.__path__[0], file)
                 modname = inspect.getmodulename(file)
                 if modname and modname not in modnames:
@@ -126,6 +133,7 @@ class MyHtml(pydoc.HTMLDoc):
         class HorizontalRule:
             def __init__(self):
                 self.needone = 0
+
             def maybe(self):
                 if self.needone:
                     push('<hr>\n')
@@ -140,8 +148,8 @@ class MyHtml(pydoc.HTMLDoc):
                 hr.maybe()
                 push(msg)
                 for name, kind, homecls, value in ok:
-		    if name.startswith('_') and name is not '__init__':
-			continue
+                    if name.startswith('_') and name is not '__init__':
+                        continue
                     push(self.document(getattr(object, name), name, mod,
                                        funcs, classes, mdict, object))
                     push('\n')
@@ -204,13 +212,14 @@ class MyHtml(pydoc.HTMLDoc):
                 thisclass = mro.pop(0)
             else:
                 thisclass = attrs[0][2]
-            attrs, inherited = pydoc._split_list(attrs, lambda t: t[2] is thisclass)
-	    
+            attrs, inherited = pydoc._split_list(
+                attrs, lambda t: t[2] is thisclass)
+
             if thisclass is object:
                 tag = "defined here"
             else:
                 tag = "inherited from %s" % self.classlink(thisclass,
-                                                          object.__module__)
+                                                           object.__module__)
             tag += ':<br>\n'
 
             # Sort attrs by name.
@@ -225,7 +234,7 @@ class MyHtml(pydoc.HTMLDoc):
                           lambda t: t[1] == 'static method')
             attrs = spillproperties("Properties %s" % tag, attrs,
                                     lambda t: t[1] == 'property')
-            #attrs = spilldata("Data and non-method functions %s" % tag, attrs,
+            # attrs = spilldata("Data and non-method functions %s" % tag, attrs,
             #                  lambda t: t[1] == 'data')
             #assert attrs == []
             attrs = None
@@ -243,11 +252,12 @@ class MyHtml(pydoc.HTMLDoc):
             for base in bases:
                 parents.append(self.classlink(base, object.__module__))
             title = title + '(%s)' % join(parents, ', ')
-        doc = self.markup(getdoc(object), self.preformat, funcs, classes, mdict)
+        doc = self.markup(getdoc(object), self.preformat,
+                          funcs, classes, mdict)
         doc = doc and '<tt>%s<br>&nbsp;</tt>' % doc or '&nbsp;'
 
         return self.section(title, '#000000', '#ffc8d8', contents, 5, doc)
-	
+
 
 pydoc.html = MyHtml()
 
@@ -256,5 +266,5 @@ os.chdir('../Help/python')
 
 pydoc.writedoc('rox')
 for file in files:
-	if not file.startswith('_') and file.endswith('.py'):
-		pydoc.writedoc('rox.' + file[:-3])
+    if not file.startswith('_') and file.endswith('.py'):
+        pydoc.writedoc('rox.' + file[:-3])

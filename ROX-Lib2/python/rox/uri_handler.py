@@ -15,10 +15,12 @@ os.waitpid(pid)
 
 """
 
-import os, urllib.parse
+import os
+import urllib.parse
 
 import rox
 from rox import basedir
+
 
 def get(scheme):
     """Return the handler for URI's of the named scheme (e.g. http, file, ftp,
@@ -29,37 +31,39 @@ def get(scheme):
     The returned string may contain %s in which case it should be replaced
     with the URI, otherwise append the URI (after a space).
     """
-    
-    if scheme=='file':
+
+    if scheme == 'file':
         return 'rox -U "%s"'
 
-    path=basedir.load_first_config('rox.sourceforge.net', 'URI', scheme)
+    path = basedir.load_first_config('rox.sourceforge.net', 'URI', scheme)
     if not path:
         return
 
     if rox.isappdir(path):
-        path=os.path.join(path, 'AppRun')
+        path = os.path.join(path, 'AppRun')
 
     return path
+
 
 def launch(uri):
     """For a given URI pass it to the appropriate launcher.
     rox.uri_handler.get() is used to look up the launcher command which is
     executed.  The process id of the command is returned (see os.wait()), or
     None if no launcher is defined for that URI."""
-    comp=urllib.parse.urlparse(uri)
-    handler=get(comp[0])
+    comp = urllib.parse.urlparse(uri)
+    handler = get(comp[0])
     if not handler:
         return
     if '%s' in handler:
-        cmd=handler % uri
+        cmd = handler % uri
     else:
-        cmd=handler+' '+uri
-    #print cmd
+        cmd = handler+' '+uri
+    # print cmd
 
     return os.spawnlp(os.P_NOWAIT, 'sh', 'sh', '-c', cmd)
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     print(get('file'))
     print(get('http'))
     print(get('mailto'))
@@ -67,4 +71,3 @@ if __name__=='__main__':
 
     launch('file:///tmp')
     launch('http://rox.sf.net/')
-

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import unittest
-import os, sys, shutil
+import os
+import sys
+import shutil
 from os.path import dirname, abspath, join
 rox_lib = dirname(dirname(dirname(abspath(sys.argv[0]))))
 sys.path.insert(0, join(rox_lib, 'python'))
@@ -17,49 +19,52 @@ from rox import basedir, choices
 
 set_save_name('Foo')
 
-class MyToggleItem(ToggleItem):
-	my_widget = None
 
-	def update(self, menu, widget):
-		self.my_menu = menu
-		self.my_widget = widget
-		ToggleItem.update(self, menu, widget)
+class MyToggleItem(ToggleItem):
+    my_widget = None
+
+    def update(self, menu, widget):
+        self.my_menu = menu
+        self.my_widget = widget
+        ToggleItem.update(self, menu, widget)
+
 
 class TestMenu(unittest.TestCase):
-	t1 = False
-	t2 = True
+    t1 = False
+    t2 = True
 
-	def setUp(self):
-		self.my_t1 = MyToggleItem('Toggle 1', 't1')
-		self.my_t2 = MyToggleItem('Toggle 2', 't2')
+    def setUp(self):
+        self.my_t1 = MyToggleItem('Toggle 1', 't1')
+        self.my_t2 = MyToggleItem('Toggle 2', 't2')
 
-		self.menu = Menu('main', [
-		SubMenu('File', [
-		  Action('Save',	'save',	'<Ctrl>S', Gtk.STOCK_SAVE),
-		  Action('Parent',	'up',	'', Gtk.STOCK_GO_UP),
-		  Action('Close',	'close','', Gtk.STOCK_CLOSE),
-		  Separator(),
-		  Action('New',	'new',	'', Gtk.STOCK_NEW)]),
-		Action('Help',	'help',	'F1', Gtk.STOCK_HELP),
-		self.my_t1,
-		self.my_t2,
-		])
-	
-	def tearDown(self):
-		self.menu.menu.destroy()
+        self.menu = Menu('main', [
+            SubMenu('File', [
+                Action('Save',	'save',	'<Ctrl>S', Gtk.STOCK_SAVE),
+                Action('Parent',	'up',	'', Gtk.STOCK_GO_UP),
+                Action('Close',	'close', '', Gtk.STOCK_CLOSE),
+                Separator(),
+                Action('New',	'new',	'', Gtk.STOCK_NEW)]),
+            Action('Help',	'help',	'F1', Gtk.STOCK_HELP),
+            self.my_t1,
+            self.my_t2,
+        ])
 
-	def testNothing(self):
-		pass
-	
-	def testToggles(self):
-		self.menu.popup(self, None)
-		assert self.my_t1.my_widget != None
-		assert self.my_t2.my_widget != None
+    def tearDown(self):
+        self.menu.menu.destroy()
 
-		assert self.my_t2.my_widget != self.my_t1.my_widget
-		assert self.my_t1.my_menu == self.my_t2.my_menu == self.menu
+    def testNothing(self):
+        pass
+
+    def testToggles(self):
+        self.menu.popup(self, None)
+        assert self.my_t1.my_widget != None
+        assert self.my_t2.my_widget != None
+
+        assert self.my_t2.my_widget != self.my_t1.my_widget
+        assert self.my_t1.my_menu == self.my_t2.my_menu == self.menu
+
 
 suite = unittest.makeSuite(TestMenu)
 if __name__ == '__main__':
-	sys.argv.append('-v')
-	unittest.main()
+    sys.argv.append('-v')
+    unittest.main()

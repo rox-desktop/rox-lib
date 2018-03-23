@@ -63,22 +63,26 @@ import rox
 import rox.xxmlrpc
 
 # Class used to invoke a method on an XXMLRPC proxy object
+
+
 class _caller(object):
     """For internal use."""
+
     def __init__(self, method):
-        self.method=method
+        self.method = method
 
     def __call__(self, *params):
-        client=self.method(*params)
+        client = self.method(*params)
         return client.get_response()
-    
+
+
 class _XXClient(object):
     """Provides the client side of the client/server model.  This is the
     XXMLRPC implementation.  Create an instance of this class with the
     appropriate service, interface and object parameters then call the
     required methods.  A rox.xxmlrpc.NoSuchService exception may be raised
     if the server side cannot be contacted."""
-    
+
     def __init__(self, service_name, interface_name, object_path='Default'):
         """Constructor.
         service_name - namespaced name giving the service to contact, e.g.
@@ -88,16 +92,17 @@ class _XXClient(object):
         must still be specified for compatability with the DBus implementation
         object_path - determines the data the methods work on, defaults to
         'Default' if not specified"""
-        self.service_name=service_name
-        self.interface_name=interface_name
-        self.object_path=object_path
+        self.service_name = service_name
+        self.interface_name = interface_name
+        self.object_path = object_path
 
-        proxy=rox.xxmlrpc.XXMLProxy(self.service_name)
-        self.obj=proxy.get_object(self.object_path)
+        proxy = rox.xxmlrpc.XXMLProxy(self.service_name)
+        self.obj = proxy.get_object(self.object_path)
 
     def __getattr__(self, method):
-        invoke=self.obj.__getattr__(method)
+        invoke = self.obj.__getattr__(method)
         return _caller(invoke)
+
 
 class _XXServer(rox.xxmlrpc.XXMLRPCServer):
     """Provides the server side of the client/server model.  You should
@@ -109,9 +114,10 @@ class _XXServer(rox.xxmlrpc.XXMLRPCServer):
     Alternatively derive from the FileHandler class instead if that meets
     your needs.  This class only supports a single object, use
     rox.xxmlrpc.XXMLRPCServer if you need to support multiple objects.
-    
+
     This is the XXMLRPC implementation.
     """
+
     def __init__(self, service_name, interface_name, object_path='Default'):
         """Constructor.
         service_name - namespaced name giving the service to provide, e.g.
@@ -124,14 +130,15 @@ class _XXServer(rox.xxmlrpc.XXMLRPCServer):
 
         This initialises rox.xxmlrpc.XXMLRPCServer with service_name and
         adds itself as a single object of the given path."""
-        
-        self.service_name=service_name
-        self.interface_name=interface_name
-        self.object_path=object_path
+
+        self.service_name = service_name
+        self.interface_name = interface_name
+        self.object_path = object_path
 
         rox.xxmlrpc.XXMLRPCServer.__init__(self, self.service_name)
 
         self.add_object(object_path, self)
+
 
 def _XXcontact(service_name, interface_name, object_path='Default',
                klass=None):
@@ -155,29 +162,31 @@ def _XXcontact(service_name, interface_name, object_path='Default',
 
     This is the XXMLRPC implementation.
     """
-     
+
     try:
-        proxy=Client(service_name, interface_name, object_path)
+        proxy = Client(service_name, interface_name, object_path)
 
     except rox.xxmlrpc.NoSuchService:
         if klass:
-            proxy=klass(service_name, interface_name, object_path)
+            proxy = klass(service_name, interface_name, object_path)
         else:
-            proxy=None
+            proxy = None
 
     return proxy
 
+
 # No DBus implementation yet, so...
-Client=_XXClient
-Server=_XXServer
-contact=_XXcontact
+Client = _XXClient
+Server = _XXServer
+contact = _XXcontact
+
 
 class FileHandler(Server):
     """An example Server derivation, providing the most common use case.
 
     This provides the interface 'net.sourceforge.rox.FileHandler' on the object
     'Default'.  Three methods are defined and one, Quit(), is implemented.
-    
+
     To use this class you must derive a class from it and implement:
     * A class member, service_name, naming the service (e.g.
       com.mydomain.MyApp)
@@ -185,11 +194,11 @@ class FileHandler(Server):
     * An implementation of the OpenFile() method.  This takes one argument,
       a file name.  This should open a new window for that file.
     """
-    
-    allowed_methods=('OpenFile', 'OpenOptions', 'Quit')
 
-    interface_name='net.sourceforge.rox.FileHandler'
-    object_path='Default'
+    allowed_methods = ('OpenFile', 'OpenOptions', 'Quit')
+
+    interface_name = 'net.sourceforge.rox.FileHandler'
+    object_path = 'Default'
 
     def __init__(self, service_name=None, interface_name=None,
                  object_path=None):
@@ -209,14 +218,14 @@ class FileHandler(Server):
         will remain running even when no windows are open.
         """
         assert hasattr(self, 'service_name')
-        assert service_name is None or service_name==self.service_name
-        assert interface_name is None or interface_name==self.interface_name
-        assert object_path is None or object_path==self.object_path
-        
+        assert service_name is None or service_name == self.service_name
+        assert interface_name is None or interface_name == self.interface_name
+        assert object_path is None or object_path == self.object_path
+
         Server.__init__(self, self.service_name, self.interface_name,
                         self.object_path)
 
-        self.active=True
+        self.active = True
         rox.toplevel_ref()
 
     def OpenFile(self, file_name):
@@ -226,7 +235,7 @@ class FileHandler(Server):
     def OpenOptions(self):
         """Open the applications options, only if the file 'Options.xml' exists
         in the app dir and is readable."""
-        opt=os.path.join(rox.app_dir, 'Options.xml')
+        opt = os.path.join(rox.app_dir, 'Options.xml')
         if os.access(opt, os.R_OK):
             rox.edit_options()
 
@@ -237,7 +246,7 @@ class FileHandler(Server):
         unless you override this to change the behavior."""
         if self.active:
             rox.toplevel_unref()
-            self.active=False
+            self.active = False
         rox.g.main_quit()
 
     @classmethod
@@ -246,8 +255,8 @@ class FileHandler(Server):
         Open the named file.  If the server could be contacted then
         it is used to open the file, otherwise a new instance of this class
         becomes the server and opens it."""
-        proxy=contact(cls.service_name, cls.interface_name, cls.object_path,
-                      cls)
+        proxy = contact(cls.service_name, cls.interface_name, cls.object_path,
+                        cls)
         return proxy.OpenFile(file_name)
 
     @classmethod
@@ -256,8 +265,8 @@ class FileHandler(Server):
         Open the options dialog.  If the server could be contacted then
         it is used to show the options dialog, otherwise a new instance of
         this class becomes the server and shows it."""
-        proxy=contact(cls.service_name, cls.interface_name, cls.object_path,
-                      cls)
+        proxy = contact(cls.service_name, cls.interface_name, cls.object_path,
+                        cls)
         return proxy.OpenOptions()
 
     @classmethod
@@ -265,7 +274,7 @@ class FileHandler(Server):
         """Class method.
         Tell the current server to quit (see the Quit() method).  If there
         is no server then take no action."""
-        proxy=contact(cls.service_name, cls.interface_name, cls.object_path)
+        proxy = contact(cls.service_name, cls.interface_name, cls.object_path)
         if proxy:
             return proxy.Quit()
 
@@ -284,13 +293,13 @@ class FileHandler(Server):
         True is returned if a server instance was installed and has now
         exited, False if an existing server was used.
         """
-        proxy=contact(cls.service_name, cls.interface_name, cls.object_path)
+        proxy = contact(cls.service_name, cls.interface_name, cls.object_path)
         if proxy is None:
-            must_serve=True
-            proxy=cls(cls.service_name, cls.interface_name, cls.object_path)
+            must_serve = True
+            proxy = cls(cls.service_name, cls.interface_name, cls.object_path)
 
         else:
-            must_serve=False
+            must_serve = False
 
         if file_name is not None:
             proxy.OpenFile(file_name)
@@ -299,4 +308,3 @@ class FileHandler(Server):
             rox.mainloop()
 
         return must_serve
-    

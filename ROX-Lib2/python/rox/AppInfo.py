@@ -4,11 +4,12 @@ Written by Christopher Arndt and Stephen Watson."""
 import sys
 from xml.dom import Node, minidom, XML_NAMESPACE
 
+
 def _getlangs(langs):
     if langs is None:
         langs = ['en', 'C', '']
         try:
-            import rox #.i18n
+            import rox  # .i18n
             langs = rox.i18n.langs + langs
         except:
             pass
@@ -16,10 +17,12 @@ def _getlangs(langs):
         langs = [langs]
     return langs
 
+
 def _data(node):
     """Return all the text directly inside this DOM Node."""
     return ''.join([text.nodeValue for text in node.childNodes
-      if text.nodeType == Node.TEXT_NODE])
+                    if text.nodeType == Node.TEXT_NODE])
+
 
 class AppInfo:
     """Parsed AppInfo.xml file. Current only deals with the <About>, 
@@ -50,7 +53,7 @@ class AppInfo:
         """Collect 'Summary' info in a dictionary by language."""
         self.summary = {}
         for summary in self._doc.documentElement.getElementsByTagName('Summary'):
-            lang=summary.getAttributeNS(XML_NAMESPACE, 'lang')
+            lang = summary.getAttributeNS(XML_NAMESPACE, 'lang')
             self.summary[lang] = _data(summary)
 
     def _parseMenu(self):
@@ -63,17 +66,17 @@ class AppInfo:
     def _parseAppMenu(self, menus, node):
         """Recursivly parse the <AppMenu>s"""
         for item in node.getElementsByTagName('Item'):
-            opt=item.getAttribute('option')
-            icon=item.getAttribute('icon')
-            labels={}
+            opt = item.getAttribute('option')
+            icon = item.getAttribute('icon')
+            labels = {}
             for label in item.getElementsByTagName('Label'):
-                lang=label.getAttributeNS(XML_NAMESPACE, 'lang')
-                labels[lang]=_data(label)
-            sub_menus=[]
+                lang = label.getAttributeNS(XML_NAMESPACE, 'lang')
+                labels[lang] = _data(label)
+            sub_menus = []
             for sub in item.getElementsByTagName('AppMenu'):
                 self._parseAppMenu(sub_menus, sub)
             menus.append({'option': opt, 'label':
-                          labels, 'icon' : icon,
+                          labels, 'icon': icon,
                           'sub-menus': sub_menus})
 
     def getAbout(self, elname, langs=None):
@@ -96,9 +99,9 @@ class AppInfo:
         """Return the contents of the <Authors> element in the
         <About> section (also tries <Author> if needed."""
 
-        auth=self.getAbout('Authors', langs)
+        auth = self.getAbout('Authors', langs)
         if auth is None:
-            auth=self.getAbout('Author', langs)
+            auth = self.getAbout('Author', langs)
         if auth is None:
             return ''
         return auth[1]
@@ -121,7 +124,7 @@ class AppInfo:
             if ab.getAttributeNS(XML_NAMESPACE, 'lang') == lang:
                 for node in ab.childNodes:
                     if node.nodeType == Node.ELEMENT_NODE and \
-                      node.localName == elname:
+                            node.localName == elname:
                         ab.removeChild(node)
                         el = self._doc.createElement(elname)
                         text = self._doc.createTextNode(value)
@@ -152,7 +155,7 @@ class AppInfo:
 
         if lang in self.summary:
             for summary in self._doc.documentElement.getElementsByTagName(
-              'Summary'):
+                    'Summary'):
                 if summary.getAttributeNS(XML_NAMESPACE, 'lang') == lang:
                     summary.parentNode.removeChild(summary)
         summary = self._doc.createElement('Summary')
@@ -170,25 +173,25 @@ class AppInfo:
         return self._doc.getElementsByTagNameNS(ns, elname)
 
     def _getMenu(self, item, langs):
-        ritem={'option': item['option'], 'icon': item['icon']}
+        ritem = {'option': item['option'], 'icon': item['icon']}
 
-        labels=item['label']
+        labels = item['label']
 
         for lang in langs:
-            #print labels, lang, labels.has_key(lang)
+            # print labels, lang, labels.has_key(lang)
             if lang in labels:
-                ritem['label']=labels[lang]
+                ritem['label'] = labels[lang]
                 break
         else:
             try:
-                ritem['label']=labels['']
+                ritem['label'] = labels['']
             except:
-                ritem['label']=''
+                ritem['label'] = ''
 
-        subs=[]
+        subs = []
         for s in item['sub-menus']:
             subs.append(self._getMenu(s, langs))
-        ritem['sub-menus']=subs
+        ritem['sub-menus'] = subs
 
         return ritem
 
@@ -199,17 +202,17 @@ class AppInfo:
         'label': the label of the item in an appropriate language
         'icon': the icon of the item
         'sub-menus': list of sub menu items"""
-        
+
         langs = _getlangs(langs)
 
-        menus=[]
+        menus = []
         for item in self.menu:
             menus.append(self._getMenu(item, langs))
 
         return menus
 
     def _getTypeList(self, element):
-        types=[]
+        types = []
         for node in self._doc.getElementsByTagName(element):
             for t in node.getElementsByTagNameNS(None, 'MimeType'):
                 types.append(t.getAttribute('type'))
@@ -233,19 +236,20 @@ class AppInfo:
         fp.write(str(self))
         fp.close()
 
+
 # Some test code
-if __name__=='__main__':
+if __name__ == '__main__':
     print(_getlangs(None))
-    ai=AppInfo(sys.argv[1])
-    #print ai
+    ai = AppInfo(sys.argv[1])
+    # print ai
     print('Summary: %s' % ai.getSummary())
     print(ai.getAbout('Authors'))
     print('Authors: %s' % ai.getAuthors())
-    #print ai.findElements('AppMenu')
+    # print ai.findElements('AppMenu')
     print(ai.menu)
     for menu in ai.getAppMenu():
         print('%s (%s) -> %d sub' % (menu['label'], menu['option'],
                                      len(menu['sub-menus'])))
-    #print ai.findElements('CanRun')
+    # print ai.findElements('CanRun')
     print(ai.getCanRun())
     print(ai.getCanThumbnail())
