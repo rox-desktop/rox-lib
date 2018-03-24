@@ -19,19 +19,6 @@ class TestOptions(unittest.TestCase):
             if os.path.isdir(d):
                 shutil.rmtree(d)
 
-    def testChoices(self):
-        group = options.OptionGroup('MyProg', 'Options')
-        o1 = options.Option('colour', 'red', group)
-        assert not os.path.isfile('/tmp/choices/MyProg/Options')
-        group.notify()
-        group.save()
-        assert os.path.isfile('/tmp/choices/MyProg/Options')
-
-        g2 = options.OptionGroup('MyProg', 'Options')
-        o1 = options.Option('colour', 'green', g2)
-        g2.notify()
-        self.assertEqual('red', o1.value)
-
     def testXDG(self):
         group = options.OptionGroup('MyProg', 'Options', 'site')
         o1 = options.Option('colour', 'red', group)

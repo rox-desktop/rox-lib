@@ -6,7 +6,7 @@ Example:
 
 from rox.Menu import Menu, set_save_name, Action, Separator, SubMenu
 
-set_save_name('Edit')
+set_save_name('Edit', site='rox.sourceforge.net')
 
 menu = Menu('main', [
     SubMenu('File', Menu([
@@ -38,17 +38,14 @@ from gi.repository import Gtk, Gdk
 
 import os
 import rox
-import rox.choices
 import rox.basedir
 
 _save_name = None
 
 
-def set_save_name(prog, leaf='menus', site=None):
-    """Set the directory/leafname (see choices) used to save the menu keys.
-    Call this before creating any menus.
-    If 'site' is given, the basedir module is used for saving bindings (the
-    new system). Otherwise, the deprecated choices module is used."""
+def set_save_name(prog, leaf='menus', *, site):
+    """Set the directory/leafname/site (see basedir) used to save the menu keys.
+    Call this before creating any menus."""
     global _save_name
     _save_name = (site, prog, leaf)
 
@@ -215,10 +212,8 @@ class Menu:
         factory = ItemFactory(Gtk.Menu, '<%s>' % name, ag)
 
         site, program, save_leaf = _save_name
-        if site:
-            accel_path = rox.basedir.load_first_config(site, program, save_leaf)
-        else:
-            accel_path = rox.choices.load(program, save_leaf)
+        assert site
+        accel_path = rox.basedir.load_first_config(site, program, save_leaf)
 
         out = []
         self.fns = []
@@ -259,11 +254,8 @@ class Menu:
 
         def keys_changed(*unused):
             site, program, name = _save_name
-            if site:
-                d = rox.basedir.save_config_path(site, program)
-                path = os.path.join(d, name)
-            else:
-                path = rox.choices.save(program, name)
+            d = rox.basedir.save_config_path(site, program)
+            path = os.path.join(d, name)
             if path:
                 try:
                     Gtk.AccelMap.save(path)

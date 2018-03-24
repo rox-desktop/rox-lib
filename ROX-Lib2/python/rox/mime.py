@@ -18,7 +18,6 @@ import fnmatch
 from gi.repository import Gtk, Gdk, GdkPixbuf, GLib
 
 import rox
-import rox.choices
 from rox import i18n, _, basedir, xattr
 
 from xml.dom import minidom, XML_NAMESPACE

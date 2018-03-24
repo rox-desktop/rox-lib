@@ -14,7 +14,7 @@ from gi.repository import Gtk
 from rox.Menu import Menu, set_save_name, SubMenu
 from rox.Menu import Separator, Action, ToggleItem
 
-set_save_name('Foo')
+set_save_name('Foo', site='example.com')
 
 
 class MyToggleItem(ToggleItem):

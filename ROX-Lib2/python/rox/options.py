@@ -27,7 +27,7 @@ yourself.
 import os
 
 import rox
-from rox import choices, basedir
+from rox import basedir
 
 from xml.dom import Node, minidom
 
@@ -144,10 +144,9 @@ class ListOption(Option):
 
 
 class OptionGroup:
-    def __init__(self, program, leaf, site=None):
-        """program/leaf is a Choices pair for the saved options. If site
-        is given, the basedir module is used for saving choices (the new system).
-        Otherwise, the deprecated choices module is used."""
+    def __init__(self, program, leaf, site):
+        """program/leaf/site is a Choices pair for the saved options."""
+        assert site
         self.site = site
         self.program = program
         self.leaf = leaf
@@ -156,10 +155,7 @@ class OptionGroup:
         self.callbacks = []
         self.too_late_for_registrations = 0
 
-        if site:
-            path = basedir.load_first_config(site, program, leaf)
-        else:
-            path = choices.load(program, leaf)
+        path = basedir.load_first_config(site, program, leaf)
         if not path:
             return
 
@@ -202,11 +198,8 @@ class OptionGroup:
         """Save all option values. Usually called by OptionsBox()."""
         assert self.too_late_for_registrations
 
-        if self.site:
-            d = basedir.save_config_path(self.site, self.program)
-            path = os.path.join(d, self.leaf)
-        else:
-            path = choices.save(self.program, self.leaf)
+        d = basedir.save_config_path(self.site, self.program)
+        path = os.path.join(d, self.leaf)
         if not path:
             return  # Saving is disabled
 
