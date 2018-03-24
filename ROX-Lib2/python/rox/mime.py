@@ -15,7 +15,7 @@ import os
 import stat
 import fnmatch
 
-from gi.repository import Gdk, GdkPixbuf
+from gi.repository import Gtk, Gdk, GdkPixbuf, GLib
 
 import rox
 import rox.choices
@@ -117,49 +117,56 @@ class MIMEtype:
 def image_for_type(type, size=48, flags=0):
     '''Search XDG_CONFIG or icon theme for a suitable icon. Returns a
     pixbuf, or None.'''
-    from .icon_theme import users_theme
+
+    icon_theme = Gtk.IconTheme.get_default()
 
     media, subtype = type.split('/', 1)
 
     path = basedir.load_first_config('rox.sourceforge.net', 'MIME-icons',
                                      media + '_' + subtype + '.png')
-    if not path:
-        icon_name = '%s-%s' % (media, subtype)
+    if path:
+        return GdkPixbuf.Pixbuf.new_from_file_at_size(path, size, size)
 
-        try:
-            path = users_theme.lookup_icon(icon_name, size, flags)
-        except:
-            print("Error loading MIME icon")
+    pixbuf = None
 
-    if not path:
-        icon_name = 'mime-%s:%s' % (media, subtype)
+    icon_name = '%s-%s' % (media, subtype)
 
-        try:
-            path = users_theme.lookup_icon(icon_name, size, flags)
-            if not path:
-                icon_name = 'mime-%s' % media
-                path = users_theme.lookup_icon(icon_name, size)
+    try:
+        pixbuf = icon_theme.load_icon(icon_name, size, flags)
+    except GLib.Error:
+        print("Error loading MIME icon")
 
-        except:
-            print("Error loading MIME icon")
+    if pixbuf:
+        return pixbuf
 
-    if not path:
-        path = basedir.load_first_config('rox.sourceforge.net',
-                                         'MIME-icons', media + '.png')
-    if not path:
-        icon_name = '%s-x-generic' % media
+    icon_name = 'mime-%s:%s' % (media, subtype)
 
-        try:
-            path = users_theme.lookup_icon(icon_name, size, flags)
-        except:
-            print("Error loading MIME icon")
+    try:
+        pixbuf = icon_theme.load_icon(icon_name, size, flags)
+        if not pixbuf:
+            icon_name = 'mime-%s' % media
+            pixbuf = icon_theme.load_icon(icon_name, size, flags)
+
+    except GLib.Error:
+        print("Error loading MIME icon")
+
+    if pixbuf:
+        return pixbuf
+
+    path = basedir.load_first_config('rox.sourceforge.net',
+                                     'MIME-icons', media + '.png')
 
     if path:
-        return GdkPixbuf.Pixbuf.new_from_file_at_size(path,
-                                                      size,
-                                                      size)
-    else:
-        return None
+        return GdkPixbuf.Pixbuf.new_from_file_at_size(path, size, size)
+
+    icon_name = '%s-x-generic' % media
+
+    try:
+        pixbuf = icon_theme.load_icon(icon_name, size, flags)
+    except GLib.Error:
+        print("Error loading MIME icon")
+
+    return pixbuf
 
 
 class MagicRule:
