@@ -29,6 +29,7 @@ python is old enough not to include them already.
 import sys
 import os
 import codecs
+import warnings as _warnings
 
 import gi
 gi.require_version("Gtk", "3.0")
@@ -66,12 +67,16 @@ def _warn_old_findrox():
 
 _warn_old_findrox()
 
-#import warnings as _warnings
-# def _stdout_warn(message, category, filename, lineno, file = None,
-#		 showwarning = _warnings.showwarning):
-#	if file is None: file = sys.stdout
-#	showwarning(message, category, filename, lineno, file)
-#_warnings.showwarning = _stdout_warn
+
+def _stdout_warn(
+        message, category, filename, lineno, file=None,
+        showwarning=_warnings.showwarning):
+    if file is None:
+        file = sys.stdout
+    showwarning(message, category, filename, lineno, file)
+
+
+_warnings.showwarning = _stdout_warn
 
 
 class UserAbort(Exception):
@@ -166,8 +171,9 @@ def _excepthook(ex_type, value, tb):
         from . import debug
         debug.show_exception(ex_type, value, tb)
 
-#_old_excepthook = sys.excepthook
-#sys.excepthook = _excepthook
+
+_old_excepthook = sys.excepthook
+sys.excepthook = _excepthook
 
 
 _icon_path = os.path.join(app_dir, '.DirIcon')
