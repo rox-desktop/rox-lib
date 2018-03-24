@@ -157,7 +157,7 @@ class ExceptionExplorer(Gtk.Frame):
 
         frames = []
         while tb is not None:
-            frames.insert(0, (tb.tb_frame, traceback.tb_lineno(tb)))
+            frames.insert(0, (tb.tb_frame, tb.tb_lineno))
             tb = tb.tb_next
         f = self.tb.tb_frame
         if f:
