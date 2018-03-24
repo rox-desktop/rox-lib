@@ -33,21 +33,6 @@ def version(major, minor, micro):
                  rox.__file__)
         return
 
-    if not os.getenv('ROXLIB_DISABLE_ZEROINSTALL') and os.path.exists('/uri/0install/rox.sourceforge.net'):
-        # We're using ZeroInstall. Good :-)
-        zpath = '/uri/0install/rox.sourceforge.net/lib/ROX-Lib2/' \
-                'latest-2'
-        if not os.path.exists(zpath):
-            os.system('0refresh rox.sourceforge.net')
-            assert os.path.exists(zpath)
-        vs = os.readlink(zpath).split('-')[-1]
-        v = tuple(map(int, vs.split('.')))
-        if v < (major, minor, micro):
-            if os.system('0refresh rox.sourceforge.net'):
-                report_error(
-                    'Using ROX-Lib in Zero Install, but cached version (%s) is too old (need %d.%d.%d) and updating failed (is zero-install running?)' % (vs, major, minor, micro))
-        sys.path.append(zpath + '/python')
-        return
     try:
         path = os.environ['LIBDIRPATH']
         paths = string.split(path, ':')
