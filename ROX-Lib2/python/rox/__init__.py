@@ -69,11 +69,11 @@ _warn_old_findrox()
 
 
 def _stdout_warn(
-        message, category, filename, lineno, file=None,
+        message, category, filename, lineno, file, line,
         showwarning=_warnings.showwarning):
     if file is None:
         file = sys.stdout
-    showwarning(message, category, filename, lineno, file)
+    showwarning(message, category, filename, lineno, file, line)
 
 
 _warnings.showwarning = _stdout_warn
