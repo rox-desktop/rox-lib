@@ -311,52 +311,53 @@ class MagicDB:
         self.maxlen = 0
 
     def mergeFile(self, fname):
-        f = file(fname, 'r')
-        line = f.readline()
-        if line != 'MIME-Magic\0\n':
-            raise MIMEerror('Not a MIME magic file')
+        with open(fname) as f:
+            line = f.readline()
+            if line != 'MIME-Magic\0\n':
+                raise MIMEerror('Not a MIME magic file')
 
-        while True:
-            shead = f.readline()
-            # print shead
-            if not shead:
-                break
-            if shead[0] != '[' or shead[-2:] != ']\n':
-                raise MIMEerror('Malformed section heading')
-            pri, tname = shead[1:-2].split(':')
-            # print shead[1:-2]
-            pri = int(pri)
-            mtype = lookup(tname)
+            while True:
+                shead = f.readline()
+                # print shead
+                if not shead:
+                    break
+                if shead[0] != '[' or shead[-2:] != ']\n':
+                    raise MIMEerror('Malformed section heading')
+                pri, tname = shead[1:-2].split(':')
+                # print shead[1:-2]
+                pri = int(pri)
+                mtype = lookup(tname)
 
-            try:
-                ents = self.types[pri]
-            except:
-                ents = []
-                self.types[pri] = ents
+                try:
+                    ents = self.types[pri]
+                except:
+                    ents = []
+                    self.types[pri] = ents
 
-            magictype = MagicType(mtype)
-            # print tname
+                magictype = MagicType(mtype)
+                # print tname
 
-            # rline=f.readline()
-            c = f.read(1)
-            f.seek(-1, 1)
-            while c and c != '[':
-                rule = magictype.getLine(f)
-                # print rule
-                if rule and rule.getLength() > self.maxlen:
-                    self.maxlen = rule.getLength()
-
+                # rline=f.readline()
                 c = f.read(1)
                 f.seek(-1, 1)
+                while c and c != '[':
+                    rule = magictype.getLine(f)
+                    # print rule
+                    if rule and rule.getLength() > self.maxlen:
+                        self.maxlen = rule.getLength()
 
-            ents.append(magictype)
-            # self.types[pri]=ents
-            if not c:
-                break
+                    c = f.read(1)
+                    f.seek(-1, 1)
+
+                ents.append(magictype)
+                # self.types[pri]=ents
+                if not c:
+                    break
 
     def match(self, path, max_pri=100, min_pri=0):
         try:
-            buf = file(path, 'r').read(self.maxlen)
+            with open(path) as f:
+                buf = f.read(self.maxlen)
             pris = list(self.types.keys())
             pris.sort(lambda a, b: -cmp(a, b))
             for pri in pris:
@@ -404,23 +405,24 @@ def _cache_database():
 
     def _import_glob_file(path):
         """Loads name matching information from a MIME directory."""
-        for line in file(path):
-            if line.startswith('#'):
-                continue
-            line = line[:-1]
-
-            type_name, pattern = line.split(':', 1)
-            mtype = lookup(type_name)
-
-            if pattern.startswith('*.'):
-                rest = pattern[2:]
-                if not ('*' in rest or '[' in rest or '?' in rest):
-                    exts[rest] = mtype
+        with open(path) as f:
+            for line in f.readlines():
+                if line.startswith('#'):
                     continue
-            if '*' in pattern or '[' in pattern or '?' in pattern:
-                globs.append((pattern, mtype))
-            else:
-                literals[pattern] = mtype
+                line = line[:-1]
+
+                type_name, pattern = line.split(':', 1)
+                mtype = lookup(type_name)
+
+                if pattern.startswith('*.'):
+                    rest = pattern[2:]
+                    if not ('*' in rest or '[' in rest or '?' in rest):
+                        exts[rest] = mtype
+                        continue
+                if '*' in pattern or '[' in pattern or '?' in pattern:
+                    globs.append((pattern, mtype))
+                else:
+                    literals[pattern] = mtype
 
     for path in basedir.load_data_paths(os.path.join('mime', 'globs')):
         _import_glob_file(path)
@@ -428,7 +430,7 @@ def _cache_database():
         magic.mergeFile(path)
 
     # Sort globs by length
-    globs.sort(lambda a, b: cmp(len(b[0]), len(a[0])))
+    globs.sort(key=lambda a: len(a[0]))
 
 
 def get_type_by_name(path):
@@ -538,7 +540,8 @@ def install_mime_info(application, package_file=None):
     if not package_file:
         package_file = os.path.join(rox.app_dir, application)
 
-    new_data = file(package_file).read()
+    with open(package_file) as f:
+        new_data = f.read()
 
     # See if the file is already installed
 
@@ -546,7 +549,8 @@ def install_mime_info(application, package_file=None):
     resource = os.path.join(package_dir, application)
     for x in basedir.load_data_paths(resource):
         try:
-            old_data = file(x).read()
+            with open(x) as f:
+                old_data = f.read()
         except:
             continue
         if old_data == new_data:
@@ -562,7 +566,8 @@ def install_mime_info(application, package_file=None):
             basedir.save_data_path(package_dir), application)
 
         # Write the file...
-        file(new_file, 'w').write(new_data)
+        with open(new_file, 'w') as f:
+            f.write(new_data)
 
         # Update the database...
         if os.path.isdir('/uri/0install/zero-install.sourceforge.net'):
