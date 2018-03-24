@@ -21,7 +21,7 @@ plug.show_all()
 rox.mainloop()
 """
 
-from gi.repository import Gtk, Gdk, GdkX11
+from gi.repository import Gtk, Gdk
 
 import rox
 
