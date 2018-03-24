@@ -67,7 +67,7 @@ class Applet(Gtk.Plug):
         )
         print(pos)
         if pos:
-            side, margin = pos.value.split(',')
+            side, margin = pos.value.split(b',')
             margin = int(margin)
         else:
             side, margin = None, 2
