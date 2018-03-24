@@ -23,14 +23,14 @@ def version(major, minor, micro):
     else:
         # print "Using ROX-Lib in PYTHONPATH"
         if (major, minor, micro) > rox.roxlib_version:
-            print >>sys.stderr, "WARNING: ROX-Lib version " \
+            print("WARNING: ROX-Lib version " \
                 "%d.%d.%d requested, but using version " \
                 "%d.%d.%d from %s" % \
                 (major, minor, micro,
                  rox.roxlib_version[0],
                  rox.roxlib_version[1],
                  rox.roxlib_version[2],
-                 rox.__file__)
+                 rox.__file__), file=sys.stderr)
         return
 
     try:
