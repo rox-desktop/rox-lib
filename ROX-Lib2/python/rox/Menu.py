@@ -183,6 +183,7 @@ class ItemFactory:
             )
 
         self._widgets[path] = widget
+        widget.show()
 
     def get_widget(self, path):
         return self._widgets[path]
