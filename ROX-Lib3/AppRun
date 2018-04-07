@@ -11,7 +11,7 @@ import rox
 import gi
 from gi.repository import Gtk, Gdk
 
-message=rox._("ROX-Lib2 contains code that is useful to newer ROX applications. \
+message=rox._("ROX-Lib3 contains code that is useful to newer ROX applications. \
 You should place this directory somewhere where other programs can \
 find it, such as ~/lib or /usr/local/lib.\n\n\
 ROX-Lib version: %s\n\

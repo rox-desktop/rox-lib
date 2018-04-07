@@ -1,15 +1,15 @@
-			ROX-Lib2
+			ROX-Lib3
 			Shared code for ROX applications
 			by Thomas Leonard
 			http://rox.sourceforge.net
 
 Quick start
 ~~~~~~~~~~~
-Move the ROX-Lib2 directory inside ~/lib, /usr/local/lib or /usr/lib.
+Move the ROX-Lib3 directory inside ~/lib, /usr/local/lib or /usr/lib.
 
-Programs which require ROX-Lib2 should now be able to find it. If you
+Programs which require ROX-Lib3 should now be able to find it. If you
 want it somewhere else, set the LIBDIRPATH environment variable to a
-colon separated list of directories to search for ROX-Lib2 and other
+colon separated list of directories to search for ROX-Lib3 and other
 libraries.
 
 Zero Install users don't have to do anything. Except for some very old
@@ -24,18 +24,18 @@ example: save boxes, menus and options.
 Keeping all this code in one place makes these programs smaller. It also
 makes programs which use it more consistant.
 
-Programs which use ROX-Lib2 need to be able to find it, so you should put it
+Programs which use ROX-Lib3 need to be able to find it, so you should put it
 inside one of the standard library directories. If you don't have root
 access, create a directory called 'lib' inside your home directory and move
-ROX-Lib2 in there.
+ROX-Lib3 in there.
 
-If you do have root access, move ROX-Lib2 into /usr/local/lib.
+If you do have root access, move ROX-Lib3 into /usr/local/lib.
 
 
 Developers
 ~~~~~~~~~~
 For people wishing to write programs using this library, look in the
-'ROX-Lib2/Help/python' directory.
+'ROX-Lib3/Help/python' directory.
 
 There is also some on-line documentation here:
 
@@ -44,10 +44,10 @@ There is also some on-line documentation here:
 
 Translators
 ~~~~~~~~~~~
-If you want to translate ROX-Lib2 into your native language, follow
+If you want to translate ROX-Lib3 into your native language, follow
 these steps (replace 'fr' with your language):
 
-$ cd ROX-Lib2/Messages
+$ cd ROX-Lib3/Messages
 $ ./update-po
 $ cp ../python/rox/messages.pot fr.po
 [ edit fr.po ]

@@ -1,20 +1,22 @@
-# ROX-Lib2 Chinese Translation.
-# Copyright @ 2003 Free Software Foundation, Inc.
-# Current translator: Babyfai Cheung, 2004.
+# Brazilian Portuguese messages for ROX-Lib.
+# Copyright (C) 2005 Jose Carlos Medeiros <debian@psabs.com.br>
+# Jose Carlos Medeiros <debian@psabs.com.br>
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: ROX-Lib2 1.9.13\n"
+"Project-Id-Version: 3.0.0\n"
 "POT-Creation-Date: 2007-05-27 11:47+BST\n"
-"PO-Revision-Date: 2006-06-25 16:40+0200\n"
-"Last-Translator: Babyfai Cheung <babyfai1@yahoo.com.hk>\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2005-05-06 11:09+BRT\n"
+"Last-Translator: Jose Carlos Medeiros <debian@psabs.com.br>\n"
+"Language-Team: ROX Mailing list <rox-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
 
 #: ../../AppRun:12
 msgid ""
-"ROX-Lib2 contains code that is useful to newer ROX applications. You should "
+"ROX-Lib3 contains code that is useful to newer ROX applications. You should "
 "place this directory somewhere where other programs can find it, such as ~/"
 "lib or /usr/local/lib.\n"
 "\n"
@@ -25,39 +27,32 @@ msgid ""
 "PyGTK location:\n"
 "%s"
 msgstr ""
-"ROX-Lib2 包含了 ROX 应用程式所必需的函式码。您应将此目录放到应用程式可找到的"
-"地方，例如 ~/lib 或  /usr/local/lib.\n"
-"\n"
-"ROX-Lib 版本：%s\n"
-"PyGTK 版本：%s\n"
-"GTK 版本：%s\n"
-"\n"
-"PyGTK 位置：\n"
-"%s"
 
 #: OptionsBox.py:124
 msgid "%s options"
-msgstr "%s 选项"
+msgstr ""
 
 #: OptionsBox.py:127
 msgid "_Revert"
-msgstr "复原(_R)"
+msgstr "_Reverter"
 
 #: OptionsBox.py:129
 msgid "Restore all options to how they were when the window was opened"
-msgstr "当打开窗口后，载入已储存的设置"
+msgstr "Restaura as op��es igual estavam antes desta janela ser aberta."
 
 #: __init__.py:72
+#, fuzzy
 msgid ""
 "The pygtk2 package (2.0.0 or later) must be installed to use this program:\n"
 "http://rox.sourceforge.net/desktop/ROX-Lib\n"
 msgstr ""
-"pygtk2 套件 (2.0.0 或以上版本) 必须安装，请参阅：\n"
-"http://rox.sourceforge.net/desktop/ROX-Lib\n"
+"Voc� deve instalar o pacote pygtk2 (1.99.13 or maior) para usar este "
+"programa:\n"
+"http://rox.sourceforge.net/rox_lib.php3\n"
 
 #: __init__.py:80
 msgid "Broken pygtk installation: found pygtk (%s), but not gtk!\n"
-msgstr "已损毁的 pygtk 安装：找到 pygtk (%s)，但没有 gtk！\n"
+msgstr ""
 
 #: __init__.py:96
 msgid ""
@@ -67,69 +62,72 @@ msgstr ""
 
 #: __init__.py:117
 msgid "Operation aborted at user's request"
-msgstr "操作被用户终结"
+msgstr "A opera��o foi abortada pelo usu�rio"
 
 #: __init__.py:124 debug.py:44
 msgid "Error"
-msgstr "错误"
+msgstr "Erro"
 
 #: __init__.py:150
 msgid "Information"
-msgstr "讯息"
+msgstr "Informa��o"
 
 #: __init__.py:172
 msgid "Confirm:"
-msgstr "确定："
+msgstr "Confirmar:"
 
 #: __init__.py:454
 msgid ""
-"You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
+"You do not have the Python 'xml' module installed, which ROX-Lib3 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "
 "package is not required)."
 msgstr ""
-"Python 'xml' 模组尚未安装，它是 ROX-Lib2 必需的。您可只安装 python-xmlbase "
-"(一个较小而基本的套件；完整的 PyXML 版本是没有必要的)."
+"Voc� n�o tem o m�dulo Python 'xml' instalado, que o ROX-Lib requer. Voc� "
+"deve instalar o python-xmlbase (este � um pequeno pacote; o pacote PyXML "
+"inteiro n�o � necess�rio)."
 
 #: debug.py:34
 msgid "_Details"
-msgstr "细节(_D)"
+msgstr "_Detalhes"
 
 #: debug.py:89
 msgid "_Bug Report"
-msgstr "错误回报(_B)"
+msgstr "Reportar _Bugs"
 
 #: debug.py:95
 msgid "Forced Quit"
-msgstr "强制登出"
+msgstr "For�ar Sair"
 
 #: debug.py:120
 msgid "Stack trace (innermost last)"
-msgstr "堆叠追踪 (最后及最深层)"
+msgstr "Stack trace (geralmente a �ltima)"
 
 #: debug.py:215
 msgid "Local variables in selected frame:"
-msgstr "本机变数在已选的框架为："
+msgstr "Vari�veis locais no frame selecionado:"
 
 #: fileutils.py:22
 msgid "Retry"
-msgstr "再试"
+msgstr "Repetir"
 
 #: fileutils.py:27
 msgid "Examine"
-msgstr "检查"
+msgstr "Examinar"
 
 #: fileutils.py:33
 msgid "Error:"
-msgstr "错误："
+msgstr "Erro:"
 
 #: fileutils.py:59
 msgid ""
 "Could not create directory `%s' because a file already exists at that path.\n"
-msgstr "未能创建目录 `%s' 目标早已存在.\n"
+msgstr ""
+"N�o � possivel criar o diret�rio `%s' porque j� existe um arquivo com este "
+"nome.\n"
 
 #: fileutils.py:65
 msgid "Could not create directory `%s'.\n"
-msgstr "未能创建目录 `%s'.\n"
+msgstr "N�o � poss�vel criar o diret�rio `%s'.\n"
 
 #: launch.py:11
 msgid ""
@@ -138,15 +136,14 @@ msgid ""
 "\n"
 "http://0install.net/injector.html"
 msgstr ""
-"程式 '%s' 不能执行，而 0launch 这指令也不存在。请到以下地方下载：\n"
-"\n"
-"http://0install.net/injector.html"
 
 #: loading.py:28
 msgid ""
 "Cannot load files from a remote machine (multiple files, or target "
 "application/octet-stream not provided)"
-msgstr "未能载入远端主机文件 (文件复杂，或目标未有提供程式资讯)"
+msgstr ""
+"Imposs�vel abrir os arquivos da m�quina remota (arquivos m�ltiplos, ou o "
+"destino application/octet-stream n�o dispon�vel)"
 
 #: mime.py:492
 msgid ""
@@ -154,49 +151,49 @@ msgid ""
 "Make sure you have the freedesktop.org shared MIME package:\n"
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 msgstr ""
-"'%s' 回传错误码 !\n"
-"请确定您已安装 freedesktop.org 的 MIME 套件：\n"
+"O comando '%s' retornou um c�digo de erro!\n"
+"Tenha certeza de ter o pacote shared MIME:\n"
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 
 #: mime_handler.py:52
 msgid "Install %s"
-msgstr "安装 %s"
+msgstr ""
 
 #: mime_handler.py:85
 msgid "Type"
-msgstr "类型"
+msgstr ""
 
 #: mime_handler.py:90
 msgid "Name"
-msgstr "名称"
+msgstr ""
 
 #: mime_handler.py:96
 msgid "Current"
-msgstr "当前的"
+msgstr ""
 
 #: mime_handler.py:103
 msgid "Install?"
-msgstr "安装？"
+msgstr ""
 
 #: mime_handler.py:109
 msgid "Uninstall?"
-msgstr "反安装？"
+msgstr ""
 
 #: mime_handler.py:293
 msgid ""
 "Run actions can be changed by selecting a file of the appropriate type in "
 "the Filer and selecting the menu option 'Set Run Action...'"
 msgstr ""
-"执行的动作可被改变为另一更合适的应用程式，请在 ROX-Filer 的菜单内 '设定执行"
-"档...' 中更改."
+"A��es podem ser alteradas selecionando um arquivo do tipo apropriado no "
+"'Filer' e selecionando no menu a op��o 'Alterar a��o...'"
 
 #: mime_handler.py:301
 msgid "run action"
-msgstr "执行动作"
+msgstr "a��o"
 
 #: mime_handler.py:312
 msgid "thumbnail handler"
-msgstr "缩图处理员"
+msgstr "gerenciador de miniaturas"
 
 #: mime_handler.py:313
 msgid ""
@@ -204,68 +201,72 @@ msgid ""
 "file.  The filer can generate thumbnails for most types of image (JPEG, PNG, "
 "etc.) but relies on helper applications for the others."
 msgstr ""
-"缩图处理员提供影像档的缩图显生功能，影像档包括所有 (JPEG, PNG, 等等.) 的文"
-"件，但某些类型或会依赖相关程式的安装."
+"O gerenciador de miniaturas prove suporte a cria��o de mini imagens dos "
+"tipos de arquivo. O 'Filer' pode gerar miniaturas para a maioria dos tipos "
+"de imagem (JPEG, PNG, etc.) mas requer ajuda das aplica��es para outros "
+"tipos."
 
 #: mime_handler.py:330
 msgid "type handler"
-msgstr "类型处理员"
+msgstr "gerenciador de tipo"
 
 #: mime_handler.py:331
 msgid ""
 "The application can handle files of these types.  Click on OK to add it to "
 "the SendTo menu for the type of file, and also the customized File menu."
 msgstr ""
-"此功能可帮助处理文件的类型，点击 '确定' 并将其加进到菜单的 '传送至' 以设定文"
-"件的类型，亦可在自定菜单内进行."
+"A aplica��o pode manusear arquivos destes tipos. Clique em OK para adicion�-"
+"la ao menu 'Enviar Para' do tipo do arquivo, e tamb�m customizar o menu "
+"Arquivo."
 
 #: saving.py:169
 msgid "Delete temporary file '%s'?"
-msgstr "删除暂存文件 '%s'?"
+msgstr "Apago o arquivo tempor�rio '%s'?"
 
 #: saving.py:345
 msgid ""
 "Drag the icon to a directory viewer\n"
 "(or enter a full pathname)"
 msgstr ""
-"将图标拖放到目录内\n"
-"(或键入完整的路径)"
+"Arraste o �cone para um diret�rio\n"
+"(ou entre com o caminho completo)"
 
 #: saving.py:371
 msgid "Unnamed"
-msgstr "取消命名"
+msgstr "Sem Nome"
 
 #: saving.py:453
+#, fuzzy
 msgid "'%s' already exists as a directory."
-msgstr "文件 '%s' 已存在并且为一个目录"
+msgstr "O Arquivo '%s' ja existe -- sobrescrevo-o?"
 
 #: saving.py:462
 msgid "Permissions changed from %o to %o."
-msgstr "权限改变从 %o 变为 %o."
+msgstr "As permiss�es foram alteradas de %o para o %o."
 
 #: saving.py:465
 msgid "Size was %d bytes; now %d bytes."
-msgstr "大小原是 %d bytes；现在是 %d bytes."
+msgstr "O tamanho era de %d bytes; agora � de %d bytes."
 
 #: saving.py:468
 msgid "Modification time changed."
-msgstr "修改时间已变更."
+msgstr "Hora de modifica��o alterada."
 
 #: saving.py:474
 msgid "File '%s' already exists -- overwrite it?"
-msgstr "文件 '%s' 已存在 -- 覆盖？"
+msgstr "O Arquivo '%s' ja existe -- sobrescrevo-o?"
 
 #: saving.py:475
 msgid "_Overwrite"
-msgstr "覆盖(_O)"
+msgstr "_Sobrescrever"
 
 #: saving.py:515
 msgid "_Discard"
-msgstr "丢弃(_D)"
+msgstr "_Descartar"
 
 #: saving.py:525
 msgid "Save As:"
-msgstr "储存为："
+msgstr "Salvar Como:"
 
 #: thumbnail.py:175
 msgid "Thumbnail not implemented"

@@ -1,12 +1,12 @@
-"""To use ROX-Lib2 you need to copy the findrox.py script into your application
+"""To use ROX-Lib3 you need to copy the findrox.py script into your application
 directory and import that before anything else. This module will locate
-ROX-Lib2 and add ROX-Lib2/python to sys.path. If ROX-Lib2 is not found, it
+ROX-Lib3 and add ROX-Lib3/python to sys.path. If ROX-Lib3 is not found, it
 will display a suitable error and quit.
 
 The AppRun script of a simple application might look like this:
 
     #!/usr/bin/env python
-    import findrox; findrox.version(1, 9, 12)
+    import findrox; findrox.version(3, 0, 0)
     import rox
     
     window = rox.Window()

@@ -8,7 +8,7 @@ to do the following:
 
 - Run 'pygettext *.py' to extract all the marked strings.
 
-- Copy messages.pot as Messages/<lang>.po and edit (see ROX-Lib2's README).
+- Copy messages.pot as Messages/<lang>.po and edit (see ROX-Lib3's README).
 
 - Use msgfmt to convert the .po files to .gmo files.
 
@@ -21,7 +21,7 @@ format, eg:
 
     print(_('You have %d lives remaining') % lives)
 
-You might like to look at the scripts in ROX-Lib2's Messages directory for
+You might like to look at the scripts in ROX-Lib3's Messages directory for
 more help.
 """
 

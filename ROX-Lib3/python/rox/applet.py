@@ -6,7 +6,7 @@ the GtkSocket widget that ROX-Filer creates for you on the panel.
 A sample AppletRun might look like this:
 
 #!/usr/bin/env python
-import findrox; findrox.version(1, 9, 12)
+import findrox; findrox.version(3, 0, 0)
 import rox
 import sys
 from gi.repository import Gtk

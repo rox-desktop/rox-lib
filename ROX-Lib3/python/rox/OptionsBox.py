@@ -3,7 +3,7 @@ For simple applications, rox.edit_options() provides an
 easy way to edit the options.
 
 You can add new types of option by appending to widget_registry (new
-in ROX-Lib 1.9.13). Return a list of widgets (which are packed into either an
+in ROX-Lib2 1.9.13). Return a list of widgets (which are packed into either an
 HBox or a VBox). For example, to add a button widget:
 
 def build_button(box, node, label):

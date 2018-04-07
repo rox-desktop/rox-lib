@@ -1,8 +1,8 @@
-# Most of the common code needed by ROX applications is in ROX-Lib2.
-# Except this code, which is needed to find ROX-Lib2 in the first place!
+# Most of the common code needed by ROX applications is in ROX-Lib3.
+# Except this code, which is needed to find ROX-Lib3 in the first place!
 
 # Just make sure you run findrox.version() before importing anything inside
-# ROX-Lib2...
+# ROX-Lib3...
 
 import os
 import sys
@@ -11,7 +11,7 @@ import string
 
 
 def version(major, minor, micro):
-    """Find ROX-Lib2, with a version >= (major, minor, micro), and
+    """Find ROX-Lib3, with a version >= (major, minor, micro), and
     add it to sys.path. If version is missing or too old, either
     prompt the user, or (if possible) upgrade it automatically.
     If 'rox' is already in PYTHONPATH, just use that (assume the injector
@@ -41,7 +41,7 @@ def version(major, minor, micro):
                  '/usr/local/lib', '/usr/lib']
 
     for p in paths:
-        p = os.path.join(p, 'ROX-Lib2')
+        p = os.path.join(p, 'ROX-Lib3')
         if exists(p):
             # TODO: check version is new enough
             sys.path.append(os.path.join(p, 'python'))
@@ -52,11 +52,11 @@ def version(major, minor, micro):
                 break
             if (major, minor, micro) <= rox.roxlib_version:
                 return  # OK
-    report_error("This program needs ROX-Lib2 (version %d.%d.%d) " %
+    report_error("This program needs ROX-Lib3 (version %d.%d.%d) " %
                  (major, minor, micro) + "to run.\n" +
                  "I tried all of these places:\n\n" +
                  string.join(paths, '\n') + '\n\n' +
-                 "ROX-Lib2 is available from:\n" +
+                 "ROX-Lib3 is available from:\n" +
                  "http://rox.sourceforge.net")
 
 
@@ -76,7 +76,7 @@ def report_error(err):
         win = gtk.GtkDialog()
         message = gtk.GtkLabel(err +
                                '\n\nAlso, pygtk2 needs to be present')
-        win.set_title('Missing ROX-Lib2')
+        win.set_title('Missing ROX-Lib3')
         win.set_position(gtk.WIN_POS_CENTER)
         message.set_padding(20, 20)
         win.vbox.pack_start(message)
@@ -93,7 +93,7 @@ def report_error(err):
     else:
         box = g.MessageDialog(None, g.MESSAGE_ERROR, 0,
                               g.BUTTONS_OK, err)
-        box.set_title('Missing ROX-Lib2')
+        box.set_title('Missing ROX-Lib3')
         box.set_position(g.WIN_POS_CENTER)
         box.set_default_response(g.RESPONSE_OK)
         box.run()

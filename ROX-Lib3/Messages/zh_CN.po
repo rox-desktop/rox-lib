@@ -1,24 +1,20 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR ORGANIZATION
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# ROX-Lib3 Chinese Translation.
+# Copyright @ 2003 Free Software Foundation, Inc.
+# Current translator: Babyfai Cheung, 2004.
 msgid ""
 msgstr ""
-"Project-Id-Version: ROX-Lib2 2.0.0\n"
+"Project-Id-Version: ROX-Lib3 3.0.0\n"
 "POT-Creation-Date: 2007-05-27 11:47+BST\n"
-"PO-Revision-Date: 2005-03-18 19:48+0100\n"
-"Last-Translator: Guido Schimmels <__guido__@web.de>\n"
-"Language-Team: ROX Mailing List <rox-devel@lists.sourceforge.net>\n"
+"PO-Revision-Date: 2006-06-25 16:40+0200\n"
+"Last-Translator: Babyfai Cheung <babyfai1@yahoo.com.hk>\n"
+"Language-Team: none\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: pygettext.py 1.4\n"
-"X-Poedit-Language: German\n"
-"X-Poedit-Country: GERMANY\n"
 
 #: ../../AppRun:12
 msgid ""
-"ROX-Lib2 contains code that is useful to newer ROX applications. You should "
+"ROX-Lib3 contains code that is useful to newer ROX applications. You should "
 "place this directory somewhere where other programs can find it, such as ~/"
 "lib or /usr/local/lib.\n"
 "\n"
@@ -29,44 +25,39 @@ msgid ""
 "PyGTK location:\n"
 "%s"
 msgstr ""
-"ROX-Lib2 enthält Code für aktuelle ROX-Programme. Sie sollten das "
-"Verzeichnis platzieren, wo andere Programme es finden können, wie ~/lib "
-"oder /usr/local/lib.\n"
+"ROX-Lib3 包含了 ROX 应用程式所必需的函式码。您应将此目录放到应用程式可找到的"
+"地方，例如 ~/lib 或  /usr/local/lib.\n"
 "\n"
-"ROX-Lib Version: %s\n"
-"PyGTK Version: %s\n"
-"GTK Version: %s\n"
+"ROX-Lib 版本：%s\n"
+"PyGTK 版本：%s\n"
+"GTK 版本：%s\n"
 "\n"
-"PyGTK Ort:\n"
+"PyGTK 位置：\n"
 "%s"
 
 #: OptionsBox.py:124
 msgid "%s options"
-msgstr ""
+msgstr "%s 选项"
 
 #: OptionsBox.py:127
 msgid "_Revert"
-msgstr "_Rückgängig"
+msgstr "复原(_R)"
 
 #: OptionsBox.py:129
 msgid "Restore all options to how they were when the window was opened"
-msgstr ""
-"Alle Einstellungen auf ihren Ausgangswert beim Öffnen des Fensters setzen"
+msgstr "当打开窗口后，载入已储存的设置"
 
 #: __init__.py:72
-#, fuzzy
 msgid ""
 "The pygtk2 package (2.0.0 or later) must be installed to use this program:\n"
 "http://rox.sourceforge.net/desktop/ROX-Lib\n"
 msgstr ""
-"Zur Nutzung dieses Programms, muss das Paket pygtk2 (1.99.13 oder später) "
-"installiert sein:\n"
-"http://rox.sourceforge.net/rox_lib.php3\n"
+"pygtk2 套件 (2.0.0 或以上版本) 必须安装，请参阅：\n"
+"http://rox.sourceforge.net/desktop/ROX-Lib\n"
 
 #: __init__.py:80
 msgid "Broken pygtk installation: found pygtk (%s), but not gtk!\n"
-msgstr ""
-"PyGTK nicht korrekt installiert: pygtk (%s) gefunden, nicht aber gtk!\n"
+msgstr "已损毁的 pygtk 安装：找到 pygtk (%s)，但没有 gtk！\n"
 
 #: __init__.py:96
 msgid ""
@@ -76,72 +67,69 @@ msgstr ""
 
 #: __init__.py:117
 msgid "Operation aborted at user's request"
-msgstr "Aktion auf Benutzerwunsch abgebrochen"
+msgstr "操作被用户终结"
 
 #: __init__.py:124 debug.py:44
 msgid "Error"
-msgstr "Fehler"
+msgstr "错误"
 
 #: __init__.py:150
 msgid "Information"
-msgstr "Hinweis"
+msgstr "讯息"
 
 #: __init__.py:172
 msgid "Confirm:"
-msgstr "Bestätigen:"
+msgstr "确定："
 
 #: __init__.py:454
 msgid ""
-"You do not have the Python 'xml' module installed, which ROX-Lib2 requires. "
+"You do not have the Python 'xml' module installed, which ROX-Lib3 requires. "
 "You need to install python-xmlbase (this is a small package; the full PyXML "
 "package is not required)."
 msgstr ""
-"Das Python 'xml'-Modul ist nicht installiert, welches von ROX-Lib2 benötigt "
-"wird.Es muss python-xmlbase installiert sein (ein kleines Paket; das "
-"vollständige PyXML-Paket wird nicht benötigt)."
+"Python 'xml' 模组尚未安装，它是 ROX-Lib3 必需的。您可只安装 python-xmlbase "
+"(一个较小而基本的套件；完整的 PyXML 版本是没有必要的)."
 
 #: debug.py:34
 msgid "_Details"
-msgstr "_Details"
+msgstr "细节(_D)"
 
 #: debug.py:89
 msgid "_Bug Report"
-msgstr "Fehler_bericht"
+msgstr "错误回报(_B)"
 
 #: debug.py:95
 msgid "Forced Quit"
-msgstr "Erzwungener Programmabbruch"
+msgstr "强制登出"
 
 #: debug.py:120
 msgid "Stack trace (innermost last)"
-msgstr "Stackrückverfolgung (von aussen nach innen)"
+msgstr "堆叠追踪 (最后及最深层)"
 
 #: debug.py:215
 msgid "Local variables in selected frame:"
-msgstr "Lokale Variablen in gewähltem Rahmen:"
+msgstr "本机变数在已选的框架为："
 
 #: fileutils.py:22
 msgid "Retry"
-msgstr "Erneut versuchen"
+msgstr "再试"
 
 #: fileutils.py:27
 msgid "Examine"
-msgstr "Durchsuchen"
+msgstr "检查"
 
 #: fileutils.py:33
 msgid "Error:"
-msgstr "Fehler:"
+msgstr "错误："
 
 #: fileutils.py:59
 msgid ""
 "Could not create directory `%s' because a file already exists at that path.\n"
-msgstr ""
-"Konnte Verzeichnis `%s' nicht anlegen, da eine gleichnamige Datei bereits "
-"existiert.\n"
+msgstr "未能创建目录 `%s' 目标早已存在.\n"
 
 #: fileutils.py:65
 msgid "Could not create directory `%s'.\n"
-msgstr "Konnte Verzeichnis `%s' nicht anlegen.\n"
+msgstr "未能创建目录 `%s'.\n"
 
 #: launch.py:11
 msgid ""
@@ -150,8 +138,7 @@ msgid ""
 "\n"
 "http://0install.net/injector.html"
 msgstr ""
-"Das Programm '%s' kann nicht ausgeführt werden, da der 0launch-Befehl nicht "
-"verfügbar ist. Erkann von hier runtergeladen werden:\n"
+"程式 '%s' 不能执行，而 0launch 这指令也不存在。请到以下地方下载：\n"
 "\n"
 "http://0install.net/injector.html"
 
@@ -159,9 +146,7 @@ msgstr ""
 msgid ""
 "Cannot load files from a remote machine (multiple files, or target "
 "application/octet-stream not provided)"
-msgstr ""
-"Kann Netzwerkdateien nicht laden (laden mehrere Dateien auf einmal oder "
-"Dateityp application/octet-stream nicht unterstützt)"
+msgstr "未能载入远端主机文件 (文件复杂，或目标未有提供程式资讯)"
 
 #: mime.py:492
 msgid ""
@@ -169,49 +154,49 @@ msgid ""
 "Make sure you have the freedesktop.org shared MIME package:\n"
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 msgstr ""
-"Der Befehl '%s' hat eine Fehlermeldung übergeben!\n"
-"Versichern Sie sich, dass das freedesktop.org MIME-Paket installiert ist:\n"
+"'%s' 回传错误码 !\n"
+"请确定您已安装 freedesktop.org 的 MIME 套件：\n"
 "http://www.freedesktop.org/standards/shared-mime-info.html"
 
 #: mime_handler.py:52
 msgid "Install %s"
-msgstr "Installieren von %s"
+msgstr "安装 %s"
 
 #: mime_handler.py:85
 msgid "Type"
-msgstr "Typ"
+msgstr "类型"
 
 #: mime_handler.py:90
 msgid "Name"
-msgstr "Name"
+msgstr "名称"
 
 #: mime_handler.py:96
 msgid "Current"
-msgstr "Aktuell"
+msgstr "当前的"
 
 #: mime_handler.py:103
 msgid "Install?"
-msgstr "Installieren?"
+msgstr "安装？"
 
 #: mime_handler.py:109
 msgid "Uninstall?"
-msgstr "Entfernen?"
+msgstr "反安装？"
 
 #: mime_handler.py:293
 msgid ""
 "Run actions can be changed by selecting a file of the appropriate type in "
 "the Filer and selecting the menu option 'Set Run Action...'"
 msgstr ""
-"Startaktionen lassen sich ändern durch Wahl einer Datei passenden Typs im "
-"Dateimanager und Wahl des Menüpunktes 'Startaktion ändern...'"
+"执行的动作可被改变为另一更合适的应用程式，请在 ROX-Filer 的菜单内 '设定执行"
+"档...' 中更改."
 
 #: mime_handler.py:301
 msgid "run action"
-msgstr "Startaktion"
+msgstr "执行动作"
 
 #: mime_handler.py:312
 msgid "thumbnail handler"
-msgstr "Miniaturvorschau-Dienstprogramm"
+msgstr "缩图处理员"
 
 #: mime_handler.py:313
 msgid ""
@@ -219,72 +204,68 @@ msgid ""
 "file.  The filer can generate thumbnails for most types of image (JPEG, PNG, "
 "etc.) but relies on helper applications for the others."
 msgstr ""
-"Miniaturvorschau-Dienstprogramme bieten die Möglichkeit, Bildchen "
-"(Thumbnails) für bestimmte Dateitypen zu erzeugen. Der Dateimanager kann "
-"solche Bildchen für die meisten Arten von Bilddateien (JPEG, PNG; etc.) "
-"erzeugen, für andere Typen nimmt er hingegen geeignete Dienstprogramme zur "
-"Hilfe."
+"缩图处理员提供影像档的缩图显生功能，影像档包括所有 (JPEG, PNG, 等等.) 的文"
+"件，但某些类型或会依赖相关程式的安装."
 
 #: mime_handler.py:330
 msgid "type handler"
-msgstr "Dienstprogramm für diesen Typ"
+msgstr "类型处理员"
 
 #: mime_handler.py:331
 msgid ""
 "The application can handle files of these types.  Click on OK to add it to "
 "the SendTo menu for the type of file, and also the customized File menu."
 msgstr ""
-"Das Programm kann Dateien dieses Typs verarbeiten. Drücken Sie OK, um es zum "
-"\"Öffnen mit...\"-Menü für diesen Dateityp hinzuzufügen, als auch zum "
-"benutzerspezifischen Dateimenü."
+"此功能可帮助处理文件的类型，点击 '确定' 并将其加进到菜单的 '传送至' 以设定文"
+"件的类型，亦可在自定菜单内进行."
 
 #: saving.py:169
 msgid "Delete temporary file '%s'?"
-msgstr "Die temporäre Datei '%s' löschen?"
+msgstr "删除暂存文件 '%s'?"
 
 #: saving.py:345
 msgid ""
 "Drag the icon to a directory viewer\n"
 "(or enter a full pathname)"
 msgstr ""
-"Ziehe das Symbol auf ein Dateienfenster\n"
-"(oder den vollen Dateipfad eingeben)"
+"将图标拖放到目录内\n"
+"(或键入完整的路径)"
 
 #: saving.py:371
 msgid "Unnamed"
-msgstr "Unbenannt"
+msgstr "取消命名"
 
 #: saving.py:453
 msgid "'%s' already exists as a directory."
-msgstr "'%s' bereits als Verzeichnis vorhanden."
+msgstr "文件 '%s' 已存在并且为一个目录"
 
 #: saving.py:462
 msgid "Permissions changed from %o to %o."
-msgstr "Zugriffsrechte geändert von %o zu %o."
+msgstr "权限改变从 %o 变为 %o."
 
 #: saving.py:465
 msgid "Size was %d bytes; now %d bytes."
-msgstr "Größe war %d Bytes; jetzt %d Bytes."
+msgstr "大小原是 %d bytes；现在是 %d bytes."
 
 #: saving.py:468
 msgid "Modification time changed."
-msgstr "Änderungszeit geändert."
+msgstr "修改时间已变更."
 
 #: saving.py:474
 msgid "File '%s' already exists -- overwrite it?"
-msgstr "Datei mit Namen '%s' bereits vorhanden -- diese überschreiben?"
+msgstr "文件 '%s' 已存在 -- 覆盖？"
 
 #: saving.py:475
 msgid "_Overwrite"
-msgstr "_Überschreiben"
+msgstr "覆盖(_O)"
 
 #: saving.py:515
 msgid "_Discard"
-msgstr "_Verwerfen:"
+msgstr "丢弃(_D)"
 
 #: saving.py:525
 msgid "Save As:"
-msgstr "Speichern Als:"
+msgstr "储存为："
 
 #: thumbnail.py:175
 msgid "Thumbnail not implemented"
