@@ -417,7 +417,7 @@ class OptionsBox(Gtk.Dialog):
             image = Gtk.Image()
             image.set_from_stock(Gtk.STOCK_DIALOG_INFO,
                                  Gtk.IconSize.BUTTON)
-            align = Gtk.Alignment(0, 0, 0, 0)
+            align = Gtk.Alignment.new(0, 0, 0, 0)
 
             align.add(image)
             hbox.pack_start(align, False, True, 0)
