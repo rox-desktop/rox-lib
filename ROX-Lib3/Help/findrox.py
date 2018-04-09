@@ -7,7 +7,6 @@
 import os
 import sys
 from os.path import exists
-import string
 
 
 def version(major, minor, micro):
@@ -35,7 +34,7 @@ def version(major, minor, micro):
 
     try:
         path = os.environ['LIBDIRPATH']
-        paths = string.split(path, ':')
+        paths = path.split(':')
     except KeyError:
         paths = [os.environ['HOME'] + '/lib',
                  '/usr/local/lib', '/usr/lib']
@@ -55,7 +54,7 @@ def version(major, minor, micro):
     report_error("This program needs ROX-Lib3 (version %d.%d.%d) " %
                  (major, minor, micro) + "to run.\n" +
                  "I tried all of these places:\n\n" +
-                 string.join(paths, '\n') + '\n\n' +
+                 '\n'.join(paths) + '\n\n' +
                  "ROX-Lib3 is available from:\n" +
                  "http://rox.sourceforge.net")
 
@@ -66,35 +65,12 @@ def report_error(err):
         sys.stderr.write('*** ' + err + '\n')
     except:
         pass
-    try:
-        import pygtk
-        pygtk.require('2.0')
-        import gtk
-        g = gtk
-    except:
-        import gtk
-        win = gtk.GtkDialog()
-        message = gtk.GtkLabel(err +
-                               '\n\nAlso, pygtk2 needs to be present')
-        win.set_title('Missing ROX-Lib3')
-        win.set_position(gtk.WIN_POS_CENTER)
-        message.set_padding(20, 20)
-        win.vbox.pack_start(message)
-
-        ok = gtk.GtkButton("OK")
-        ok.set_flags(gtk.CAN_DEFAULT)
-        win.action_area.pack_start(ok)
-        ok.connect('clicked', gtk.mainquit)
-        ok.grab_default()
-
-        win.connect('destroy', gtk.mainquit)
-        win.show_all()
-        gtk.mainloop()
-    else:
-        box = g.MessageDialog(None, g.MESSAGE_ERROR, 0,
-                              g.BUTTONS_OK, err)
-        box.set_title('Missing ROX-Lib3')
-        box.set_position(g.WIN_POS_CENTER)
-        box.set_default_response(g.RESPONSE_OK)
-        box.run()
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk
+    box = Gtk.MessageDialog(None, Gtk.MessageType.ERROR, 0, Gtk.ButtonsType.OK, err)
+    box.set_title('Missing ROX-Lib3')
+    box.set_position(Gtk.WindowPosition.CENTER)
+    box.set_default_response(Gtk.ResponseType.OK)
+    box.run()
     sys.exit(1)
