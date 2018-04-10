@@ -128,7 +128,7 @@ class _RPC(object):
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE
             )
             stdoutdata, stderrdata = process.communicate(
-                stream.getvalue()
+                stream.getvalue().encode('utf-8')
             )
             if stdoutdata:
                 root = ET.fromstring(stdoutdata)
