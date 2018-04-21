@@ -25,8 +25,8 @@ menu = Menu('main', [
       Separator(),
       Action('Process...',            'process'),
     ])),
-    Action('Options',        'show_options', 'F1', stock=Gtk.STOCK_HELP)),
-    Action('Quit',                'quit', stock=Gtk.STOCK_QUIT),
+    Action('Options',        'show_options', 'F1')),
+    Action('Quit',                'quit'),
     ])
 
 There is also an older syntax, where you pass tuples of strings
@@ -53,7 +53,7 @@ def set_save_name(prog, leaf='menus', *, site):
 class MenuItem:
     """Base class for menu items. You should normally use one of the subclasses..."""
 
-    def __init__(self, label, callback_name, type='', key=None, stock=None):
+    def __init__(self, label, callback_name, type='', key=None):
         if label and label[0] == '/':
             self.label = label[1:]
         else:
@@ -61,22 +61,17 @@ class MenuItem:
         self.fn = callback_name
         self.type = type
         self.key = key
-        self.stock = stock
 
     def activate(self, caller):
         getattr(caller, self.fn)()
 
 
 class Action(MenuItem):
-    """A leaf menu item, possibly with a stock icon, which calls a method when clicked."""
+    """A leaf menu item, which calls a method when clicked."""
 
-    def __init__(self, label, callback_name, key=None, stock=None, values=()):
+    def __init__(self, label, callback_name, key=None, values=()):
         """object.callback(*values) is called when the item is activated."""
-        if stock:
-            MenuItem.__init__(self, label, callback_name,
-                              '<StockItem>', key, stock)
-        else:
-            MenuItem.__init__(self, label, callback_name, '', key)
+        MenuItem.__init__(self, label, callback_name, '', key)
         self.values = values
 
     def activate(self, caller):
@@ -155,16 +150,11 @@ class ItemFactory:
         cb = item[2]
         action = item[3]
         type = item[4]
-        stock_id = None if len(item) < 6 else item[5]
         label = path.split('/')[-1]
         if type == '<Separator>':
             widget = Gtk.SeparatorMenuItem.new()
         elif type == '<ToggleItem>':
             widget = Gtk.CheckMenuItem.new_with_label(label)
-        elif type == '<StockItem>':
-            widget = Gtk.ImageMenuItem.new_from_stock(
-                stock_id, self._accel_group
-            )
         else:
             widget = Gtk.MenuItem.new_with_label(label)
 
@@ -230,11 +220,7 @@ class Menu:
                 cb = self._activate
             else:
                 cb = None
-            if item.stock:
-                out.append((path, item.key, cb, len(
-                    self.fns) - 1, item.type, item.stock))
-            else:
-                out.append((path, item.key, cb, len(self.fns) - 1, item.type))
+            out.append((path, item.key, cb, len(self.fns) - 1, item.type))
             if hasattr(item, 'update'):
                 items_with_update.append((path, item))
 
